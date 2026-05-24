@@ -1,11 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Document</title>
+    <script src="http://unpkg.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>실무 컴포넌트 마스터하기</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+
 </head>
+
 <body>
-    
+    <!-- 여기서부터 헤더 -->
+    <header>
+        <div class="header__logo">WELLIFE</div>
+        <nav class="header__gnb gnb">
+            <ul class="gnb__list">
+                <li class="gnb__item"> <span class="gnb__link">브랜드 스토리</span></li>
+                <li class="gnb__item"> <span class="gnb__link">제품 소개</span></li>
+                <li class="gnb__item"> <span class="gnb__link">고객 지원</span></li>
+            </ul>
+        </nav>
+    </header>
+    <!-- 여기서부터 메인 -->
+    <main class="main-visual">
+        <div class="swiper Myswiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide main-slide main slide--first">
+                    <h2 class="main-slide__title">현대적인 </h2>
+                    <p class="main-slide__desc">대상웰라이프의 핵심 기능을 내 것으로 만듭니다. </p>
+                </div>
+                <div class="swiper-slide main-slide main-slide--second">
+                    <h2 class="main-slide__title">라이브러리 활용하기</h2>
+                    <p class="main-slide__desc">필요한 기능을 부품처럼 가져와 조립하세요.</p>
+                </div>
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </main>
+    <!-- 여기서부터 스와이퍼 -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- 여기서부터 자바스크립트 -->
+     <script>
+        const header = document.getElementById('mainHeader');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                // 스크롤이 50px 이상 내려가면 클래스 추가
+                header.classList.add('header--scrolled');
+            } else {
+                // 맨 위로 올라오면 클래스 제거
+                header.classList.remove('header--scrolled');
+            }
+        });
+            // 🚀 기능 2: Swiper 슬라이더 초기화 및 설정
+        const swiper = new Swiper(".mySwiper", {
+            loop: true, // 무한 반복
+            autoplay: { delay: 4000, disableOnInteraction: false }, // 4초마다 자동 전환
+            pagination: { el: ".swiper-pagination", clickable: true }, // 하단 점 표시
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, // 화살표
+        });
+
+        
+    </script>
 </body>
 </html>
