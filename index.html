@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-    <script src="http://unpkg.com"></script>
+    <!-- <script src="http://unpkg.com"></script> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
     <link rel="stylesheet" href="./style.css">
     <title>NotedDount</title>
     
@@ -13,76 +14,75 @@
 </head>
 
 <body>
-    <!-- 여기서부터 헤더 -->
-    <header class="header" id="mainHeader">
-        <nav class="navbar">
-            <h1 class="logo">
-            <img src="./img/white_logo.png" alt=""> </h1>
+    <nav id="mainNav" class="navbar">
+    <h1 class="logo"><a href="#">Knotted</a></h1>
+    <ul class="nav-links">
+        <li><a href="#">ORDER</a></li>
+        <li><a href="#">STORE</a></li>
+        <li><a href="#">MENU</a></li>
+        <li><a href="#">BRAND</a></li>
+        <li><a href="#">SUPPORT</a></li>
+    </ul>
+    <div class="nav-actions">
+        <a href="#" class="btn btn-outline">Login</a>
+        <a href="#" class="btn btn-outline">Cart</a>
+    </div>
+    </nav>
 
-            <ul class="nav-links">
-            <li><a href="/order">ORDER</a></li>
-            <li><a href="/store">STORE</a></li>
-            <li><a href="/menu">MENU</a></li>
-            <li><a href="/brand">BRAND</a></li>
-            <li><a href="/support">SUPPORT</a></li>
-            </ul>
+    <header class="video-hero">
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="./video/donut_backgroud.mp4" type="video/mp4">
+        </video>
 
-            <div class="nav-actions">
-            <a href="/login" class="btn btn-outline">Login</a>
-            <a href="/cart" class="btn btn-outline">Cart</a>
+        <div class="hero-container">
+        
+            <div class="hero-text-box">
+                <span class="sub-title">Fresh & Creamy</span>
+                <h1 class="main-title">Creamy<br>Donuts</h1>
+                <p class="description">
+                    매일 아침, 정성스럽게 만든<br>
+                    부드럽고 달콤한 크림 도넛
+                </p>
+                
+                <div class="button-group">
+                    <a href="#" class="btn-primary">ORDER NOW &rarr;</a>
+                    <a href="#" class="btn-secondary">VIEW MENU</a>
+                </div>
+                
+                <div class="feature-info">
+                    <div class="feature-circles">
+                        <span class="circle"></span>
+                        <span class="circle"></span>
+                        <span class="circle"></span>
+                    </div>
+                    <p class="feature-text">
+                        100% Handmade<br>
+                        Made fresh every morning
+                    </p>
+                </div>
             </div>
-        </nav>
+
+            <div class="hero-image-box">
+            </div>
+
+    </div>
+
+    <div class="scroll-indicator">
+        <div class="mouse-icon"></div>
+        <span>SCROLL</span>
+    </div>
     </header>
-    <!-- 여기서부터 메인 -->
-    <main class="main-visual">
-        <div class="swiper mySwiper">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide main-slide main-slide--first">
-                    <h2 class="main-slide__title">현대적인 </h2>
-                    <p class="main-slide__desc">대상웰라이프의 핵심 기능을 내 것으로 만듭니다. </p>
-                </div>
-                <div class="swiper-slide main-slide main-slide--second">
-                    <h2 class="main-slide__title">라이브러리 활용하기</h2>
-                    <p class="main-slide__desc">필요한 기능을 부품처럼 가져와 조립하세요.</p>
-                </div>
-            </div>
-            <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-pagination"></div>
-        </div>
-    </main>
+
+    <section class="next-section">
+    <h2>Our Story</h2>
+    <p>여기는 영상이 지나간 후 나타나는 일반 섹션입니다.</p>
+    </section>
 
 
 
 
     <!-- 여기서부터 스와이퍼 -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- 여기서부터 자바스크립트 -->
-     <script>
-        const header = document.getElementById('mainHeader');
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                // 스크롤이 50px 이상 내려가면 클래스 추가
-                header.classList.add('header--scrolled');
-            } else {
-                // 맨 위로 올라오면 클래스 제거
-                header.classList.remove('header--scrolled');
-            }
-        });
-            // 기능 2: Swiper 슬라이더 초기화 및 설정
-        const swiper = new Swiper(".mySwiper", {
-
-            loop: true, // 무한 반복
-            
-            autoplay: { delay: 4000, disableOnInteraction: false }, // 4초마다 자동 전환
-            pagination: { el: ".swiper-pagination", clickable: true }, // 하단 점 표시
-            navigation: { 
-                nextEl: ".swiper-button-next", 
-                prevEl: ".swiper-button-prev" }, // 화살표
-        });
-
-        
-    </script>
+    <script src="./script.js"></script>
 </body>
 </html>
