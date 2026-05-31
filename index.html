@@ -2,33 +2,42 @@
 <html lang="en">
 
 <head>
-    <title>Document</title>
     <script src="http://unpkg.com"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>실무 컴포넌트 마스터하기</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-
+    <link rel="stylesheet" href="./style.css">
+    <title>NotedDount</title>
+    
 
 </head>
 
 <body>
     <!-- 여기서부터 헤더 -->
-    <header>
-        <div class="header__logo">WELLIFE</div>
-        <nav class="header__gnb gnb">
-            <ul class="gnb__list">
-                <li class="gnb__item"> <span class="gnb__link">브랜드 스토리</span></li>
-                <li class="gnb__item"> <span class="gnb__link">제품 소개</span></li>
-                <li class="gnb__item"> <span class="gnb__link">고객 지원</span></li>
+    <header class="header" id="mainHeader">
+        <nav class="navbar">
+            <h1 class="logo">
+            <img src="./img/white_logo.png" alt=""> </h1>
+
+            <ul class="nav-links">
+            <li><a href="/order">ORDER</a></li>
+            <li><a href="/store">STORE</a></li>
+            <li><a href="/menu">MENU</a></li>
+            <li><a href="/brand">BRAND</a></li>
+            <li><a href="/support">SUPPORT</a></li>
             </ul>
+
+            <div class="nav-actions">
+            <a href="/login" class="btn btn-outline">Login</a>
+            <a href="/cart" class="btn btn-outline">Cart</a>
+            </div>
         </nav>
     </header>
     <!-- 여기서부터 메인 -->
     <main class="main-visual">
-        <div class="swiper Myswiper">
+        <div class="swiper mySwiper">
             <div class="swiper-wrapper">
-                <div class="swiper-slide main-slide main slide--first">
+                <div class="swiper-slide main-slide main-slide--first">
                     <h2 class="main-slide__title">현대적인 </h2>
                     <p class="main-slide__desc">대상웰라이프의 핵심 기능을 내 것으로 만듭니다. </p>
                 </div>
@@ -42,11 +51,16 @@
             <div class="swiper-pagination"></div>
         </div>
     </main>
+
+
+
+
     <!-- 여기서부터 스와이퍼 -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <!-- 여기서부터 자바스크립트 -->
      <script>
         const header = document.getElementById('mainHeader');
+
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
                 // 스크롤이 50px 이상 내려가면 클래스 추가
@@ -56,12 +70,16 @@
                 header.classList.remove('header--scrolled');
             }
         });
-            // 🚀 기능 2: Swiper 슬라이더 초기화 및 설정
+            // 기능 2: Swiper 슬라이더 초기화 및 설정
         const swiper = new Swiper(".mySwiper", {
+
             loop: true, // 무한 반복
+            
             autoplay: { delay: 4000, disableOnInteraction: false }, // 4초마다 자동 전환
             pagination: { el: ".swiper-pagination", clickable: true }, // 하단 점 표시
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }, // 화살표
+            navigation: { 
+                nextEl: ".swiper-button-next", 
+                prevEl: ".swiper-button-prev" }, // 화살표
         });
 
         
