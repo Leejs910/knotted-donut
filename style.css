@@ -1,4 +1,31 @@
 body, h1, p, ul { margin: 0; padding: 0; list-style: none; }
+
+body {
+    overflow-x:hidden;
+}
+
+html{
+    box-sizing: inherit;
+    scroll-behavior: smooth;
+    height: fit-content;
+}
+
+@font-face {
+        font-family: 'recoleta'; 
+        src: url('./font/RecoletaAlt\ Black.woff2') format('woff2');
+        font-weight: bold;
+        font-style: normal;
+    }
+
+@font-face {
+    font-family: 'Caveat';
+    src: url('./font/Caveat-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
 body { font-family: sans-serif; background: #f8fafc; }
 * {
     box-sizing: border-box; }
@@ -28,14 +55,24 @@ a{
 /* 메뉴들도 가로로 배치되도록 추가 */
 .nav-links {
   display: flex;
-  gap: 30px;
+  gap: 64px;
   list-style: none;
 }
 
-.nav-links a, .logo a { 
+.nav-links a { 
   color: white; 
   text-decoration: none; 
   font-weight: bold; 
+}
+.logo a img{
+ width: auto;   
+ height: 42px;
+}
+.navbar .logo .logo_black{
+    display: none;
+}
+.navbar .logo .logo_white{
+    display: block;
 }
 
 .nav-actions{
@@ -57,20 +94,32 @@ a{
 }
 /* 2. 스크롤 올릴 때: 배경색이 채워진 상태 */
 .navbar.nav-solid {
-  background-color: #c30000; /* 공차처럼 흰색 배경으로 변경 (원하는 색 지정) */
+  background-color: #FFF09F; /* 공차처럼 흰색 배경으로 변경 (원하는 색 지정) */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 구분을 위한 그림자 추가 */
 }
-/* (선택) 배경이 흰색이 될 때 글자색 어둡게 변경 */
+/* (선택) 배경이 노란색이 될 때 글자색 어둡게 변경 */
 .navbar.nav-solid .nav-links a,
 .navbar.nav-solid .logo a {
   color: #333333; 
 }
+.navbar.nav-solid .nav-actions .btn-outline {
+    border: 2px solid black;
+    color: black;
+} 
+.navbar.nav-solid .logo .logo_white {
+    display: none;
+}
+.navbar.nav-solid .logo .logo_black {
+    display: block;
+}
+
 /* --- 일반 섹션 --- */
 .next-section {
   height: 100vh;
-  background-color: #f9f9f9;
+  background-color: #BDE1EF;
   padding: 100px;
   text-align: center;
+  z-index: -1;
 }
 
 /* .nav-links { display: flex; gap: 30px; list-style: none; }
@@ -97,7 +146,7 @@ a{
   position: relative;
   width: 100%;
   height: 100vh; /* 화면 꽉 차게 */
-  overflow: hidden;
+  /* overflow: hidden; */
   display: flex;
     flex-direction: column;
     justify-content: center; /* 세로 중앙 정렬 */
@@ -134,25 +183,30 @@ a{
 }
 
 .sub-title {
-    font-size: 24px;
-    font-style: italic;
-    font-family: 'Georgia', serif; /* 필기체 느낌 */
+    font-size: 36px;
+    font-family: 'Caveat';
+    font-weight:normal;
     margin-bottom: 10px;
     display: block;
+    color:#623A01 ;
+    letter-spacing: -2%;
 }
 
 .main-title {
-    font-size: 80px;
+    font-family: 'recoleta';
+    font-size: 110px;
     font-weight: 900;
-    line-height: 1.1;
+    line-height: 0.9;
     margin-bottom: 20px;
-    text-shadow: 2px 4px 10px rgba(0,0,0,0.2); /* 텍스트가 잘 보이게 그림자 추가 */
+    text-shadow: 0px 4px 4px rgba(0,0,0,0.2); /* 텍스트가 잘 보이게 그림자 추가 */
 }
 
 .description {
-    font-size: 18px;
+    font-size: 24px;
     line-height: 1.6;
+    font-weight: bold;
     margin-bottom: 40px;
+    color: #623A01;
 }
 
 /* --- 버튼 그룹 --- */
@@ -208,7 +262,9 @@ a{
 
 .feature-text {
     font-size: 14px;
+    font-weight: bold;
     opacity: 0.9;
+    color: #623A01;
 }
 
 /* --- 오른쪽 이미지 박스 --- */
@@ -258,4 +314,333 @@ a{
     height: 8px;
     background-color: white;
     border-radius: 2px;
+
+    animation: scrollWheel 2s ease-out infinite;
 }
+
+.arrow-down {
+    width: 12px;
+    height: 12px;
+    /* 오른쪽과 아래쪽에만 테두리를 줌 */
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    
+    /* 45도 회전시켜서 V자 모양(아래 화살표)으로 만듦 */
+    rotate: 45deg; 
+    margin-top: 5px; 
+    /* 글자와의 간격 */
+    
+    /* ✨ 애니메이션 적용 (2초 주기로 무한 반복) */
+    animation: bounceDown 2s infinite;
+}
+
+
+
+/* --- 장식 요소 컨테이너 --- */
+.decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* 비디오(-1)와 콘텐츠(1) 사이 공간에 배치 */
+    
+    /* 💡 핵심 꿀팁: 장식 이미지가 클릭을 방해하지 않게 만듦 (투명 인간 취급) */
+    pointer-events: none; 
+}
+
+/* --- 개별 장식 요소 공통 스타일 --- */
+.deco {
+    position: absolute;
+    /* 둥둥 떠다니는 애니메이션 적용 (아래에서 정의) */
+    animation: float 3s ease-in-out infinite; 
+}
+
+/* --- 각각의 위치 및 크기 지정 (스크린샷 참고) --- */
+/* %를 사용해야 화면 크기가 변해도 비율에 맞게 위치합니다. */
+/*스타 데코 */
+.wrap_item-1 {
+    top: 15%; 
+    left: 40%; 
+    width: 50px; 
+    /* opacity: 0%; */
+}
+.wrap_item-2 {
+    top: 20%; 
+    right: 16%; 
+    width: 30px; 
+    animation-delay: 0.5s; /* 애니메이션 시작 시간 다르게 (엇박자 효과) */
+}
+.wrap_item-3 {
+    top: 40%; 
+    left: 14%; 
+    width: 40px; 
+    animation-delay: 2s;
+}
+.wrap_item-4 {
+    top: 30%; 
+    right: 10%; 
+    width: 40px; 
+    animation-delay: 1.5s;
+    /* opacity: 50%; */
+}
+
+
+
+
+
+
+/* 클라우드 데코레이션 */
+.item-3 {
+    top: 10%; 
+    right: 8%; 
+    width: 200px; 
+    opacity: 50%;
+    animation: float 3s ease-in-out infinite 1s, 
+                spin 20s linear infinite;
+}
+
+.item-7 {
+    bottom: 8%; 
+    left: 20%; 
+    width: 180px; 
+    opacity: 50%;
+    animation: float 3s ease-in-out infinite 1s, 
+                spin 20s linear infinite;
+}
+
+/* 스마일 */
+
+.item-4 {
+    bottom: 32%; 
+    right: 10%;
+    width: 120px; 
+    animation: float 3s ease-in-out infinite 1s,
+                sway 4s ease-in-out infinite;
+}
+
+
+.item-6 {
+    bottom: 22%; 
+    right: 8%;
+    width: 150px;
+    animation: none;
+}
+
+
+
+
+
+/* --- 🌟 둥둥 떠다니는 효과 (Keyframes) --- */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); } /* 위로 15px 올라감 */
+    100% { transform: translateY(0px); }  /* 다시 제자리 */
+}
+
+@keyframes sway {
+    0% {rotate: -10deg;}
+    50% {rotate: 20deg;}
+    100% {rotate: -10deg;}
+}
+
+
+@keyframes spin {
+    0% { rotate: 0deg; }
+    100% { rotate: 360deg; }
+}
+
+
+
+/* 마우스 애니메이션 */
+/* 🌟 마우스 휠 굴러가는 애니메이션 */
+@keyframes scrollWheel {
+    0% {
+        transform: translate(-50%, 0); /* 시작 위치 (정중앙) */
+        opacity: 1;                    /* 선명함 */
+    }
+    100% {
+        transform: translate(-50%, 15px); /* 아래로 15px 이동 */
+        opacity: 0;                       /* 완전히 투명해짐 */
+    }
+}
+
+@keyframes scrollDownArrow  {
+    0%,
+    20%,
+    55%,
+    80%,
+    100% {
+        transform: translate3d(-50%,0,0);
+    }
+
+    40% {
+        transform: translate3d(-50%, -15px, 0);
+    }
+    70% {
+        transform: translate3d(-50%, -10px, 0);
+    }
+    80% {
+        transform: translate3d(-50%, -5px, 0);
+    }
+}
+
+@keyframes bounceDown {
+    0%, 20%, 55%, 80%, 100% {
+        translate: 0 0;
+    }
+    40% {
+        translate: 0 -15px; /* 위로 튀어 오름 */
+    }
+    70% {
+        translate: 0 -10px;
+    }
+    80% {
+        translate: 0 -5px;
+    }
+}
+
+/* 별똥별 애니 */
+/* --- 별똥별 기본 모양 (잔상 꼬리) --- */
+.shooting-star {
+    position: absolute;
+    width: 150px;       /* 꼬리 길이 */
+    height: 2px;        /* 꼬리 두께 */
+    
+    /* 머리쪽(왼쪽)은 하얗고, 꼬리쪽(오른쪽)은 투명해지는 그라데이션 */
+    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    
+    /* 약 30도 각도로 기울이기 (오른쪽 위에서 왼쪽 아래로 떨어지게) */
+    rotate: -30deg; 
+    pointer-events: none; /* 클릭 방해 금지 */
+    z-index: 1;
+
+    /* JS로 생성될 때 애니메이션 실행 (1.5초 동안) */
+    animation: shooting 1.5s ease-in-out forwards;
+}
+
+/* --- 별똥별 빛나는 머리 부분 --- */
+.shooting-star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; /* 머리 위치 */
+    transform: translateY(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    
+    /* 자체발광하는 듯한 번짐(Glow) 효과 */
+    box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8),
+                0 0 20px 4px rgba(255, 255, 255, 0.4);
+}
+
+/* --- 별똥별 떨어지는 애니메이션 --- */
+@keyframes shooting {
+    0% {
+        translate: 0 0; /* 시작점 */
+        opacity: 0;     /* 처음엔 안 보임 */
+    }
+    15% {
+        opacity: 1;     /* 나타남 (Fade In) */
+    }
+    85% {
+        opacity: 1;     /* 이동하는 동안 계속 보임 */
+    }
+    100% {
+        /* 왼쪽 아래 중심부 방향으로 길게 이동 */
+        translate: -600px 300px; 
+        opacity: 0;     /* 사라짐 (Fade Out) */
+    }
+}
+
+.decorations.scrolled-down .deco {
+    /* 기존의 float, sway 애니메이션을 멈추고 scrollDrop 애니메이션 실행 
+      forwards: 애니메이션이 100%에 도달한 상태(투명도 0)를 계속 유지하게 만듦
+    */
+    animation: scrollDrop 1s forwards ease-in-out;
+}
+
+/* --- 아래로 떨어지며 돌고 사라지는 애니메이션 --- */
+@keyframes scrollDrop {
+    0% {
+        translate: 0 0;
+        rotate: 0deg;
+        opacity: 1;
+    }
+    100% {
+        translate: 0 600px; /* 아래로 600px 깊게 떨어짐 (다음 섹션 방향) */
+        rotate: 360deg;     /* 한 바퀴 빙글 회전 */
+        opacity: 0;         /* 서서히 투명해지며 사라짐 */
+    }
+}
+
+
+
+/* --- 1. 겉 상자 (위치 담당) --- */
+.deco-wrap {
+    position: absolute;
+    /* GSAP이 이 상자를 조종할 것입니다 */
+}
+
+
+/* 섹션2  */
+
+/* --- 물결을 가두는 틀 --- */
+.wave-container {
+    position: absolute;
+    bottom: -8px; /* 섹션 간의 미세한 흰 틈새를 방지 */
+    left: 0;
+    width: 100%;
+    height: 30px; /* SVG 이미지의 실제 높이에 맞게 조절하세요 */
+    overflow: hidden; /* 화면 밖으로 나가는 물결을 숨김 */
+    z-index: 10;
+}
+
+/* --- 실제로 움직이는 물결 무늬 --- */
+.wave-divider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    
+    /* 💡 핵심 1: 화면 너비(100%)에 패턴 1개 너비(예: 1000px)를 더해줍니다. */
+    width: calc(100% + 1000px); 
+    height: 100%;
+    
+    /* SVG 배경 설정 */
+    background-image: url('./img/waves.svg'); /* 첨부하신 SVG 경로 */
+    background-repeat: repeat-x; /* 가로로 무한 반복 */
+    background-size: 1000px 100%; /* 💡 핵심 2: 패턴 1개의 고정 너비 지정 */
+    
+    /* GPU 가속을 이용한 무한 애니메이션 (5초 동안 일정한 속도로) */
+    animation: waveMove 5s linear infinite;
+    /* 💡 브라우저에게 "이 요소는 곧 transform이 변할 거니까 메모리를 미리 할당해 둬!" 라고 귀띔해 줍니다. */
+    will-change: transform;
+}
+
+@keyframes waveMove {
+    0% { 
+        /* 시작 위치 */
+        transform: translate3d(0, 0, 0); 
+    }
+    100% { 
+        /* 💡 핵심 3: 정확히 패턴 1개 너비(-1000px)만큼만 이동 후 리셋 */
+        transform: translate3d(-1000px, 0, 0); 
+    }
+}
+
+
+
+/* 🌟 OS/브라우저에서 '애니메이션(시각 효과) 줄이기'를 설정한 사용자 */
+/* 애니메이션을 즉시 정지하고, 제자리에 고정시킵니다 */
+
+/* @media (prefers-reduced-motion: reduce) {
+    .wave-divider {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+} */
+    
+    /* 앞서 작성하셨던 반짝이, 구름, 스크롤 GSAP 애니메이션들도 
+       이 미디어 쿼리 안에서 animation: none 이나 opacity: 1 로 고정해 주는 것이 완벽한 예외 처리입니다. */
