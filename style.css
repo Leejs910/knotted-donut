@@ -114,12 +114,18 @@ a{
 }
 
 /* --- 일반 섹션 --- */
-.next-section {
-  height: 100vh;
+.newAndBest {
   background-color: #BDE1EF;
   padding: 100px;
   text-align: center;
-  z-index: -1;
+  /* z-index: -1; */
+  position: relative; /* 구름의 기준점이 됨 */
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* .nav-links { display: flex; gap: 30px; list-style: none; }
@@ -343,7 +349,7 @@ a{
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* 비디오(-1)와 콘텐츠(1) 사이 공간에 배치 */
+    z-index: 1; /* 비디오(-1)와 콘텐츠(1) 사이 공간에 배치 */
     
     /* 💡 핵심 꿀팁: 장식 이미지가 클릭을 방해하지 않게 만듦 (투명 인간 취급) */
     pointer-events: none; 
@@ -644,3 +650,267 @@ a{
     
     /* 앞서 작성하셨던 반짝이, 구름, 스크롤 GSAP 애니메이션들도 
        이 미디어 쿼리 안에서 animation: none 이나 opacity: 1 로 고정해 주는 것이 완벽한 예외 처리입니다. */
+
+
+
+
+/* 뉴앤 베스트 섹션 */
+
+/* --- 토글 컨테이너 (알약 모양 틀) --- */
+.menu-toggle-wrapper {
+    position: relative;
+    display: inline-flex;
+    background-color: #fff;
+    border: 3px solid #3E2723; /* 진한 브라운 테두리 */
+    border-radius: 40px;
+    padding: 6px;
+    margin: 0 auto 50px auto; /* 섹션 중앙 정렬 및 아래 여백 */
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.1); /* 살짝 떠보이는 그림자 */
+}
+/* --- 개별 텍스트 버튼 --- */
+.toggle-btn {
+    padding: 14px 40px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #3E2723; /* 기본 글자색 */
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* 색상 변경을 부드럽게 */
+    width: 160px;
+    text-align: center;
+    z-index: 1; /* 뱃지보다 아래 */
+    min-width: 200px;
+    width: auto;
+    white-space: nowrap;
+    position: relative;
+    
+}
+.toggle-btn.active {
+    background-color: #3E2723; /* 버튼 배경이 브라운으로 변경 */
+    color: #fff; /* 글자색이 흰색으로 변경 */
+}
+
+/* --- 가운데 원형 이미지 뱃지 --- */
+.toggle-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* translate로 정확히 한가운데 정렬 */
+    transform: translate(-50%, -50%); 
+    width: 70px;
+    height: 70px;
+    background-color: #fff;
+    border: 3px solid #3E2723;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* 버튼 글자들을 가리도록 위로 올림 */
+    overflow: hidden;
+    pointer-events: none; /* 💡 뱃지가 버튼 클릭을 방해하지 않게 투명망토 처리 */
+}
+
+.toggle-badge img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain; /* 이미지가 찌그러지지 않게 꽉 채움 */
+}
+
+/* --- 🌟 통통 튕기는 젤리 애니메이션 --- */
+@keyframes jellyBounce {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    30%  { transform: translate(-50%, -50%) scale(1.3); } /* 살짝 커짐 */
+    50%  { transform: translate(-50%, -50%) scale(0.85); }/* 살짝 작아짐 */
+    70%  { transform: translate(-50%, -50%) scale(1.1); } /* 다시 약간 커짐 */
+    100% { transform: translate(-50%, -50%) scale(1); }   /* 원상복구 */
+}
+
+/* 자바스크립트로 이 클래스를 붙였다 뗐다 할 예정입니다 */
+.toggle-badge.animate-bounce {
+    animation: jellyBounce 0.6s ease-in-out;
+}
+
+
+
+
+/* --- 1. 구름 컨테이너 --- */
+.clouds-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow: hidden; /* 구름이 화면 밖으로 나가는 것 가리기 */
+    pointer-events: none; /* 구름 클릭 방지 */
+    z-index: 1;
+}
+
+/* --- 2. 개별 구름 공통 스타일 --- */
+.random-cloud {
+    position: absolute;
+    /* 출발선을 화면 오른쪽 끝(100%) 바깥으로 설정 */
+    left: 100%; 
+    height: auto;
+    
+    /* 구름 크기는 100px ~ 180px 사이로 CSS/JS에서 적절히 혼용 (기본값) */
+    width: 150px; 
+    opacity: 0.8;
+    
+    /* GPU에게 연산 준비를 시킴 */
+    will-change: transform; 
+}
+
+/* --- 3. 구름이 흘러가는 애니메이션 (JS에서 클래스로 부여) --- */
+.cloud-moving {
+    /* JS에서 주입한 랜덤 시간(duration)을 바탕으로 이동 */
+    animation: flyCloud linear forwards;
+}
+
+/* 🌟 화면 너비보다 더 멀리(-120vw) 날아가서 완전히 사라지도록 설정 */
+@keyframes flyCloud {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-120vw, 0, 0); } 
+}
+
+
+
+/* --- 3. 토글 버튼 위로 띄우기 --- */
+.menu-toggle-wrapper {
+    /* 기존 속성 유지 */
+    position: relative;
+    z-index: 10; /* 구름(1)보다 위에 보이도록 z-index 추가 */
+    /* ... 나머지 기존 속성들 ... */
+}
+
+/* --- 4. 카드 영역 --- */
+.card-section {
+    position: relative;
+    width: 100%;
+    z-index: 10; /* 구름(1)보다 위에 보이도록 z-index 추가 */
+    
+    /* 💡 기존에 있던 height: 100vh; 나 background-color 등은 지워주세요! */
+    margin-top: 40px; /* 토글 버튼과 카드 사이의 간격 */
+}
+
+
+/* --- 🃏 스와이퍼 & 카드 스타일 --- */
+.swiper {
+    width: 100%;
+    
+    /* ❌ 기존: padding: 100px 50px 80px 50px; (바닥이 80px로 얕음) */
+    /* ✅ 수정: 아래쪽 패딩(세 번째 숫자)을 150px~200px 정도로 아주 깊게 파줍니다! */
+    padding: 30px 50px 200px 50px; /* 상 우 하 좌 */
+    z-index: 2; /* 구름 위로 띄움 */
+    overflow: visible !important; 
+    /* ✨ 마법 2: 컨테이너 양 끝 15% 영역에 투명해지는 그라데이션 장막을 칩니다.
+       카드가 이 영역을 지나갈 때만 부드럽게 지워지며 사라집니다! */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.swiper-slide {
+    /* 카드의 너비 설정 (화면 크기에 맞게 조절하세요) */
+    width: 280px; 
+    /* transition: transform 0.3s ease; */
+    padding: 2vw;
+    
+}
+
+/* 동적 */
+/* --- style.css 수정 및 추가 --- */
+
+/* 기존 스와이퍼 슬라이드 안의 내용을 겹치게 할 기준점 생성 */
+.swiper-slide.card {
+    position: relative; /* 자식 요소들의 absolute 기준점이 됨 */
+    width: 280px; 
+    overflow: hidden; /* 혹시 모를 삐져나옴 방지 */
+}
+
+/* 1. 바닥에 깔리는 배경 카드 이미지 */
+.card-bg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* 2. 카드 가운데서 살짝 위로 띄운 도넛 이미지 */
+.donut-pic {
+    position: absolute;
+    top: 42%; /* 50%가 정중앙이므로, 숫자를 줄이면 위로 올라갑니다 */
+    left: 50%;
+    transform: translate(-50%, -50%); /* 정확한 가운데 정렬 마법 */
+    
+    width: 75%; /* 도넛 크기 (카드 안쪽 동그라미에 맞게 조절) */
+    
+    /* ✨ 진짜 도넛처럼 보이게 아래쪽에 입체적인 그림자 추가 */
+    filter: drop-shadow(0 15px 15px rgba(0,0,0,0.3)); 
+    z-index: 2;
+}
+
+/* 3. 도넛 아래에 위치할 이름표 박스 */
+.donut-name-box {
+    position: absolute;
+    top: 72%; /* 도넛 아래쪽으로 위치 지정 */
+    left: 50%;
+    transform: translateX(-50%);
+    
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 1.1rem;
+    padding: 8px 20px;
+    
+    /* 스크린샷처럼 테두리 2px과 둥근 모서리 적용 */
+    border: 2px solid #ffffff; 
+    border-radius: 4px; 
+    
+    /* 줄바꿈 없이 한 줄로 나오도록 강제 */
+    white-space: nowrap; 
+    z-index: 3;
+}
+
+
+
+
+
+
+/*  */
+
+
+.card-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* --- ✨ 스와이퍼 화살표 커스텀 --- */
+.custom-nav-btn {
+    color: #3E2723 !important; /* 화살표 아이콘 브라운 색상 */
+    background-color: #FFF09F; /* 배경은 흰색 */
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50%; /* 완전한 동그라미 */
+    border: 3px solid #3E2723; /* 브라운 테두리 */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    
+    /* 기본적으로 마스크 밖으로 빼기 위해 여백을 줍니다 */
+    top: 55% !important; /* 살짝 위쪽으로 올리기 원하면 조절 가능 */
+    z-index: 20; 
+}
+
+/* 화살표 아이콘(폰트) 크기 줄이기 */
+.custom-nav-btn::after {
+    font-size: 24px !important;
+    font-weight: 900;
+}
+
+/* 좌우 위치 조절 (화면 너무 끝에 붙지 않게 조절) */
+.swiper-button-prev {
+    left: 8% !important; 
+}
+.swiper-button-next {
+    right: 8% !important; 
+}
+
+/* 버튼에 마우스 올렸을 때 살짝 위로 뜨는 애니메이션 */
+.custom-nav-btn:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}

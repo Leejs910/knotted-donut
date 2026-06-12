@@ -6,32 +6,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    
     <link rel="stylesheet" href="./style.css">
     <title>NotedDount</title>
-    
+
 
 </head>
 
 <body>
     <nav id="mainNav" class="navbar">
-    <h1 class="logo">
-        <a>
-            <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
-            <img src="./img/black_logo.png" class="logo_black"  alt="검은색 로고">
-        </a>
-    </h1>
-    <ul class="nav-links">
-        <li><a href="#">ORDER</a></li>
-        <li><a href="#">STORE</a></li>
-        <li><a href="#">MENU</a></li>
-        <li><a href="#">BRAND</a></li>
-        <li><a href="#">SUPPORT</a></li>
-    </ul>
-    <div class="nav-actions">
-        <a href="#" class="btn btn-outline">Login</a>
-        <a href="#" class="btn btn-outline">Cart</a>
-    </div>
+        <h1 class="logo">
+            <a>
+                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+            </a>
+        </h1>
+        <ul class="nav-links">
+            <li><a href="#">ORDER</a></li>
+            <li><a href="#">STORE</a></li>
+            <li><a href="#">MENU</a></li>
+            <li><a href="#">BRAND</a></li>
+            <li><a href="#">SUPPORT</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="btn btn-outline">Login</a>
+            <a href="#" class="btn btn-outline">Cart</a>
+        </div>
     </nav>
 
     <header class="video-hero">
@@ -54,14 +53,14 @@
             <div class="deco-wrap wrap_item-4">
                 <img src="./img_deco/Star 4.png" class="deco item-8" alt="sparkle">
             </div>
-            
+
             <img src="./img_deco/clover2.png" class="deco item-3" alt="cloud">
             <img src="./img_deco/clover2.png" class="deco item-7" alt="cloud">
             <img src="./img_deco/sweetDay.png" class="deco item-6" alt="have a sweet day">
             <img src="./img_deco/smile.svg" class="deco item-4" alt="smile">
         </div>
         <div class="hero-container">
-        
+
             <div class="hero-text-box">
                 <span class="sub-title">Fresh & Creamy</span>
                 <h1 class="main-title">Creamy<br>Donut</h1>
@@ -69,12 +68,12 @@
                     매일 아침, 정성스럽게 만든<br>
                     부드럽고 달콤한 크림 도넛
                 </p>
-                
+
                 <div class="button-group">
                     <a href="#" class="btn-primary">ORDER NOW &rarr;</a>
                     <a href="#" class="btn-secondary">VIEW MENU</a>
                 </div>
-                
+
                 <div class="feature-info">
                     <div class="feature-circles">
                         <span class="circle"></span>
@@ -91,40 +90,88 @@
             <div class="hero-image-box">
             </div>
 
-    </div>
+        </div>
 
-    <div class="scroll-indicator">
-        <div class="mouse-icon"></div>
-        <span>SCROLL</span>
-        <div class="arrow-down"></div>
-    </div>
+        <div class="scroll-indicator">
+            <div class="mouse-icon"></div>
+            <span>SCROLL</span>
+            <div class="arrow-down"></div>
+        </div>
 
-    <div class="wave-container">
-        <div class="wave-divider"></div>
-    </div>
+        <div class="wave-container">
+            <div class="wave-divider"></div>
+        </div>
     </header>
+    <main>
+        <section class="newAndBest">
 
-    <section class="next-section">
-    <h2>신메뉴/베스트셀러</h2>
-    </section>
+            <div class="clouds-bg" id="cloud-container"></div>
+            <div class="menu-toggle-wrapper">
+                <div class="toggle-btn active" id="btn-new">신메뉴</div>
+                <div class="toggle-btn" id="btn-best">베스트셀러</div>
+                <div class="toggle-badge">
+                    <img src="./img/pinkBear.png" alt="bear" id="bear-icon">
+                </div>
+            </div>
+
+            <div class="card-section">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardPink.png" alt="카드 이미지 1"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardBlue.svg" alt="카드 이미지 2"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardGreen.png" alt="카드 이미지 3"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 4"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardBlue.svg" alt="카드 이미지 5"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardGreen.png" alt="카드 이미지 6"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardPink.png" alt="카드 이미지 7"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 7"></div>
+                        </div>
+                        <div class="swiper-slide card">
+                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 7"></div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="swiper-button-prev custom-nav-btn"></div>
+                <div class="swiper-button-next custom-nav-btn"></div>
+            </div>
+        </section>
+
+    </main>
 
 
 
 
 </body>
-    
-    <!-- 여기서부터 스와이퍼 -->
-     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
-    <script src="./script.js"></script>
-    <!-- <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>  -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollToPlugin.min.js"></script> -->
-    <script src="./script.js"></script>
+
+<!-- 여기서부터 스와이퍼 -->
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="./script.js"></script>
+<!-- <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>  -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollToPlugin.min.js"></script> -->
 </body>
+
 </html>
