@@ -944,7 +944,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const soundText = document.getElementById("sound-text");
 
     // 🎵 실제 배경음악 파일 경로로 수정하세요
-    const bgm = new Audio('./music/morning.mp3'); 
+    const bgm = new Audio('./music/Morning.mp3'); 
     bgm.loop = true;
     bgm.volume = 0.2;
     // 🚀 핵심 최적화: 사용자가 재생하기 전까지는 음원 데이터를 미리 다운로드하지 않음 (로딩 속도 대폭 향상)
