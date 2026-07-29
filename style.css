@@ -2651,11 +2651,7 @@ a{
     /* --- 🃏 숨어있던 상품 카드를 정갈한 카드로 복구 --- */
     .product-bundle {
         /* 모바일 기기 너비에 맞게 조절 */
-        /* width: 260px; 
-        height: auto;
-        display: flex;
-        align-items: center;
-        justify-content: center; */
+        
         width: 280px; /* ✨ 슬라이드 하나의 전체 영역 (원하는 너비로 조절) */
         height: auto;
         display: flex;
