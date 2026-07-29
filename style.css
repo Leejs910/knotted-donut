@@ -2,12 +2,15 @@ body, h1, p, ul { margin: 0; padding: 0; list-style: none; }
 
 body {
     overflow-x:hidden;
+    width: 100%;
 }
 
 html{
+    width: 100%;
     box-sizing: inherit;
     scroll-behavior: smooth;
     height: fit-content;
+    overflow-x: hidden;
 }
 
 @font-face {
@@ -57,12 +60,21 @@ a{
   display: flex;
   gap: 64px;
   list-style: none;
+  /* 🎯 추가: 모든 메뉴 항목(li) 자체를 가로 기준 한 줄 내에서 세로 정앙 정렬합니다 */
+  align-items: center;
 }
 
 .nav-links a { 
-  color: white; 
+  /* color: white; 
   text-decoration: none; 
-  font-weight: bold; 
+  font-weight: bold;  */
+
+  display: flex;
+    align-items: center; /* 텍스트를 박스 정중앙에 고정 */
+    color: white; 
+    text-decoration: none; 
+    font-weight: bold; 
+    height: 100%; /* 부모(li)의 높이에 맞춰 똑같이 늘어남 */
 }
 .logo a img{
  width: auto;   
@@ -112,36 +124,92 @@ a{
 .navbar.nav-solid .logo .logo_black {
     display: block;
 }
+/* =========================================
+   🖥️ PC 기본 상태 (1025px 이상) 사운드 버튼 커스텀
+========================================= */
+
+.btn-sound-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* 🎯 Cart 버튼과 완벽하게 일치시키는 여백 및 테두리 */
+    padding: 8px 20px;
+    border: 2px solid white;
+    border-radius: 30px;
+    color: white;
+    text-decoration: none;
+    background: transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    
+    /* 버튼 크기가 들쭉날쭉하지 않게 가로/세로 비율을 잡아줍니다 */
+    /* Cart 버튼 높이와 일치시키세요 (보통 padding 8px 기준 약 38~40px) */
+    /* height: 38px;  */
+    width: auto;
+    
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 마우스 호버 시 피드백 효과 */
+/* .btn-sound-outline:hover {
+    background-color: white;
+    color: #3E2723; 
+} */
+    /* 호버 시 텍스트/아이콘 색상이 어둡게 변하도록 설정 */
+/* =========================================
+   🖱️ 진짜 마우스가 있는 환경(PC)에서만 호버 작동
+========================================= */
+@media (hover: hover) and (pointer: fine) {
+    
+    /* 기본 상태 호버 */
+    .btn-sound-outline:hover {
+        background-color: white;
+        color: #3E2723;
+    }
+
+    /* 네비게이션이 노란색(.nav-solid)일 때의 호버 */
+    .navbar.nav-solid .btn-sound-outline:hover {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+}
+
+
+/* 내부 SVG 아이콘 크기 고정 */
+.btn-sound-outline .speaker-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    color: currentColor; /* 부모인 .btn-sound-outline의 color를 그대로 따름 */
+}
+
+/* 🎯 스크롤을 내려서 .nav-solid 상태가 되었을 때의 테두리 및 아이콘 색상 변경 */
+.navbar.nav-solid .btn-sound-outline {
+    border-color: #000000 !important;
+    color: #000000 !important;
+}
 
 /* --- 일반 섹션 --- */
 .newAndBest {
   background-color: #BDE1EF;
-  padding: 100px;
+  padding-top: 100px;
+  padding-bottom: 100px;
   text-align: center;
   /* z-index: -1; */
   position: relative; /* 구름의 기준점이 됨 */
   width: 100%;
-  min-height: 100vh;
+  /* height: 90vh; */
+  min-height: 80vh;
+  min-height: calc(80vh - 80px);
+  /* height: auto; */
   overflow: hidden;
+  /* overflow: visible !important; */
   display: flex;
     flex-direction: column;
     align-items: center;
+    transition: background-color 0.4s ease;
 }
-
-/* .nav-links { display: flex; gap: 30px; list-style: none; }
-.nav-links a, .logo a { 
-  color: white; 
-  text-decoration: none; 
-  font-weight: bold; 
-}
-.btn-outline {
-  padding: 8px 20px;
-  border: 2px solid white;
-  border-radius: 30px;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-} */
 
 
 /* -------------------------------------
@@ -207,6 +275,7 @@ a{
     text-shadow: 0px 4px 4px rgba(0,0,0,0.2); /* 텍스트가 잘 보이게 그림자 추가 */
 }
 
+
 .description {
     font-size: 24px;
     line-height: 1.6;
@@ -244,34 +313,9 @@ a{
     font-size: 16px;
 }
 
-/* --- 하단 특징 설명 (100% Handmade) --- */
-.feature-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
 
-.feature-circles {
-    display: flex;
-}
 
-/* 스크린샷의 3개 동그라미 모양 틀 */
-.circle {
-    width: 40px;
-    height: 40px;
-    background-color: #ccc; /* 나중에 배경 이미지로 교체 */
-    border-radius: 50%;
-    border: 2px solid white;
-    margin-left: -10px; /* 살짝 겹치게 만드는 효과 */
-}
-.circle:first-child { margin-left: 0; }
 
-.feature-text {
-    font-size: 14px;
-    font-weight: bold;
-    opacity: 0.9;
-    color: #623A01;
-}
 
 /* --- 오른쪽 이미지 박스 --- */
 .hero-image-box {
@@ -596,7 +640,6 @@ a{
 /* --- 물결을 가두는 틀 --- */
 .wave-container {
     position: absolute;
-    bottom: -8px; /* 섹션 간의 미세한 흰 틈새를 방지 */
     left: 0;
     width: 100%;
     height: 30px; /* SVG 이미지의 실제 높이에 맞게 조절하세요 */
@@ -609,20 +652,62 @@ a{
     position: absolute;
     bottom: 0;
     left: 0;
-    
+
     /* 💡 핵심 1: 화면 너비(100%)에 패턴 1개 너비(예: 1000px)를 더해줍니다. */
     width: calc(100% + 1000px); 
     height: 100%;
     
     /* SVG 배경 설정 */
-    background-image: url('./img/waves.svg'); /* 첨부하신 SVG 경로 */
-    background-repeat: repeat-x; /* 가로로 무한 반복 */
-    background-size: 1000px 100%; /* 💡 핵심 2: 패턴 1개의 고정 너비 지정 */
-    
-    /* GPU 가속을 이용한 무한 애니메이션 (5초 동안 일정한 속도로) */
-    animation: waveMove 5s linear infinite;
-    /* 💡 브라우저에게 "이 요소는 곧 transform이 변할 거니까 메모리를 미리 할당해 둬!" 라고 귀띔해 줍니다. */
-    will-change: transform;
+    /* background-image: url('./img/waves.svg'); 첨부하신 SVG 경로 */
+    /* background-repeat: repeat-x; 가로로 무한 반복 */
+    /* background-size: 1000px 100%; 💡 핵심 2: 패턴 1개의 고정 너비 지정 */
+    /* 🎨 1. 원하시는 다음 섹션의 노란색을 여기에 적어줍니다! 
+          이 배경색이 그대로 물결의 색상이 됩니다. */
+          
+          /* 🎭 2. 기존 background-image 대신 mask 속성으로 SVG를 불러옵니다. */
+          -webkit-mask-image: url('./img/waves.svg');
+          mask-image: url('./img/waves.svg');
+          
+          /* 📦 3. 마스크가 가로로 무한 반복되도록 기존 설정을 그대로 옮겨옵니다. */
+          -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+          -webkit-mask-size: 1000px 100%;
+          mask-size: 1000px 100%;
+          /* GPU 가속을 이용한 무한 애니메이션 (5초 동안 일정한 속도로) */
+          animation: waveMove 5s linear infinite;
+          /* 💡 브라우저에게 "이 요소는 곧 transform이 변할 거니까 메모리를 미리 할당해 둬!" 라고 귀띔해 줍니다. */
+          will-change: transform;
+    /* ✨ 물결 색상도 부드럽게 전환되도록 추가 */
+    transition: background-color 0.4s ease;
+        }
+
+.newAndBest.theme-pink {
+    background-color: #FFC9E1;
+}
+
+.color-pink {
+    background-color: #FFC9E1;
+}
+        
+.wave-top {
+    bottom: -8px; /* 천장에 붙임 */
+    /* ✨ 꿀팁: 천장에 붙일 때는 물결 모양이 거꾸로 매달려야 자연스럽습니다.
+       이 코드 한 줄이면 SVG 파일을 새로 만들 필요 없이 위아래가 완벽히 뒤집힙니다! */
+    /* transform: scaleY(-1); */
+}
+.wave-bottom {
+    /* 무지개(4)보다 뒤로 가도록 z-index를 낮춥니다 */
+    z-index: 3 ;
+    bottom: -8px;
+}
+
+/* --- 색상 조절 --- */
+.color-yellow {
+    background-color: #FFF09F; /* 노란색 배경에 맞춤 */
+}
+
+.color-blue {
+    background-color: #BDE1EF; /* 파란색 배경에 맞춤 */
 }
 
 @keyframes waveMove {
@@ -741,6 +826,7 @@ a{
     overflow: hidden; /* 구름이 화면 밖으로 나가는 것 가리기 */
     pointer-events: none; /* 구름 클릭 방지 */
     z-index: 1;
+    /* z-index: 5 !important; */
 }
 
 /* --- 2. 개별 구름 공통 스타일 --- */
@@ -811,7 +897,7 @@ a{
     width: 280px; 
     /* transition: transform 0.3s ease; */
     padding: 2vw;
-    
+    cursor: pointer;
 }
 
 /* 동적 */
@@ -854,7 +940,7 @@ a{
     
     color: #ffffff;
     font-weight: 900;
-    font-size: 1.1rem;
+    /* font-size: 1.15rem; */
     padding: 8px 20px;
     
     /* 스크린샷처럼 테두리 2px과 둥근 모서리 적용 */
@@ -862,23 +948,64 @@ a{
     border-radius: 4px; 
     
     /* 줄바꿈 없이 한 줄로 나오도록 강제 */
-    white-space: nowrap; 
     z-index: 3;
+
+    /* white-space: nowrap;  */
+    width: 90%;
+    box-sizing: border-box;
+    text-align: center; /* 두 줄이 되었을 때 가운데 정렬 */
+
+    /* white-space: nowrap;  <-- 이 줄은 지워주세요! */
+    word-break: keep-all; /* 단어가 중간에 뚝 끊기지 않고 예쁘게 줄바꿈됨 */
+
 }
 
-
-
-
-
-
-/*  */
-
-
-.card-image img {
+/* 📸 1-1. 카드 상단 이미지 영역 */
+.card-img-wrap {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 160px; /* 이미지 공간 높이 */
+    background-color: #f8f8f8; /* 이미지가 투명할 경우를 대비한 톤다운 배경 */
+    border-bottom: 1px solid #eee; /* 이미지와 텍스트 사이의 미세한 구분선 */
 }
+
+.card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    /* 💡 이미지가 찌그러지지 않고 영역에 예쁘게 꽉 차도록 덮어씌웁니다 */
+    object-fit: cover; 
+}
+
+/* 📝 1-2. 카드 하단 텍스트 영역 */
+.card-info {
+    padding: 15px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1; /* 남은 공간을 알아서 꽉 채움 */
+}
+
+.item-name {
+    margin: 0 0 8px 0;
+    color: #444;
+    font-size: 15px;
+    font-weight: 700;
+    
+    /* ✨ 스크린샷처럼 상품명이 너무 길면 자동으로 '...' 처리를 해주는 마법의 코드! */
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.item-price {
+    margin: 0;
+    color: #FF85B3; /* 스크린샷의 화사한 핑크색으로 맞춤 */
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+
 
 /* --- ✨ 스와이퍼 화살표 커스텀 --- */
 .custom-nav-btn {
@@ -913,4 +1040,1757 @@ a{
 .custom-nav-btn:hover {
     transform: translateY(-5px);
     transition: transform 0.3s ease;
+}
+
+/* 2. ✨ 새로 만든 안쪽 껍데기 (우리가 CSS로 조종할 영역) */
+.card-inner {
+    position: relative; /* 자식 요소들의 absolute 기준점 */
+    width: 100%;
+    /* 애니메이션 속도를 여기에만 부여합니다 */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* =========================================
+   ✨ 안전해진 마우스 호버(Hover) 인터랙션 
+========================================= */
+
+@media (hover: hover) and (pointer: fine) {
+/* 🎯 가운데 카드 (Active) */
+/* 슬라이드에 마우스를 올리면, '안쪽 껍데기'를 움직입니다 (!important 필요 없음) */
+.swiper-slide-active:hover .card-inner {
+    transform: translateY(-10px) scale(1.05); 
+}
+
+/* 🎯 오른쪽에 있는 카드들 (Next) */
+.swiper-slide-active ~ .swiper-slide:hover .card-inner {
+    transform: translateY(-15px) rotate(6deg); 
+}
+
+/* 🎯 왼쪽에 있는 카드들 (Prev) */
+.swiper-slide:has(~ .swiper-slide-active):hover .card-inner {
+    transform: translateY(-15px) rotate(-6deg); 
+}
+/* =========================================
+   ✨ 3. 마우스 호버(Hover) 애니메이션 발동!
+========================================= */
+/* 번들에 마우스를 올리면 박스는 커지고 카드는 위로 솟구칩니다 */
+.product-bundle:hover .box-img {
+    transform: scale(1.08); /* 박스 8% 확대 */
+}
+
+.product-bundle:hover .product-card {
+    /* 카드가 박스 위로 완전히 모습을 드러내도록 Y축으로 끌어올립니다 */
+    transform: translate(-50%, -140px);
+}
+
+}
+
+
+/* =========================================
+   🛒 ONLINE SHOP 섹션
+========================================= */
+
+.online_shop {
+    background-color: #FFF09F; /* 스크린샷과 동일한 연노랑 배경 */
+    padding: 100px 50px;       /* 상하 100px, 좌우 50px 여백 */
+    text-align: center;
+    position: relative;
+    width: 100%;
+    min-height: 80vh;         /* 화면 높이를 100% 꽉 채움 (newAndBest와 동일) */
+    /* overflow: visible; */
+    overflow: hidden;
+    
+    /* 요소들을 세로로 예쁘게 정렬하기 위한 Flex 속성 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+/* 🌈 무지개 (중간) */
+.rainbow-bridge {
+    position: absolute;
+    /* bottom 값을 마이너스(-)로 주어 다음 섹션(온라인 샵)까지 푹 꽂히게 만듭니다 */
+    bottom: -20%; 
+    right: -5%; /* 오른쪽 위치 조절 */
+    
+    width: 35vw; /* 화면 크기에 반응하도록 vw 단위 사용 */
+    min-width: 300px; /* 모바일에서 너무 작아지지 않게 최소 크기 보장 */
+    
+    /* 스크린샷처럼 비스듬하게 각도 조절 */
+    transform: rotate(10deg); 
+    
+    
+    /* ✨ 구름(1)보단 앞, 물결(3)보단 뒤에 둡니다 */
+    z-index: 2; 
+
+    
+    /* 무지개가 클릭을 방해하지 않도록 유령 취급 */
+    pointer-events: none; 
+}
+
+/* 🌊 바닥 물결 (가장 뒤) */
+
+
+
+
+/* ----------------------onlineshop섹션 */
+/* 타이틀 박스 및 SVG 크기 설정 */
+.shop-title-box {
+    margin: 50px auto;
+    text-align: center;
+    cursor: pointer;
+    /* ✨ 마우스 인식 영역을 간판 크기에 딱 맞추기 위해 추가 */
+    
+    margin-bottom: 480px;
+}
+
+.title-svg {
+    width: 100%;
+    max-width: 500px; /* 화면에 꽉 차지 않도록 최대 크기 지정 */
+    height: auto;
+    /* ✨ 왼쪽으로 3도 정도 살짝 기울여서 귀여운 느낌을 강조합니다 */
+    transform: rotate(-3deg);
+    overflow: visible;
+}
+
+/* =========================================
+   🐻 곰돌이 숨기기 (대기 상태)
+========================================= */
+/* 얼굴과 양손을 동시에 타겟팅합니다 */
+#head{
+    /* 간판 아래로 150px 만큼 쓱 내려서 숨겨둡니다 */
+    transform: translateY(10px); 
+    
+    /* 통통 튀는 젤리 같은 타이밍 함수 적용 */
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* =========================================
+   ✨ 나타나기 (자바스크립트가 .active를 붙였을 때)
+========================================= */
+.shop-title-box:hover #head {
+    /* 원래 위치(0)로 쏙! 하고 올라옵니다 */
+    transform: translateY(-20%); 
+}
+
+
+/* ✨ 2. 추가: 상품 박스(.product-bundle)에 마우스를 올렸을 때도 똑같이 출현! */
+.online_shop:has(.product-bundle:hover) #head {
+    transform: translateY(-40%); 
+}
+
+/* =======================================================
+   🖥️ [1] 마우스가 있는 기기 (PC 환경) - 기존 애니메이션 유지
+======================================================= */
+@media (hover: hover) and (pointer: fine) {
+    /* 간판에 마우스 올리면 반쯤 빼꼼 (-20%) */
+    .shop-title-box:hover #head {
+        transform: translateY(-20%); 
+    }
+
+    /* 상품 박스에 마우스 올리면 완전히 출현 (-40%) */
+    .online_shop:has(.product-bundle:hover) #head {
+        transform: translateY(-40%); 
+    }
+}
+
+
+/* =======================================================
+   📱 [2] 손가락 터치 기기 (모바일, 태블릿 전체 환경)
+======================================================= */
+@media (hover: none), (pointer: coarse) {
+    /* 🚫 상품 카드를 터치할 때는 곰돌이가 반응하지 않도록 차단 */
+    .online_shop:has(.product-bundle:hover) #head {
+        transform: translateY(10px) !important;
+    }
+
+    /* ✨ 간판을 톡 터치하면 곰돌이가 완전히 튀어나오도록 수정 (-40%) */
+    .shop-title-box:hover #head,
+    .shop-title-box:active #head {
+        transform: translateY(-40%) !important;
+    }
+}
+
+
+
+/* =========================================
+   🛤️ ONLINE SHOP - 컨베이어 벨트 트레일
+========================================= */
+
+/* 1. 레일 전체를 담는 틀 (섹션 정중앙 배치) */
+
+.trail-container {
+    position: absolute; 
+    
+    /* ❌ 기존의 top: 100%; 와 translateY(-50%)는 지워주세요! (가두리 밖으로 나감) */
+    
+    /* ✨ 섹션 바닥에서 위로 80px 정도 안전하게 띄워서 배치합니다 */
+    bottom: 78px; 
+    left: 0;
+    
+    width: 100%; 
+    
+    /* 🚨 범인 검거! 120%가 아니라 120px로 확실하게 고정합니다 */
+    height: 357px; 
+    
+    transform: scaleX(1.02); /* 가로 틈새만 살짝 메꿈 */
+    overflow: visible; 
+    z-index: 10; 
+}
+
+/* 2. 실제로 굴러가는 레일 바닥 */
+.trail-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    width: 100%; 
+    height: 100%;
+    
+    /* 트레일 배경 이미지 설정 (경로는 실제 파일명으로 수정하세요) */
+    background-image: url('./img/trail2.svg'); 
+    background-repeat: repeat-x; /* 가로로 무한 반복 */
+    
+    
+    background-size: 1455px 100%; 
+    
+    /* 우에서 좌로 이동하는 애니메이션 (15초 동안 일정한 속도로) */
+    animation: trailMove 17.5s linear infinite; 
+/* transform 대신 background-position을 최적화합니다 */
+    will-change: background-position;
+}
+
+/* 3. 우 -> 좌 이동 애니메이션 */
+@keyframes trailMove {
+    0% {
+        /* ✨ 시작점: 배경 이미지의 X축 위치 0 */
+        background-position: 0 0;
+    }
+    100% {
+        /* ✨ 도착점: 박스는 가만히 있고, 배경 이미지만 -1440px 만큼 왼쪽으로 밀려납니다 */
+        background-position: -1455px 0;
+    }
+}
+
+
+/* =========================================
+   🛤️ 컨베이어 상품들 (Swiper 설정)
+========================================= */
+.trail-swiper {
+    position: absolute;
+    /* 레일 바닥에 박스가 딱 맞게 올라타도록 bottom 값을 조절하세요 */
+    bottom: 112px; 
+    width: 100%;
+    /* 카드가 위로 튀어나올 공간을 위해 높이를 넉넉히 줍니다 */
+    height: 400px; 
+    z-index: 20; /* 레일(.trail-track)보다 앞에 오도록 설정 */
+    overflow: visible; /* 잘림 방지 */
+    /* ✨ 핵심 해결책 1: 윗동네(.swiper)에서 물려받은 마스크와 패딩을 강제로 지워버립니다! */
+    padding: 0 !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+}
+
+/* ✨ Swiper 연속 스크롤의 핵심: 중간에 멈칫하지 않고 일정한 속도로 흐르게 함 */
+.trail-swiper .swiper-wrapper {
+    transition-timing-function: linear !important;
+}
+
+/* 스와이퍼 슬라이드 너비를 내용물 크기에 맞춤 */
+.trail-swiper .swiper-slide {
+    width: auto; 
+}
+
+/* =========================================
+   📦 상품 번들 (박스 + 카드) 디자인
+========================================= */
+.product-bundle {
+    position: relative;
+    width: 280px; /* 박스와 카드를 감싸는 영역 넓이 */
+    height: 100%;
+    display: flex;
+    align-items: flex-end; /* 바닥(레일)을 기준으로 정렬 */
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* 🃏 1. 뒤에 숨을 HTML 카드 */
+.product-card {
+    position: absolute;
+    /* 박스 뒤에 완벽히 숨도록 기본 위치를 낮춥니다 */
+    bottom: 50px; 
+
+    
+    /* ✨ 핵심 해결책 2: 카드가 박스의 정중앙 뒤에 정확히 숨도록 X축 기준점을 잡아줍니다 */
+    left: 50%;
+    transform: translateX(-50%);
+    /* ✨ 이미지가 예쁘게 들어가도록 카드의 너비와 높이를 살짝 키웠습니다 */
+    width: 240px; 
+    height: 280px;
+
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 15px;
+    /* 💡 둥근 모서리 밖으로 삐져나가는 이미지를 깔끔하게 잘라줍니다 */
+    overflow: hidden; 
+    
+    z-index: 1; 
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* 카드 내부를 위아래로 분할하기 위한 설정 */
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+
+
+/* 🎁 2. 앞에 놓일 박스 이미지 */
+.box-img {
+    position: relative;
+    width: 250px; /* 가지고 계신 박스 이미지 원본 비율에 맞게 조절하세요 */
+    
+    /* ✨ 카드보다 앞에 있도록 z-index를 높게 설정! */
+    z-index: 2; 
+    
+    /* 박스가 커질 때 공중으로 뜨지 않고 바닥에 붙어있도록 기준점 설정 */
+    transform-origin: bottom center; 
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+
+
+/* =========================================
+   🎈 ONLINE SHOP - 떠다니는 배경 장식
+========================================= */
+.shop-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 섹션 밖으로 삐져나가는 장식 숨기기 */
+    
+    /* 💡 장식들이 상품 클릭이나 호버를 방해하지 않도록 유령 취급합니다 */
+    pointer-events: none; 
+    
+    /* 간판(z-index가 없을 경우 1 이상)이나 무지개보다 뒤에 은은하게 깔리도록 설정 */
+    z-index: 1; 
+}
+
+/* 개별 장식들의 공통 설정 */
+.shop-deco {
+    position: absolute;
+    /* 구름처럼 오른쪽 끝 바깥(100%)에서 출발 대기 */
+    /* left: 100%;  */
+    opacity: 0.7; /* 배경 요소이므로 살짝 투명하게 처리 */
+    will-change: transform;
+}
+
+/* 🌟 별 장식 (이동 + 위아래 둥둥) */
+.deco-star {
+    top: 15%;
+    left: 20%;
+    width: 50px;
+    opacity: 1;
+    /* ✨ 구름 이동(25초)과 둥둥 효과(3초) 동시 적용! */
+    animation: float 3s ease-in-out infinite 1s, 
+                spin 5s linear infinite;
+}
+.deco-star2 {
+    top: 10%;
+    left: 10%;
+    width: 20px;
+    opacity: 1;
+    /* ✨ 구름 이동(25초)과 둥둥 효과(3초) 동시 적용! */
+    animation: float 6s ease-in-out infinite 1s, 
+                spin 5s linear infinite;
+}
+
+.deco-star3 {
+    top: 25%;
+    right: 10%;
+    width: 20px;
+    opacity: 1;
+    /* ✨ 구름 이동(25초)과 둥둥 효과(3초) 동시 적용! */
+    /* animation: float 6s ease-in-out infinite 1s,  */
+                /* spin 5s linear infinite; */
+}
+
+
+/* 🍀 클로버 장식 (이동 + 빙글빙글) */
+.deco-clover {
+    top: 8%;
+    right: 14%;
+    width: 140px;
+    opacity: 1;
+    /* ✨ 10초 늦게 출발(delay)하여 화면을 심심하지 않게 채워줍니다 */
+    animation: spin 4s linear infinite;
+}
+
+/* 😊 스마일 장식 (이동 + 까딱까딱) */
+.deco-smile {
+    left: 100%;
+    top: 25%;
+    width: 90px;
+    /* ✨ 5초 늦게 출발 */
+    animation: flyCloud 20s linear infinite 5s, sway 14s ease-in-out infinite;
+}
+
+
+/* =========================================
+   🎛️ 컨베이어 벨트 재생 컨트롤러 (4-State)
+========================================= */
+.trail-controls {
+    position: absolute;
+/* ✨ 핵심 2: 섹션의 맨 밑바닥(0)에 고정합니다 */
+    bottom: 0; 
+    left: 0;
+    
+    /* 가로 100%로 꽉 채우고, 높이를 80px로 주어 물리적인 박스(기계 하단부)처럼 만듭니다 */
+    width: 100%;
+    height: 80px; 
+    
+    /* 요청하신 트레일러 배경색과 동일한 색상 적용 */
+    background-color: #D8D8D8; 
+    
+    /* 버튼들을 정중앙에 예쁘게 배치 */
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    gap: 15px;
+    
+    /* (기존에 있던 margin-top은 지워줍니다) */
+    
+    /* 다른 요소와 겹치지 않도록 레이어만 정리 (시각적으로 떠보이지 않음) */
+    z-index: 20;
+}
+
+.ctrl-btn {
+    width: 50px;
+    height: 50px;
+    background-color: #D8D8D8;
+    border: 4px solid #534B41;
+    border-radius: 50%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-weight: 900;
+    color: #534B41;
+    font-size: 16px;
+    letter-spacing: -1px; 
+    cursor: pointer;
+    
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+/* 마우스 올렸을 때 살짝 반응 */
+.ctrl-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ✨ 현재 작동 중인 모드(Active) 하이라이트 효과 */
+.ctrl-btn.active {
+    background-color: #534B41;
+    color: #D8D8D8;
+    /* box-shadow: inset 3px 3px 5px rgba(0,0,0,0.1); 눌려있는 듯한 내부 그림자 */
+    transform: translateY(2px);
+}
+
+
+
+.trail_button{
+    margin: 0px;
+    padding: 0;
+    background-color: #D8D8D8;
+}
+
+
+/* =========================================
+   📸 INSTAGRAM 섹션
+========================================= */
+.insta {
+    position: relative; /* 자식 요소들의 위치 기준점 */
+    /* ✨ 윗동네(온라인 샵)와의 완벽한 분리를 위한 8px 두께의 진한 브라운 테두리 */
+    border-top: 8px solid #534B41;
+    
+    /* (아래는 예시용 기본 여백입니다. 원하시는 대로 조절하세요!) */
+    padding: 50px 50px;
+    text-align: center;
+    overflow: hidden;
+    /* height: 80vh; */
+    
+
+}
+
+/* ✨ 2. 실제 캐릭터 이미지 (Y축 깡총 점프 담당) */
+.insta-bg-svg {
+    width: 300px; /* 캐릭터 크기 조절 */
+    
+    /* 래퍼(hopper-track)의 기준점에서 정확히 중앙을 맞추기 위한 여백 */
+    margin-left: -150px; /* 너비의 절반 */
+    margin-top: -150px;  /* 높이의 절반 */
+    
+    /* 1초에 한 번씩 포물선으로 뛰는 애니메이션 */
+    animation: hopY 1s infinite;
+}
+
+/* 🏃‍♂️ 가로 왕복 & 턴(Flip) 애니메이션 */
+@keyframes moveSideToSide {
+    /* (참고: 원본 이미지가 오른쪽을 보고 있다고 가정합니다) */
+    
+    /* 0%: 오른쪽 화면 밖에서 시작, 왼쪽을 바라봄(scaleX(-1)) */
+    0%    { transform: translateX(60vw) scaleX(1); }
+    
+    /* 49.9%: 왼쪽 화면 끝 도착할 때까지 이동 */
+    49.9% { transform: translateX(-60vw) scaleX(1); }
+    
+    /* 50%: 제자리에서 휙! 오른쪽으로 고개 돌림 */
+    50.0% { transform: translateX(-60vw) scaleX(-1); }
+    
+    /* 99.9%: 다시 오른쪽 화면 끝으로 이동 */
+    99.9% { transform: translateX(60vw) scaleX(-1); }
+    
+    /* 100%: 제자리에서 다시 왼쪽으로 고개 돌림 */
+    100%  { transform: translateX(60vw) scaleX(1); }
+}
+
+/* 🐇 세로 포물선 점프 애니메이션 (중력 가속도 구현) */
+@keyframes hopY {
+    0%, 100% { 
+        /* 바닥에 닿았을 때 */
+        transform: translateY(0); 
+        
+        /* 튀어 오를 때: 바닥을 뻥 차고 위에서 힘이 빠짐 (ease-out) */
+        animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1); 
+    }
+    50% { 
+        /* 최고 높이 도달했을 때 */
+        transform: translateY(-80px); /* 🌟 여기서 점프 높이를 조절하세요! */
+        
+        /* 떨어질 때: 허공에서 멈칫했다가 중력으로 빠르게 떨어짐 (ease-in) */
+        animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0); 
+    }
+}
+
+
+
+/* ✨ 1. 가로 레일 (X축 이동과 좌우 반전 담당) */
+.hopper-track {
+    position: absolute;
+    top: 70%; /* 화면 세로 위치 (원하는 대로 조절하세요) */
+    left: 50%; /* 기준점을 중앙으로 */
+    z-index: 1; /* 배경 레이어 */
+    
+    /* 16초 동안 좌우로 쉼 없이 왕복하는 애니메이션 */
+    animation: moveSideToSide 16s linear infinite;
+}
+
+
+
+
+/* ✨ 2층: 투명도 76% 그라데이션 + 투명도 50% 땡땡이 장막 */
+.insta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 2; /* 캐릭터(1)보단 위, 글자(3)보단 아래에 덮입니다 */
+    
+    background-image: 
+        /* [패턴 1] 흰색 땡땡이 (투명도 50% = rgba 255,255,255,0.5) */
+        /* ✨ 1. 점의 크기 조절: 기존 20% -> 12%로 줄여서 점을 작게 만듭니다 */ 
+        radial-gradient(rgba(255, 255, 255, 0.5) 12%, transparent 0),
+        radial-gradient(rgba(255, 255, 255, 0.5) 12%, transparent 0),
+        
+        /* [패턴 2] 인스타그램 코닉 그라데이션 (모든 색상에 투명도 76% = 0.76 적용) */
+        conic-gradient(from 225deg at 50% 50%, 
+            rgba(255, 220, 128, 0.76) 0%,   /* 옐로우 */
+            rgba(252, 175, 69, 0.76) 15%,   /* 오렌지 */
+            rgba(245, 96, 64, 0.76) 30%,    /* 레드 */
+            rgba(225, 48, 108, 0.76) 45%,   /* 핑크 */
+            rgba(193, 53, 132, 0.76) 60%,   /* 마젠타 */
+            rgba(131, 58, 180, 0.76) 75%,   /* 퍼플 */
+            rgba(64, 93, 230, 0.76) 90%,    /* 블루 */
+            rgba(255, 220, 128, 0.76) 100%  /* 다시 옐로우로 자연스럽게 연결 */
+        );
+        
+    /* 패턴 크기와 위치 설정 */
+    /* ✨ 2. 점의 간격 조절: 기존 20px -> 40px로 늘려서 듬성듬성하게 만듭니다 */
+    background-size: 40px 40px, 40px 40px, 100% 100%;
+
+    /* ✨ 3. 지그재그 배열 맞추기: 간격(40px)의 정확히 '절반(20px)'을 입력해야 예쁘게 교차됩니다! */
+    background-position: 0 10px, 20px 30px, center center;
+
+    /* background-position: 0 0, 10px 10px, center center;
+    background-size: 20px 20px, 20px 20px, 100% 100%; */
+    
+    /* 💡 이 장막이 마우스 클릭을 방해하지 않도록 유령 취급합니다 */
+    pointer-events: none; 
+}
+
+/* ✨ 3층: 실제 글자 콘텐츠 */
+.insta-content {
+    position: relative;
+    z-index: 3; /* 장막 위로 띄워서 글자가 선명하게 보이게 함 */
+    
+/* 콘텐츠를 화면 위쪽 정중앙에 예쁘게 배치 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 0px; /* 위쪽 여백 (원하는 만큼 조절하세요) */
+}
+
+
+/* 📸 인스타그램 타이틀 박스 */
+.insta-title-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background-color: #3b3b3b; /* 스크린샷과 비슷한 짙은 회색 배경 */
+    
+    /* 왼쪽 패딩을 60px로 넉넉히 주어 아이콘이 들어갈 자리를 마련합니다 */
+    padding: 15px 40px 15px 60px; 
+    
+    /* 전체 박스를 살짝 왼쪽으로 기울임 (-4도) */
+    transform: rotate(-4deg); 
+    box-shadow: 2px 4px 15px rgba(0,0,0,0.15); /* 은은한 그림자 */
+}
+
+/* 📸 인스타그램 아이콘 (박스 밖으로 튀어나오는 마법) */
+.insta-icon {
+    position: absolute;
+    /* ✨ 핵심: 박스 왼쪽 바깥으로 -30px 만큼 끄집어냅니다! */
+    left: -30px; 
+    
+    top: 50%;
+    transform: translateY(-50%); /* 수직 중앙 정렬 */
+    
+    width: 65px; /* 아이콘 크기 (직접 만드신 이미지에 맞게 조절하세요) */
+    height: auto;
+    
+    /* (선택) 기울어진 박스 안에서 아이콘만 똑바로 서있게 하고 싶다면 주석을 푸세요 */
+    /* rotate: 4deg; */ 
+}
+
+/* 📸 인스타그램 텍스트 */
+.insta-text {
+    color: #ffffff;
+    font-family: sans-serif; /* 깔끔하고 두꺼운 폰트 */
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: 2px; /* 글자 간격 살짝 넓게 */
+    margin: 0;
+}
+
+/* =========================================
+   📸 인스타그램 피드 스와이퍼
+========================================= */
+.insta-swiper-wrap {
+    position: relative;
+    width: 100%;
+    /* max-width: 1400px; 최대 너비 제한 */
+    margin-top: 50px;
+    margin-bottom: 50px;
+    padding: 0 50px; /* 좌우 버튼이 들어갈 공간 확보 */
+    z-index: 10;
+}
+
+/* 스와이퍼 컨테이너 */
+.insta-swiper {
+    width: 100%;
+    padding: 20px 0; /* 그림자가 잘리지 않도록 상하 여백 부여 */
+    /* overflow: visible;  */
+    /* 을 주면 양옆으로 카드가 이어지는 느낌을 낼 수 있습니다 */
+}
+
+/* ✨ 카드 기본 스타일 (링크 a 태그) */
+.insta-card {
+    display: block; /* a 태그를 블록 요소로 변환 */
+    width: 100%;
+    aspect-ratio: 1.5 / 2; /* 완벽한 정사각형 유지 */
+    background-color: #e0e0e0; /* 로딩 전 빈 공간 회색 처리 */
+    border: 6px solid #ffffff; /* 두꺼운 흰색 테두리 */
+    border-radius: 4px; /* 끝을 아주 살짝만 둥글게 */
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1); /* 은은한 그림자 */
+    overflow: hidden; /* 이미지가 삐져나가지 않게 */
+    
+    /* 호버 애니메이션을 위한 트랜지션 */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+/* 🖱️ 호버 시 스케일업 효과 */
+.insta-card:hover {
+    transform: translateY(-10px) scale(1.02); /* 살짝 위로 떠오르며 커짐 */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2); /* 그림자도 깊어짐 */
+}
+
+/* 카드 내부 이미지 */
+.insta-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지가 찌그러지지 않고 영역을 꽉 채움 */
+    transition: transform 0.5s ease;
+}
+
+/* (선택) 카드에 마우스를 올리면 내부 이미지도 살짝 줌인되는 디테일 */
+.insta-card:hover img {
+    transform: scale(1.08); 
+}
+
+/* 🔘 커스텀 내비게이션 버튼 */
+.insta-btn-prev, .insta-btn-next {
+    color: #534B41; /* 버튼 화살표 색상 (브라운) */
+    background-color: #ffffff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
+}
+
+.insta-btn-prev:hover, .insta-btn-next:hover {
+    transform: scale(1.1);
+}
+
+/* 버튼 기본 화살표 크기 조절 */
+.insta-btn-prev::after, .insta-btn-next::after {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+/*푸터 전체영역 */
+
+.site-footer {
+    position: relative;
+    width: 100%;
+    height: 800px; /* 높이는 배경 이미지 비율에 맞게 조절 */
+    overflow: hidden;
+    
+}
+/* ✨ 새로운 3단 경계선 (검정 - 하양 - 검정) */
+.site-footer::before {
+    content: ''; /* 가상 요소 필수 속성 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    /* 전체 테두리 높이 (흰색 영역 + 위아래 검은 줄 포함) */
+    height: 24px; 
+    box-sizing: border-box; /* 높이 계산 안에 테두리 두께를 포함시킴 */
+    
+    /* 🎯 색상 및 선 두께 설정 */
+    background-color: #ffffff; /* 가운데 들어갈 흰색 영역 */
+    border-top: 4px solid #1a1a1a; /* 위쪽 검은색(진한 회색) 줄 */
+    border-bottom: 4px solid #1a1a1a; /* 아래쪽 검은색(진한 회색) 줄 */
+    
+    /* 🎯 캔버스(곰돌이)나 배경 건물보다 무조건 위에 덮이도록 가장 높은 z-index 부여 */
+    z-index: 50; 
+}
+
+
+/* 🌳 1층: 나무 배경 무한 스크롤 */
+.footer-bg-trees {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('./img/background.webp');
+
+    /* ✨ 수정 1: 가로를 무조건 4096px로 고정하고,, 가로는 원본 비율을 유지합니다 */
+    background-size: 4096px 110%; 
+    background-position: 0 bottom;
+    background-repeat: repeat-x; 
+    
+    animation: scrollTrees 40s linear infinite; 
+    z-index: 1;
+}
+
+/* 나무 배경 무한 스크롤 애니메이션 */
+@keyframes scrollTrees {
+    from { background-position: 0 bottom; }
+    /* ✨ 수정 2: -2000px 대신, 가지고 계신 이미지의 '실제 가로 픽셀 사이즈'를 적어주세요! */
+    /* (예시: 이미지 가로가 1920px이라면 -1920px로 적습니다) */
+    to { background-position: -4096px bottom; } 
+}
+/* 🏪 2층: 스토어 건물들이 지나갈 투명한 컨테이너 */
+.footer-store-building {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* 화면 전체 너비 */
+    height: 100%; /* 푸터 전체 높이 */
+    z-index: 2;
+    overflow: hidden; /* 컨테이너 밖으로 나가는 건물 숨기기 */
+    
+    /* 🎯 핵심 픽스: 이 컨테이너 자체의 배경 이미지와 애니메이션은 삭제합니다! */
+    background-image: none;
+    animation: none;
+}
+
+/* ✨ 새 클래스: 자바스크립트가 생성할 건물 개별 스타일 */
+.spawned-building {
+    position: absolute;
+    bottom: 100px;
+    /* 🎯 핵심 픽스: 모든 건물은 화면 오른쪽 바깥(100%)에서 시작합니다 */
+    left: 100%; 
+    height: auto;
+    
+    /* 원하시는 건물 크기 조절 (데이터에 따라 다르게 할 수도 있습니다) */
+    width: 1000px; /* 예시 크기 */
+    
+    background-size: contain;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    
+    /* 🎯 핵심 픽스: 움직임은 개별 건물에 적용합니다 */
+    animation: scrollBuilding 30s linear; /* 무한 루프가 아닌 1회 재생 */
+}
+/* 건물이 오른쪽에서 나타나 왼쪽 밖으로 사라지는 애니메이션 (유지) */
+@keyframes scrollBuilding {
+    from { left: 100%; } 
+    to { left: -100%; } /* 건물의 너비만큼 완전히 빠져나갈 때까지 (-100%) */
+}
+/* 🐻 3층: 곰돌이 도화지 */
+#footer-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5; /* 배경보단 위, 글자보단 아래 */
+    /* cursor: pointer; */
+}
+
+/* 🕶️ 3.5층: 텍스트 가독성을 위한 검은색 반투명 유리창 */
+.footer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* ✨ 검은색(0,0,0)에 투명도 72%(0.72) 적용 */
+    background-color: rgba(0, 0, 0, 0); 
+    
+    z-index: 8; /* 캔버스(5)와 글자(10) 사이의 공간! */
+    
+    /* 🎯 아주 중요: 이 유리가 마우스 클릭을 막지 않도록 유령 취급합니다 */
+    pointer-events: none; 
+}
+
+/* ✍️ 4층: 텍스트 정보 */
+/* =========================================
+   ✍️ 4층: 텍스트 정보 레이아웃 (CSS Grid)
+========================================= */
+.footer-ui {
+    position: relative;
+    z-index: 10;
+    
+    /* 🎯 3단 분리 마법: 왼쪽(1fr) 중앙(로고크기) 오른쪽(1fr) */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; 
+    gap: 40px;
+    
+    /* 전체 여백 조절 (위아래 80px, 좌우 100px) */
+    padding: 80px 50px; 
+    color: #ffffff;
+    font-family: 'Pretendard', sans-serif; /* 프로젝트 폰트에 맞게 수정하세요 */
+    
+    /* 배경 클릭이 도화지(캔버스)에 닿을 수 있게 통과시킴 */
+    pointer-events: none; 
+}
+
+/* 텍스트와 버튼은 다시 마우스와 상호작용할 수 있게 복구 */
+.footer-ui a,
+.footer-ui p,
+.footer-ui h2,
+.footer-ui h4,
+.footer-center img {
+    pointer-events: auto;
+}
+
+/* 📌 공통 제목 스타일 */
+.footer-ui h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* 📌 왼쪽 영역 스타일 */
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* 소셜 박스와 회사 정보 사이 간격 */
+    /* ✨ 추가: 숫자를 키울수록 글자가 더 아래로 내려갑니다 */
+    padding-top: 100px;
+}
+
+/* 
+.social-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 12px 22px;
+    border-radius: 25px; 
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+}
+
+.btn-social:hover {
+    transform: translateY(-2px); 
+}
+
+.btn-social img {
+    width: 18px; 
+    height: auto;
+}
+ */
+ /* 📌 버튼들을 감싸는 박스 */
+.social-actions-wrap {
+    display: flex;
+    gap: 12px;
+    /* ✨ 핵심 1: 자식 버튼들이 부모 높이에 맞춰 위아래로 쭈욱 늘어나는(stretch) 현상을 방지합니다 */
+    align-items: flex-start; 
+}
+
+/* 📌 개별 소셜 버튼 컴포넌트 */
+.btn-social-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    
+    /* ✨ 핵심 2: 패딩 위아래를 조금 줄이고 가로를 넉넉히 주어 안정감을 줍니다 */
+    padding: 12px 20px; 
+    
+    /* ✨ 핵심 3: 글자가 좁아져도 아래로 떨어지면서 박스가 뚱뚱해지지 않도록 보호막을 칩니다 */
+    white-space: nowrap; 
+    
+    transition: transform 0.2s ease;
+}
+
+
+
+.btn-social-item img {
+    width: 16px; /* 아이콘 크기 살짝 다이어트 */
+    height: auto;
+    display: block;
+}
+
+.btn-social-item .btn-text {
+    font-size: 13px;
+    line-height: 1; /* 글자 높이 때문에 박스가 벌어지는 것 방지 */
+}
+
+
+
+
+
+
+
+
+
+/* 회사 정보 텍스트 */
+.footer-company p {
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0;
+    color: #e0e0e0; /* 약간 톤 다운된 흰색 */
+}
+
+.footer-company .copyright {
+    margin-top: 15px;
+    color: #a0a0a0;
+}
+
+/* 📌 가운데 영역 스타일 */
+.footer-center {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 정렬 */
+}
+
+.footer-logo {
+    width: 480px; /* 로고 크기 조절 (원하는 대로 수정하세요) */
+    height: auto;
+}
+
+/* 📌 오른쪽 영역 스타일 */
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    /* ✨ 텍스트와 요소를 오른쪽 끝으로 밀착시키는 마법 */
+    align-items: flex-end; 
+    text-align: right; 
+    /* ✨ 추가: 왼쪽과 높이를 맞추기 위해 동일한 값을 줍니다 */
+    padding-top: 100px;
+}
+
+
+/* 약관 링크 */
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+/* 고객센터 텍스트 */
+.footer-cs h2 {
+    font-size: 40px;
+    font-weight: 800;
+    margin: 5px 0 15px 0;
+}
+
+.footer-cs p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    color: #e0e0e0;
+}
+
+    /* =========================================
+   🔊 사운드 토글 아이콘 ON/OFF 스위칭 로직
+========================================= */
+
+/* 1. 기본 상태 (소리가 꺼져있을 때 = is-on 클래스가 없을 때) */
+.sound-toggle .icon-on {
+    display: none; /* 파동 숨기기 */
+}
+.sound-toggle .icon-off {
+    display: block; /* X표시 보이기 */
+}
+
+/* 2. 소리가 켜져있을 때 (자바스크립트가 is-on 클래스를 붙였을 때) */
+.sound-toggle.is-on .icon-on {
+    display: block; /* 파동 보이기 */
+}
+.sound-toggle.is-on .icon-off {
+    display: none;  /* X표시 숨기기 */
+}
+
+/* =========================================
+   🖥️ PC 기본 상태 (1025px 이상)
+========================================= */
+.mobile-cart,
+.hamburger-btn,
+.mobile-menu-wrapper {
+    display: none; /* PC에서는 절대 보이지 않음 */
+}
+
+/* 기존 로고 토글 상태 보존 */
+.logo_black { display: none; }
+.logo_white { display: block; }
+/* =========================================
+   🍔 햄버거 버튼 기본 디자인 (1025px 이상에서는 숨김)
+========================================= */
+.hamburger-btn {
+    display: none; /* 데스크톱에서는 안 보임 */
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1000; /* 메뉴판보다 위에 떠있어야 X 버튼을 누를 수 있음 */
+}
+
+/* 햄버거를 이루는 3개의 흰색 가로줄 */
+.hamburger-btn span {
+    width: 100%;
+    height: 3px;
+    background-color: #ffffff; /* 메뉴 줄 색상 */
+    border-radius: 5px;
+    transition: all 0.3s ease; /* 부드러운 애니메이션 */
+}
+
+
+/* =========================================
+   🍔 햄버거 버튼 기본 디자인 (1025px 이상에서는 숨김)
+========================================= */
+
+
+
+
+/* =========================================
+   🖥️ 1. 기본 스타일 (1281px 이상: 넓은 데스크톱)
+========================================= */
+/* (지금까지 작성하신 기본 CSS 코드들이 이곳에 해당합니다. 
+   넓은 화면을 위한 시원시원한 여백과 큰 글자 크기가 적용됩니다.) */
+
+
+/* =========================================
+   💻 2. 노트북 및 작은 데스크톱 (1280px 이하)
+========================================= */
+@media (max-width: 1280px) {
+    /* 레이아웃 구조는 그대로 유지합니다.
+       대신 너무 넓게 퍼져있던 좌우 여백(padding)을 살짝 줄이거나, 
+       크기가 너무 큰 로고나 폰트 사이즈를 한 단계 정도만 다듬어 줍니다. */
+           /* 소셜 버튼과 회사 정보 사이의 붕 떴던 간격을 살짝 좁혀줍니다 */
+
+
+
+
+
+           /* 📌 1. 네비게이션(GNB) 다이어트 */
+    .navbar {
+        padding: 15px 30px; /* 양옆 여백 축소 */
+    }
+    .nav-links {
+        gap: 24px; /* 메뉴들 사이의 간격을 64px에서 24px로 대폭 축소 */
+    }
+    .nav-links a {
+        font-size: 14px; /* 글자 크기도 살짝 줄여서 겹침 방지 */
+    }
+    .nav-actions {
+        gap: 12px;
+    }
+
+
+    /* 기존에 작성하신 1280px 코드들... */
+
+    /* 🎬 히어로 비디오 영역 높이 축소 */
+    .video-hero {
+        height: 80vh; 
+    }
+
+    /* 🍩 신메뉴 & 베스트셀러 섹션 여백 축소 */
+    .newAndBest {
+        padding-top: 60px;
+        padding-bottom: 40px;
+    }
+
+    
+    .footer-left {
+        gap: 24px; 
+        padding-top: 60px; /* 기존 100px에서 노트북에 맞게 업로드 */
+    }
+
+    .footer-logo{
+        width: 320px;
+    }
+    
+    /* 1280px 화면에서도 버튼 글씨가 답답하지 않게 조절 */
+    .btn-social-item .btn-text {
+        font-size: 12px;
+    }
+    .btn-social-item {
+        padding: 6px 14px;
+    }
+    .donut-name-box {
+        font-size: 0.9rem; /* 1.1rem에서 0.9rem으로 축소 */
+        padding: 2px 10px; /* 여백도 살짝 줄여서 박스 전체 크기를 줄임 */
+    }
+    
+    .footer-ui{
+         padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+    }
+    
+
+}
+
+
+/* =========================================
+   📱 3. 태블릿 및 가로 모드 (1024px 이하)
+========================================= */
+@media (max-width: 1024px) {
+    /* 아이패드 세로 모드에 해당하는 크기입니다.
+       네비게이션 메뉴들의 간격(gap)을 좁히고, 
+       푸터(footer)의 전체 높이를 600px에서 400px 정도로 줄여서 비율을 맞춥니다. */
+    /* 🚨 중요: 기존 .navbar의 position(fixed, absolute 등)을 절대 강제 변경하지 않음!
+       대신 내부 아이템들의 너비 분배를 통해 로고가 중앙에 오게끔 안전하게 정렬합니다.
+    */
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .navbar.nav-solid{
+        box-shadow: none;
+    }
+
+    /* 1. 좌측 장바구니 아이콘 (PC 메뉴 숨기고 이것만 보이게 함) */
+    .nav-links, .pc-btn { 
+        display: none !important; 
+    }
+    
+    .mobile-cart {
+        display: block;
+        width: 24px;
+        height: 24px;
+        color: #ffffff;
+        flex: 0 0 auto; /* 좌측에 고정 크기 유지 */
+    }
+
+    /* 2. 로고 정중앙 오게 하기 (가장 안전한 Flex 정렬 방식) */
+    .logo {
+        margin: 0 auto; /* 좌우 마진을 자동으로 주어 Flex 레이아웃 안에서 정중앙으로 밀어냄 */
+        display: flex;
+        justify-content: center;
+        flex: 1; /* 가용한 중간 공간을 모두 차지해 중앙 정렬 */
+    }
+    .logo a {
+        display: block;
+    }
+
+    /* 3. 우측 액션 영역 (햄버거 + 사운드) */
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex: 0 0 auto; /* 우측 고정 크기 유지 */
+    }
+
+    /* 🍔 햄버거 버튼 디자인 */
+    .hamburger-btn { 
+        display: flex; 
+        flex-direction: column;
+        justify-content: space-between;
+        width: 24px;
+        height: 16px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        order: 1; /* 햄버거가 먼저 나옴 */
+    }
+
+    .hamburger-btn span {
+        width: 100%;
+        height: 2px;
+        background-color: #ffffff;
+        transition: all 0.3s;
+    }
+
+    /* 🔊 사운드 버튼 레이아웃 안 깨지게 고정 */
+    .sound-toggle { 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        order: 2; /* 사운드 아이콘이 햄버거 오른쪽에 위치 */
+        margin: 0;
+        padding: 0;
+        background: none !important; /* 기존의 버튼 테두리나 배경이 깨지는 것 방지 */
+        border: none !important;
+    }
+
+
+    /* 글자만 깔끔하게 날리고 아이콘만 유지 */
+    #sound-text { 
+        display: none !important; 
+    }
+    
+    .speaker-icon { 
+        width: 24px; 
+        height: 24px; 
+        color: #ffffff; 
+        margin: 0;
+    }
+
+    /* --- 🎨 스크롤 시 배경 변경에 대응하는 흑/백 전환 색상 --- */
+    /* 노란색 배경일 때 (.nav-solid) */
+    .navbar.nav-solid .mobile-cart,
+    .navbar.nav-solid .speaker-icon { color: #000000; }
+    .navbar.nav-solid .hamburger-btn span { background-color: #000000; }
+    .navbar.nav-solid .logo_white { display: none; }
+    .navbar.nav-solid .logo_black { display: block; }
+
+    /* --- 📂 메뉴가 열렸을 때(.menu-open)의 네비게이션 바 상태 --- */
+    .navbar.menu-open {
+        /* ✨ 1. 스크롤을 내려도 절대 사라지지 않도록 화면 최상단에 강제 고정 */
+        position: fixed !important; 
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        /* ✨ 3. 혹시 스크롤 시 navbar를 위로 숨기는 JS 애니메이션이 있다면 그것을 무력화 */
+        transform: translateY(0) !important; 
+    }
+
+    /* 메뉴 오픈됐을 때 (.menu-open - 하얀 풀스크린 배경이므로 무조건 어둡게) */
+    .navbar.menu-open .mobile-cart,
+    .navbar.menu-open .speaker-icon { color: #333333 !important; }
+    .navbar.menu-open .hamburger-btn span { background-color: #333333 !important; }
+    .navbar.menu-open .logo_white { display: none !important; }
+    .navbar.menu-open .logo_black { display: block !important; }
+
+    /* 햄버거 활성화 모양 (X) */
+    .hamburger-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+    .hamburger-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+
+    /* --- 📂 모바일 전체화면 드롭다운 메뉴 스타일 --- */
+    .mobile-menu-wrapper {
+        display: block;
+        position: fixed;
+        top: -120vh; /* 화면 상단 밖에서 대기 */
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #FFF09F;
+        z-index: 990; /* 네비게이션 헤더 바로 아래 레이어 */
+        transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        overflow-y: auto;
+    }
+
+    .mobile-menu-wrapper.active {
+        top: 0; /* 화면 아래로 쫙 내려옴 */
+    }
+
+    /* 핑크색 상단 로그인 헤더 */
+    .mobile-login-header {
+        background-color: #FFF09F;
+        padding: 100px 24px 24px 24px; /* 기존 헤더 높이에 가려지지 않게 여유공간 확보 */
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+    .mobile-login-header p { margin: 0; color: #555; font-size: 14px; }
+    .mobile-login-header .login-link { color: #222; font-weight: 700; text-decoration: none; }
+
+    /* 모바일 리스트 */
+    .mobile-menu-list { list-style: none; padding: 0; margin: 0; }
+    .mobile-menu-list li { border-bottom: 1px solid #000000; }
+    .mobile-menu-list a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        color: #333;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    .chevron::after {
+        content: '';
+        display: block;
+        width: 8px;
+        height: 8px;
+        border-bottom: 2px solid #000000;
+        border-right: 2px solid #000000;
+        transform: rotate(45deg);
+    }
+
+    .video-hero{
+        height: 60vh;
+    }
+    
+    .item-4 {
+        display: none;
+    }
+    
+    .item-6 {
+        display: none;
+    }
+    .item-7 {
+        display: none;
+    }
+    .swiper{
+        padding: 30px 50px 70px 50px;
+    }
+    /* 푸터 중앙 로고 크기 축소 */
+
+    .site-footer{
+        height: 640px;
+    }
+
+    .footer-ui{
+         padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+    }
+    .footer-logo {
+        width: 200px; 
+    }
+
+    /* 양옆 텍스트 영역 상단 여백 조절 */
+    .footer-left,
+    .footer-right {
+        padding-top: 20px; /* 로고가 작아졌으므로 텍스트 시작 위치도 위로 살짝 당김 */
+        gap: 30px; /* 내부 요소들(소셜 버튼, 회사 정보 등) 사이의 간격 축소 */
+    }
+
+    /* 오른쪽 고객센터 전화번호 크기 축소 */
+    .footer-cs h2 {
+        font-size: 28px; /* 기존 40px -> 28px */
+        margin: 5px 0 10px 0;
+    }
+    
+}
+
+
+/* =========================================
+   📱 4. 스마트폰 (767px 이하)
+========================================= */
+@media (max-width: 767px) {
+    /* 가로 공간이 절대적으로 부족해지는 구간입니다.
+       가로 정렬(Row)을 세로 정렬(Column)로 완전히 부수고 다시 쌓아야 합니다.
+       푸터의 3단 정보를 세로로 길게 배치하고, 
+       상단 네비게이션 메뉴들은 햄버거 메뉴(☰)로 숨기는 작업이 들어갑니다. */
+
+       /* 🎬 1. 비디오 100vh 및 화면 꽉 채우기 */
+    .video-hero {
+        /* ✨ 꿀팁: 모바일에서는 주소창 때문에 100vh를 쓰면 밑이 잘릴 수 있습니다. 
+           최신 표준인 100svh(Small Viewport Height)를 쓰면 완벽하게 꽉 찹니다! */
+        height: 100vh; /* 구형 브라우저 대비 */
+        height: 100svh; 
+        
+        /* 🚀 콘텐츠를 위로 끌어올리는 핵심 마법! */
+        justify-content: flex-start; /* 기존 center에서 위쪽 시작점으로 변경 */
+        padding-top: 130px; /* 네비게이션 높이 + 원하는 여백만큼 위에서 띄워줍니다 */
+    }
+
+    /* 🎥 2. 비디오 중앙 정렬 */
+    .bg-video {
+        object-fit: cover;
+        
+        /* ✨ 기존의 center center 대신, Y축 기준점을 조절합니다. 
+           0%는 맨 위, 100%는 맨 아래입니다. */
+        object-position: 76% 100%; 
+        
+        /* 💡 숫자를 줄일수록(예: 10%) 비디오의 '위쪽'이 더 많이 보이게 되어 
+           결과적으로 비디오가 아래로 내려간 느낌을 줍니다. */
+    }
+    /* ✨ 1.2배(20%) 크기를 키우고, Y축(아래) 방향으로 8%만큼 내립니다 */
+        /* 💡 숫자를 이렇게 조절해 보세요!
+           - 더 키우고 싶다면: scale(1.3)
+           - 더 아래로 내리고 싶다면: translateY(15%)
+        */
+    /* 📦 3. 콘텐츠 컨테이너 세로 배치 (가장 중요) */
+    .hero-container {
+        flex-direction: column; /* 좌우 배치를 위아래로 쌓도록 변경 */
+        text-align: center; /* 모든 텍스트를 가운데 정렬 */
+        padding: 0 20px;
+    }
+
+    /* ✍️ 4. 텍스트 박스 글자 크기 다이어트 */
+    .hero-text-box {
+        text-align: center;
+    }
+
+
+    .main-title {
+        /* 한 줄로 펼쳐지면 가로 폭이 모자랄 수 있으므로 기존 64px에서 
+           화면 크기에 따라 40px~48px 정도로 살짝 조정해 줍니다. */
+        font-size: 64px; 
+        line-height: 1.1;
+        white-space: nowrap; /* 글자가 절대 다음 줄로 떨어지지 않게 고정 */
+        margin-bottom: 42px;
+    }
+    .description{
+        display: none;
+    }
+    .sub-title{
+        margin-bottom: 4px;
+    }
+    .hero-text-box {
+        text-align: center;
+        
+        /* 🚀 핵심: 박스 자체를 위로 끌어올리기 위해 위쪽 마진에 마이너스(-)를 줍니다. 
+           수치를 변경해가며 위아래 위치를 마음에 들게 세밀 조정해 보세요! */
+        margin-top: -50px; 
+    }
+    .description{
+        display: none;
+    }
+    
+    .sub-title {
+        font-size: 26px; /* 기존 36px -> 26px */
+    }
+
+    .description {
+        font-size: 16px; /* 기존 24px -> 16px */
+        margin-bottom: 25px;
+    }
+
+    /* 🔘 5. 버튼 그룹 가운데 정렬 */
+    .button-group {
+        justify-content: center;
+    }
+
+    /* 🍩 6. 우측 둥둥 떠다니는 이미지 */
+    .hero-image-box {
+        justify-content: center;
+        margin-top: 40px; /* 텍스트와의 간격 띄우기 */
+    }
+
+    .hero-image-box img {
+        width: 80%; /* 모바일 화면 너비의 80%만 차지하도록 크기 축소 */
+        max-width: 280px;
+    }
+    
+    /* 🐭 7. 스크롤 안내 아이콘(마우스) 위치 살짝 올리기 */
+    .scroll-indicator {
+        
+        bottom: 80px; /* 화면이 좁으니 바닥에서 조금 띄워줍니다 */
+    }
+    .decorations{
+        display: none;
+    }
+    .logo{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+    }
+    .pc-only-br {
+        display: none; /* 모바일에서는 줄바꿈을 완전히 비활성화 */
+    }
+    
+
+    
+    /*----------------------- newandBest */
+    .newAndBest {
+        padding-bottom: 100px;
+    }
+    .rainbow-bridge {
+        display: none;
+    }
+    .card-section{
+        margin-top: 0px;
+    }
+    .card-inner{
+        width: 80%;
+    }
+    .custom-nav-btn{
+        display: none;
+    }
+    .menu-toggle-wrapper{
+        margin: 0 auto 20px auto;
+    }
+    .donut-name-box{
+        font-size: 1.6rem;
+        padding: 10px 10px;
+    }
+
+    /* online Shop */
+    .title-svg {
+        width: 70%;
+
+    }
+    /* --- 🚂 컨베이어 벨트 장치 숨기기 --- */
+    .trail-track,
+    .trail-controls {
+        display: none !important; /* 레일 배경과 하단 제어 버튼 완전 차단 */
+    }
+
+    /* 컨테이너 높이 및 간격 최적화 */
+    .trail-container {
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        height: auto; /* 고정 높이를 해제하여 내용물에 맞춤 */
+        margin-top: 40px; /* 타이틀과의 간격 설정 */
+    }
+
+    .trail-swiper {
+        position: relative;
+        bottom: 0;
+        height: auto;
+        overflow: visible; /* 양옆 카드들이 살짝 걸쳐 보이도록 설정 */
+        padding: 20px 0 40px 0 !important; /* 상하 여백을 주어 그림자 잘림 방지 */
+    }
+
+    /* --- 🎁 상자 이미지 완전히 없애기 --- */
+    .box-img {
+        display: none !important;
+    }
+
+    /* --- 🃏 숨어있던 상품 카드를 정갈한 카드로 복구 --- */
+    .product-bundle {
+        width: 260px; /* 모바일 기기 너비에 맞게 조절 */
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-card {
+        position: relative; /* absolute로 박스 뒤에 묶여있던 성질 해제 */
+        bottom: 0;
+        left: 0;
+        transform: none !important; /* 호버 시 솟구치거나 움직이던 트랜스폼 리셋 */
+        width: 300px;
+        height: 380px; /* 모바일 카드 세로 높이 */
+        background-color: #ffffff;
+        border: 2px solid #f0f0f0;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); /* 입체감 확보를 위한 부드러운 그림자 */
+    }
+    .card-img-wrap{
+        height: 280px;
+    }
+
+    /* 탭(터치)할 때 카드가 튀어 오르거나 흔들리는 모바일 호버 이펙트 원천 차단 */
+    .product-bundle:hover .box-img,
+    .product-bundle:hover .product-card {
+        transform: none !important;
+    }
+
+    .shop-title-box{
+        margin-bottom: 30px;
+        margin-top: 0px;
+    }
+
+    /* 🚫 1. 상품 카드(번들)를 터치했을 때 곰돌이가 반응하는 기능 완전 차단 */
+    .online_shop:has(.product-bundle:hover) #head {
+        /* 곰돌이의 기본 숨김 위치(10px)로 강제 고정하여 안 튀어나오게 막습니다 */
+        transform: translateY(10px) !important; 
+    }
+
+    /* ✨ 2. 간판을 터치(호버)하면 곰돌이가 반(-20%)이 아니라 완전히(-40%) 튀어나오게 변경 */
+    /* 모바일에서는 터치하는 순간 브라우저가 :hover 상태로 인식합니다 */
+    .shop-title-box:hover #head,
+    .shop-title-box:active #head {
+        transform: translateY(-40%) !important;
+    }
+    /* 인스타 */
+    .insta-swiper-wrap{
+        width: 140%;
+    }
+
+    .insta-btn-prev{
+        display: none;
+    }
+    .insta-btn-next{
+        display: none;
+    }
+
+    /* -----------------footer */
+    /* 1. 푸터 전체 높이 및 배경 컨테이너 */
+    .site-footer {
+        height: auto; /* 고정 800px 높이를 해제하여 내용물만큼 늘어나게 함 */
+        min-height: 70vh;
+        padding-bottom: 50px; /* 바닥 여백 */
+    }
+
+    /* 2. 3단 그리드를 세로 1줄 플렉스 박스로 변환 */
+    .footer-ui {
+        display: flex;
+        flex-direction: column; /* 가로(Row)에서 세로(Column)로 눕힘 */
+        padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+        gap: 20px; /* 각 구역(로고, 정보, SNS) 사이의 시원한 간격 */
+    }
+
+    /* 🍩 [순서 1] 중앙 로고를 맨 위로 & 왼쪽 정렬 */
+    .footer-center {
+        order: 1; /* 배치 순서 1번 */
+        justify-content: flex-start; /* 기존 가운데 정렬에서 왼쪽 정렬로 */
+        padding: 0;
+    }
+    
+    .footer-logo {
+        width: 160px; /* 모바일 화면에 맞게 로고 사이즈 다이어트 */
+    }
+
+    /* ☎️ [순서 2] 우측 고객센터를 로고 밑으로 & 왼쪽 정렬 */
+    .footer-right {
+        order: 2; /* 배치 순서 2번 */
+        align-items: flex-start; /* 요소들을 왼쪽으로 밀착 */
+        text-align: left; /* 글자도 왼쪽 정렬 */
+        padding-top: 0; /* PC에서 맞췄던 상단 여백 제거 */
+        gap: 20px;
+    }
+
+    .footer-cs h2 {
+        font-size: 26px; /* 전화번호 크기 축소 */
+        margin-bottom: 5px;
+    }
+
+    /* 🏢 [순서 3] 좌측 회사정보 및 소셜 버튼을 맨 아래로 */
+    .footer-left {
+        order: 3; /* 배치 순서 3번 */
+        align-items: flex-start; /* 왼쪽 밀착 */
+        text-align: left; 
+        padding-top: 0; /* 여백 제거 */
+        gap: 24px;
+    }
+
+    /* 📱 소셜 버튼 래퍼 줄바꿈 허용 */
+    .social-actions-wrap {
+        flex-wrap: wrap; /* 화면이 좁을 경우 버튼이 다음 줄로 예쁘게 떨어지게 함 */
+        gap: 10px;
+    }
+
+    .btn-social-item {
+        padding: 10px 16px; /* 모바일 터치에 적합하게 사이즈 조절 */
+    }
+    
+    /* ... 기존의 다른 767px 모바일 코드들 유지 ... */
+
+    /* 🏪 모바일 환경에서의 스토어 건물 크기 및 배치 제어 */
+    .spawned-building {
+        /* ✨ 1. 원하는 크기(720px ~ 1000px) 중 가장 자연스러운 크기로 고정 */
+        width: 800px !important; /* 720px~1000px 사이 중 원하시는 값으로 자유롭게 조절해 보세요! */
+        height: auto !important; 
+        
+        /* ✨ 2. 요청하신 대로 바닥 여백을 80px로 올려서 균형을 잡습니다 */
+        bottom: 80px !important; 
+        
+        /* ✨ 3. 덩치가 커졌으므로 화면 왼쪽 끝(-1000px)까지 확실하게 밀어내기 위해 모바일 전용 애니메이션 작동 */
+        animation: scrollBuildingMobile 22s linear !important; 
+    }
+}
+
+/* =========================================
+   🖥️ 0. 울트라와이드 / QHD 이상 대형 모니터 (1921px 이상)
+========================================= */
+@media (min-width: 1920px) {
+    
+    /* 🍩 1. 도넛 이름표 뱃지 큼직하게 스케일업 */
+    .donut-name-box {
+        font-size: 1.25rem; /* 글자 크기 확대 */
+        padding: 10px 26px; /* 넉넉한 여백 */
+        border-width: 3px; /* 테두리 굵기도 해상도에 맞춰 살짝 두껍게 */
+    }
+}
+
+/* =======================================================
+   ✨ 새로 추가: 건물이 완전히 화면 왼쪽 바깥으로 나가는 것을 보장하는 모바일 키프레임
+======================================================= */
+@keyframes scrollBuildingMobile {
+    from { 
+        left: 100%; 
+    }
+    to { 
+        /* 🚨 핵심: 건물의 최대 크기가 1000px에 달하므로, 
+           최소 -1000px 지점까지 완전히 밀어내야 삐져나온 꼬리까지 다 숨겨진 뒤 자연스럽게 삭제됩니다. */
+        left: -1100px; 
+    }
 }

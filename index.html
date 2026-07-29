@@ -12,30 +12,73 @@
 
 </head>
 
-<body>
-    <nav id="mainNav" class="navbar">
-        <h1 class="logo">
-            <a>
-                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
-                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
-            </a>
-        </h1>
-        <ul class="nav-links">
-            <li><a href="#">ORDER</a></li>
-            <li><a href="#">STORE</a></li>
-            <li><a href="#">MENU</a></li>
-            <li><a href="#">BRAND</a></li>
-            <li><a href="#">SUPPORT</a></li>
-        </ul>
-        <div class="nav-actions">
-            <a href="#" class="btn btn-outline">Login</a>
-            <a href="#" class="btn btn-outline">Cart</a>
-        </div>
-    </nav>
+<body><nav id="mainNav" class="navbar">
+    
+    <a href="#" class="mobile-cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+    </a>
 
+    <h1 class="logo">
+        <a>
+            <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+            <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+        </a>
+    </h1>
+
+    <ul class="nav-links">
+        <li><a href="#">SHOP</a></li>
+        <li><a href="#">STORE</a></li>
+        <li><a href="#">MENU</a></li>
+        <li><a href="#">BRAND</a></li>
+        <li><a href="#">SUPPORT</a></li>
+    </ul>
+
+    <div class="nav-actions">
+            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <a href="#" class="btn btn-outline pc-btn">Cart</a>
+
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <a href="#" id="sound-toggle-btn" class="sound-toggle btn-sound-outline is-on">
+                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15" class="icon-off"></line>
+                    <line x1="17" y1="9" x2="23" y2="15" class="icon-off"></line>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="icon-on"></path>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="icon-on"></path>
+                </svg>
+            </a>
+        </div>
+</nav>
+
+<div class="mobile-menu-wrapper" id="mobile-menu">
+    <div class="mobile-login-header">
+        <p>로그인이 필요합니다.</p>
+        <a href="#" class="login-link">로그인</a>
+    </div>
+    <ul class="mobile-menu-list">
+        <li><a href="#">Online Shop <span class="chevron"></span></a></li>
+        <li><a href="#">Reservation <span class="chevron"></span></a></li>
+        <li><a href="#">Menu <span class="chevron"></span></a></li>
+        <li><a href="#">Event <span class="chevron"></span></a></li>
+        <li><a href="#">Brand <span class="chevron"></span></a></li>
+        <li><a href="#">Help <span class="chevron"></span></a></li>
+        <li><a href="#">Contact <span class="chevron"></span></a></li>
+    </ul>
+</div>
+
+ 
     <header class="video-hero">
         <video autoplay muted loop playsinline poster="./img/donut_fallback.png" class="bg-video">
-            <source src="./video/donut_backgroud_ast2_C1S2.mp4" type="video/mp4">
+            <source src="./video/donutVideo.mp4" type="video/mp4">
             브라우저가 비디오를 지원하지 않습니다.
         </video>
         <div class="decorations">
@@ -63,7 +106,8 @@
 
             <div class="hero-text-box">
                 <span class="sub-title">Fresh & Creamy</span>
-                <h1 class="main-title">Creamy<br>Donut</h1>
+                <h1 class="main-title">Creamy <br class="pc-only-br">Donut</h1>
+                
                 <p class="description">
                     매일 아침, 정성스럽게 만든<br>
                     부드럽고 달콤한 크림 도넛
@@ -74,17 +118,7 @@
                     <a href="#" class="btn-secondary">VIEW MENU</a>
                 </div>
 
-                <div class="feature-info">
-                    <div class="feature-circles">
-                        <span class="circle"></span>
-                        <span class="circle"></span>
-                        <span class="circle"></span>
-                    </div>
-                    <p class="feature-text">
-                        100% Handmade<br>
-                        Made fresh every morning
-                    </p>
-                </div>
+                
             </div>
 
             <div class="hero-image-box">
@@ -98,13 +132,12 @@
             <div class="arrow-down"></div>
         </div>
 
-        <div class="wave-container">
-            <div class="wave-divider"></div>
+        <div class="wave-container wave-top">
+            <div class="wave-divider color-blue"></div>
         </div>
     </header>
     <main>
         <section class="newAndBest">
-
             <div class="clouds-bg" id="cloud-container"></div>
             <div class="menu-toggle-wrapper">
                 <div class="toggle-btn active" id="btn-new">신메뉴</div>
@@ -113,65 +146,138 @@
                     <img src="./img/pinkBear.png" alt="bear" id="bear-icon">
                 </div>
             </div>
-
             <div class="card-section">
                 <div class="swiper mySwiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardPink.png" alt="카드 이미지 1"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardBlue.svg" alt="카드 이미지 2"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardGreen.png" alt="카드 이미지 3"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 4"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardBlue.svg" alt="카드 이미지 5"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardGreen.png" alt="카드 이미지 6"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardPink.png" alt="카드 이미지 7"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 7"></div>
-                        </div>
-                        <div class="swiper-slide card">
-                            <div class="card-image"><img src="./img/cardYellow.png" alt="카드 이미지 7"></div>
-                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-prev custom-nav-btn"></div>
+                <div class="swiper-button-next custom-nav-btn"></div>
+            </div>
+            <img src="./img/rainbow.svg" class="rainbow-bridge" alt="무지개">
+            <div class="wave-container wave-bottom">
+                <div class="wave-divider color-yellow"></div>
+            </div>
+        </section>
+
+        <section class="online_shop">
+            <div class="shop-decorations">
+                <img src="./img_deco/star1.png" class="shop-deco deco-star" alt="별">
+                <img src="./img_deco/star2.png" class="shop-deco deco-star2" alt="별">
+                <img src="./img_deco/star3.png" class="shop-deco deco-star3" alt="별">
+                <img src="./img_deco/clover1.png" class="shop-deco deco-clover" alt="클로버">
+                <img src="./img_deco/smile.svg" class="shop-deco deco-smile" alt="스마일">
+            </div>
+
+            <div class="shop-title-box" id="shopTitleBox">
+            </div>
+
+            <div class="trail-container">
+                <div class="trail-track"></div>
+
+                <div class="swiper trail-swiper">
+                    <div class="swiper-wrapper">
+
 
                     </div>
                 </div>
+            </div>
+            <div class="trail-controls">
+                <div class="ctrl-btn" id="btn-ff">&lt;&lt;</div>
+                <div class="ctrl-btn active" id="btn-play">▶</div>
+                <div class="ctrl-btn" id="btn-pause">||</div>
+                <div class="ctrl-btn" id="btn-rew">&gt;&gt;</div>
+            </div>
+        </section>
+        <section class="insta">
+            <div class="hopper-track">
+                <img src="./img/bluedog.svg" class="insta-bg-svg" alt="배경 캐릭터">
 
-                <div class="swiper-button-prev custom-nav-btn"></div>
-                <div class="swiper-button-next custom-nav-btn"></div>
+            </div>
+            <div class="insta-content">
+                <div class="insta-title-box">
+                    <img src="./img/insta.png" class="insta-icon" alt="인스타 아이콘">
+                    <h2 class="insta-text">INSTAGRAM</h2>
+                </div>
+
+                <div class="insta-swiper-wrap">
+                    <div class="swiper insta-swiper">
+                        <div class="swiper-wrapper" id="insta-wrapper">
+                        </div>
+                    </div>
+
+                    <div class="swiper-button-prev insta-btn-prev"></div>
+                    <div class="swiper-button-next insta-btn-next"></div>
+                </div>
             </div>
         </section>
 
     </main>
+    <footer class="site-footer">
 
+        <div class="footer-bg-trees"></div>
+        <div class="footer-store-building">
+        </div>
 
+        <canvas id="footer-canvas"></canvas>
 
+        <div class="footer-overlay"></div>
 
-</body>
+<div class="footer-ui">
+    
+    <div class="footer-left">
+        <div class="footer-social">
+            <h4>SOCIAL</h4>
+            <div class="social-actions-wrap">
+        <a href="#" class="btn-social-item btn-kakao">
+            <img src="./img/kakao.png" alt="채널 추가하기">
+            <span class="btn-text">채널 추가하기</span>
+        </a>
+        <a href="#" class="btn-social-item btn-insta">
+            <img src="./img/insta.png" alt="인스타그램">
+            <span class="btn-text">Instagram</span>
+        </a>
+            </div>
+            
+        </div>
+        <div class="footer-company">
+            <h4>COMPANY INFORMATION</h4>
+            <p>주식회사 지엔에프지</p>
+            <p>서울 강남구 학동로82길 7</p>
+            <p>사업자 등록번호 248-81-00620 • 통신판매번호 2020-서울강남-02297 • 대표이사 이준범</p>
+            <p class="copyright">Copyright © 2023 Knotted. All Rights Reserved.</p>
+        </div>
+    </div>
 
-<!-- 여기서부터 스와이퍼 -->
-<script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <div class="footer-center">
+        <img src="./img/white_logo.svg" alt="Knotted 로고" class="footer-logo">
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="./script.js"></script>
-<!-- <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>  -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollToPlugin.min.js"></script> -->
+    <div class="footer-right">
+        <div class="footer-links">
+            <a href="#">개인정보처리방침</a>
+            <a href="#">이용약관</a>
+        </div>
+        <div class="footer-cs">
+            <h4>고객센터</h4>
+            <h2>1800-6067</h2>
+            <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
+            <p>점심시간 : 12:00 - 13:00</p>
+        </div>
+    </div>
+
+</div>
+
+    </footer>
+
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script type="module" src="./script.js"></script>
+
+   
 </body>
 
 </html>
