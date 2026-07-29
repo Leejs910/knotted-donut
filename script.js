@@ -284,7 +284,7 @@ const cardSwiper = new Swiper('.mySwiper', {
     // loopedSlides: 7, 
 
     // 📱 기본값 (모바일 등 가장 작은 화면 기준)
-    slidesPerView: 1.5, // 모바일에서는 가운데 1개, 양옆에 살짝 걸치게
+    slidesPerView: 1.2, // 모바일에서는 가운데 1개, 양옆에 살짝 걸치게
     loop: true,
     loopedSlides: 7, 
 
