@@ -423,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const trailSwiper = new Swiper('.trail-swiper', {
     loop: true,               // 무한 반복
     // 📱 [1] 기본값: 767px 이하 모바일 환경 (일반 카드 스와이프)
-    slidesPerView: 2,      // 화면에 중심 카드 1개 + 양옆 카드 꼬리가 살짝 걸치게 하여 넘김 유도
+    slidesPerView: 'auto',      // 화면에 중심 카드 1개 + 양옆 카드 꼬리가 살짝 걸치게 하여 넘김 유도
     centeredSlides: true,    // 보고 있는 카드를 화면 정중앙에 고정
     spaceBetween: 20,        // 카드와 카드 사이 여백
     speed: 400,              // 슬라이드가 넘어갈 때 걸리는 속도 (0.4초)
@@ -713,7 +713,7 @@ function initInstaSwiper() {
         // 📱 반응형 분기점 설정 (화면 크기에 따라 보여지는 카드 개수 자동 조절)
         breakpoints: {
             // 모바일
-            320: { slidesPerView: 2, spaceBetween: 15 },
+            320: { slidesPerView: 1.2, spaceBetween: 15 },
             // 태블릿
             768: { slidesPerView: 3, spaceBetween: 20 },
             // 데스크탑 (제공해주신 이미지처럼 한 화면에 4~5개 정도)
