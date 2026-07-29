@@ -1936,35 +1936,7 @@ a{
     padding-top: 100px;
 }
 
-/* 
-.social-buttons {
-    display: flex;
-    gap: 12px;
-}
 
-.btn-social {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #ffffff;
-    color: #000000;
-    padding: 12px 22px;
-    border-radius: 25px; 
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 700;
-    transition: transform 0.2s ease;
-}
-
-.btn-social:hover {
-    transform: translateY(-2px); 
-}
-
-.btn-social img {
-    width: 18px; 
-    height: auto;
-}
- */
  /* 📌 버튼들을 감싸는 박스 */
 .social-actions-wrap {
     display: flex;
@@ -2428,6 +2400,13 @@ a{
     .swiper{
         padding: 30px 50px 70px 50px;
     }
+
+    /* 인스타 */
+    /*--------------- 인스타------------------- */
+    .insta-swiper-wrap{
+        width: 180%;
+    }
+
     /* 푸터 중앙 로고 크기 축소 */
 
     .site-footer{
