@@ -2561,7 +2561,7 @@ a{
     
     /* 🐭 7. 스크롤 안내 아이콘(마우스) 위치 살짝 올리기 */
     .scroll-indicator {
-        
+        display: none;
         bottom: 80px; /* 화면이 좁으니 바닥에서 조금 띄워줍니다 */
     }
     .decorations{
@@ -2595,16 +2595,14 @@ a{
     .custom-nav-btn{
         display: none;
     }
-    /* .menu-toggle-wrapper{
-        margin: 0 auto 20px auto;
-    } */
      /* 🎛️ 1. 토글 버튼(신메뉴/베스트셀러) 전체 비율 축소 */
     .menu-toggle-wrapper {
-        margin: 0 auto 20px auto;
-        
-        /* ✨ 핵심 마법: 내부 width나 font-size를 일일이 건드리면 곰돌이 위치가 꼬일 수 있으므로, 
-           transform: scale()을 이용해 전체적인 형태 그대로 85% 크기로 축소시킵니다! */
-        transform: scale(0.85); 
+        margin-bottom: 20px; /* 아래쪽 여백만 남겨둡니다 */
+        /* ✨ 절대 실패하지 않는 강제 중앙 정렬 + 축소 마법 */
+        position: relative;
+        left: 50%;
+        /* X축으로 자신의 절반(-50%)만큼 당겨서 완벽한 중앙을 맞추고, 동시에 크기를 85%로 줄입니다 */
+        transform:translateX(-50%) scale(0.85); 
         transform-origin: center top; /* 축소될 때 윗부분을 기준으로 쪼그라들게 만듭니다 */
     }
     .donut-name-box{
@@ -2710,6 +2708,13 @@ a{
     .shop-title-box:hover #head,
     .shop-title-box:active #head {
         transform: translateY(-40%) !important;
+    }
+
+    .deco-clover{
+        display: none;
+    }
+    .deco-star{
+        display: none;
     }
     /*--------------- 인스타------------------- */
     .insta-swiper-wrap{

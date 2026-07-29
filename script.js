@@ -447,24 +447,7 @@ const trailSwiper = new Swiper('.trail-swiper', {
         }
     }
 
-
-
-    // 기존 것 
-
-
-    // slidesPerView: 'auto',    // CSS에 지정한 크기(.product-bundle)에 맞춰 배치
-    // spaceBetween: 80,         // 박스와 박스 사이의 여백 (픽셀)
     
-    // // ✨ 레일과 싱크를 맞출 핵심 속도 설정 (숫자를 조절해보세요)
-    // speed: 5000,              // 카드가 한 바퀴를 도는 데 걸리는 시간 (밀리초)
-    
-    // autoplay: {
-    //     delay: 0,             // 중간에 멈추는 시간 없이
-    //     disableOnInteraction: false, // 마우스로 건드려도 계속 굴러가게 설정
-    // },
-    
-    // (선택) 마우스로 잡아끄는 걸 막고 싶다면 주석을 푸세요
-    // allowTouchMove: false, 
 });
 
 // =========================================
@@ -803,21 +786,31 @@ function gameLoop() {
 
     // ✨ 곰돌이의 고정 위치 (항상 화면 정중앙, 바닥 기준)
     const fixedX = canvas.width / 2;
-    const fixedY = canvas.height - (250 * scaleRatio); 
+
+    
+
+    // 🌟 반응형 마법: 화면 너비가 768px 이하인지 체크합니다.
+    const isMobile = window.innerWidth <= 768;
+
+    // 모바일이면 기준점을 450으로, PC면 원래대로 250으로 설정합니다.
+    const yOffset = isMobile ? 400 : 250; 
+    const fixedY = canvas.height - (yOffset * scaleRatio); 
 
     ctx.save(); 
     ctx.translate(fixedX, fixedY); 
-    // (이제 방향을 뒤집을 필요가 없으므로 scale(-1, 1) 로직도 삭제되었습니다)
 
-    // 마법의 그리기 로직 (스프라이트 자르기)
     if (spriteSheet.complete) {
         const frameWidth = spriteSheet.width / TOTAL_FRAMES; 
         const frameHeight = spriteSheet.height;
         const currentFrame = walkSequence[char.seqIndex];
         const sourceX = currentFrame * frameWidth; 
         
-        const scaledWidth = char.width * scaleRatio;
-        const scaledHeight = char.height * scaleRatio;
+        // 🌟 반응형 마법: 모바일이면 크기를 1.5배(495, 594)로 계산하고, PC면 기본 크기를 씁니다.
+        const currentWidth = isMobile ? 495 : char.width;
+        const currentHeight = isMobile ? 594 : char.height;
+
+        const scaledWidth = currentWidth * scaleRatio;
+        const scaledHeight = currentHeight * scaleRatio;
 
         ctx.drawImage(
             spriteSheet,   
@@ -885,23 +878,29 @@ function spawnBuilding(isFirst = false) {
 
 // 3. 무작위 간격으로 계속 스폰되도록 타이머 설정
 // (주의: `spawnBuilding()` 함수 자체는 무한 루프가 아니므로, 타이머로 계속 튕겨줘야 합니다)
+// 3. 무작위 간격으로 계속 스폰되도록 타이머 설정
 function initBuildingSpawner() {
-    // 처음 켜지자마자 하나 스폰
     spawnBuilding(true);
 
-    // 이후 4초~7초 사이의 무작위 간격으로 계속 스폰
-    // 🎯 3. 스폰 속도 조절: 숫자를 키워서 띄엄띄엄 나오게 만듭니다
-    const minDelay = 8000; // 최소 
-    const maxDelay = 15000; // 최대 
-    
     function randomSpawn() {
         spawnBuilding();
+        
+        // 🌟 반응형 마법: 건물이 스폰될 때마다 현재 화면 크기를 체크합니다!
+        const isMobile = window.innerWidth <= 768;
+        
+        // 모바일이면 15~25초, PC면 8~15초 사이의 무작위 간격 적용
+        const minDelay = isMobile ? 15000 : 8000; 
+        const maxDelay = isMobile ? 25000 : 15000; 
+
         const nextDelay = Math.random() * (maxDelay - minDelay) + minDelay;
         setTimeout(randomSpawn, nextDelay);
     }
     
-    // 첫 스폰 후 랜덤 타이머 시작
-    setTimeout(randomSpawn, Math.random() * (maxDelay - minDelay) + minDelay);
+    // 첫 스폰 타이머 작동 시에도 화면 크기 체크
+    const isMobile = window.innerWidth <= 768;
+    const initialMin = isMobile ? 15000 : 8000;
+    const initialMax = isMobile ? 25000 : 15000;
+    setTimeout(randomSpawn, Math.random() * (initialMax - initialMin) + initialMin);
 }
 
 // 4. 문서 로드 시 스폰 시스템 시작
