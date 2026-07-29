@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Animation - ViewBox Cropped</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f6f8; 
+            font-family: sans-serif;
+            padding-bottom: 100px; 
+        }
+
+        svg {
+            width: 100%;
+            max-width: 1920px;
+            height: auto;
+            background-color: white;
+            display: block;
+        }
+
+        #door {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #door.is-closed {
+            transform: translateY(618.5px);
+        }
+
+        .btn-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top: 1px solid #eee;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+        }
+        
+        button {
+            width: 100%;
+            max-width: 800px; 
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background-color: #00c73c; 
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #00b336;
+        }
+        
+        .payment-info {
+            padding: 40px;
+            width: 100%;
+            height: 100%;
+        }
+        .payment-info h2 { color: #333; margin-bottom: 20px; }
+        .payment-info p { color: #666; font-size: 20px; line-height: 1.8; margin-bottom: 20px; }
+        
+        .dummy-box {
+            background-color: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            height: 200px;
+        }
+        /* foreignObject 내부의 최상위 컨테이너 */
+.payment-info {
+    width: 100%;
+    height: 100%; /* 부모(foreignObject)의 높이를 꽉 채움 */
+    padding: 30px;
+    
+    /* 핵심: 내용이 height를 넘어가면 세로 스크롤바 자동 생성 */
+    overflow-y: auto; 
+    
+    /* 스크롤바 디자인도 CSS로 꾸밀 수 있음 (웹킷 기반) */
+    scrollbar-width: thin; 
+}
+
+/* 글자 크기 제어 */
+.payment-info h2 { 
+    font-size: 28px; /* CSS로 폰트 크기 완벽 제어 가능 */
+    color: #333; 
+    margin-bottom: 20px; 
+}
+
+.payment-info p { 
+    font-size: 16px; /* 일반 텍스트 크기 */
+    color: #666; 
+    line-height: 1.6; 
+}
+    </style>
+</head>
+<body>
+
+    <!-- 
+       [수정 포인트] viewBox 높이를 조절하여 바퀴(Y: 1352~1486 구간)를 카메라 밖으로 잘라냄
+       - 기존: 0 500 626 986 (Y축 500부터 1486까지 보임)
+       - 변경: 0 500 626 852 (Y축 500부터 1352까지만 보임, 바퀴 영역 탈락)
+    -->
+    <svg width="626" height="852" viewBox="0 500 626 852" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="626" height="1486" fill="#F5F5F5"/>
+        <g id="layer">
+            <g id="truck_1">
+                <g id="body">
+                    <path id="Vector" d="M50.9152 1253.44C50.9152 1254.11 49.3652 1256.61 50.7804 1257.72C51.7239 1258.42 52.8359 1258.19 55.2957 1258.19H575.871L618.429 1257.62C620.384 1257.62 623.821 1260.44 624.865 1262.23L625.034 1352.35L572.366 1352.58L467.368 1352.48L467.47 1408.49C460.798 1409.67 455.17 1410 449.442 1408.25L448.6 1352.18L145.332 1352.45L144.827 1409.19C138.189 1409.9 132.764 1410.27 126.53 1409.09L125.553 1352.42L25.7777 1352.58L0.808713 1351.54L0 1260.04C6.70558 1256.4 13.0405 1258.76 18.6678 1258.59L47.6803 1257.58C48.1858 1252.73 46.9053 1249.97 48.1184 1246.77C48.7249 1248.96 48.051 1252.13 50.8478 1253.51L50.9152 1253.44ZM98.7977 1301.36L98.5282 1272.33L45.2879 1272.47L45.9618 1301.56L98.8314 1301.4L98.7977 1301.36ZM362.034 1304.59L361.528 1271.66L263.64 1271.83L263.404 1304.59H362.067H362.034ZM581.869 1301.03L581.7 1272.27L528.291 1272.87L527.988 1301.03H581.835H581.869Z" fill="#CCCCCC"/>
+                    
+                    <!-- 다시 원상복구 (display: none 제거) -->
+                    <path id="Vector_2" d="M572.4 1352.55C572.333 1387.98 571.962 1423.2 563.201 1458.46C561.078 1467.02 554.945 1482.14 545.578 1483.65L459.18 1484.06C449.543 1480.99 443.882 1466.55 442.871 1457.49L436.604 1401.45C429.831 1400.47 420.733 1402.76 414.095 1399.16C406.715 1395.12 403.447 1383.8 404.222 1375.89L406.176 1356.22L191.598 1356.05L190.048 1386.43C189.845 1390.1 184.69 1396.77 181.657 1398.42C173.806 1402.63 164.91 1400.27 156.149 1400.37L149.612 1464.02C146.411 1478.2 136.268 1485.27 121.914 1485.07L51.5556 1483.99C26.9909 1483.62 24.4974 1385.52 25.8453 1352.58L125.62 1352.42L126.597 1409.09C132.831 1410.27 138.29 1409.9 144.894 1409.19L145.4 1352.45L448.667 1352.18L449.51 1408.25C455.204 1410 460.865 1409.67 467.537 1408.49L467.436 1352.48L572.434 1352.58L572.4 1352.55Z" fill="#363130"/>
+                    
+                    <path id="Vector_3" d="M362.034 1304.59H263.371L263.606 1271.79L361.494 1271.63L362.034 1304.59Z" fill="#1F1B16"/>
+                    <path id="Vector_4" d="M98.7979 1301.36L45.962 1301.53L45.2881 1272.43L98.5283 1272.3L98.7979 1301.36Z" fill="#1F1B16"/>
+                    <path id="Vector_5" d="M581.869 1301.03L528.022 1301.06L528.325 1272.91L581.7 1272.3L581.869 1301.03Z" fill="#1F1B16"/>
+                    <path id="Vector_6" d="M591.91 1238.25H21.3633V1258.19H591.91V1238.25Z" fill="#1F1B18"/>
+                    
+                    <path id="Vector_7" d="M595.313 618.469H17.8926V1236.94H595.313V618.469Z" fill="white"/>
+
+                    <!-- foreignObject에 너비와 높이(width, height)가 꼭 명시되어 있어야 스크롤이 제대로 작동해! -->
+    <foreignObject x="20" y="620" width="570" height="610">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="payment-info">
+            <h2>주문/결제 정보</h2>
+            <!-- 이 내용이 610px 높이를 넘어가면 내부에 스크롤이 생겨 -->
+            <p>엄청나게 긴 텍스트 1...</p>
+            <p>엄청나게 긴 텍스트 2...</p>
+            <p>엄청나게 긴 텍스트 3...</p>
+            <div class="dummy-box">결제 수단...</div>
+            <div class="dummy-box">배송지...</div>
+            <div class="dummy-box">쿠폰 적용...</div>
+            <div class="dummy-box">동의 약관...</div>
+        </div>
+    </foreignObject>
+                </g>
+
+                <g id="door">
+                    <path id="Vector_8" d="M595.313 0H17.8926V618.469H595.313V0Z" fill="#FFFF99"/>
+                    <path id="Vector_9" d="M595.313 606.312H17.8926V618.436H595.313V606.312Z" fill="black"/>
+                </g>
+            </g>
+        </g>
+    </svg>
+
+    <div class="btn-container">
+        <button id="payBtn">42,900원 결제하기</button>
+    </div>
+
+    <script>
+        const door = document.getElementById('door');
+        const payBtn = document.getElementById('payBtn');
+        
+        let isClosed = false;
+
+        payBtn.addEventListener('click', () => {
+            isClosed = !isClosed;
+            
+            if (isClosed) {
+                door.classList.add('is-closed');
+                payBtn.innerText = "결제 취소 (문 열기)";
+                payBtn.style.backgroundColor = "#555"; 
+            } else {
+                door.classList.remove('is-closed');
+                payBtn.innerText = "42,900원 결제하기";
+                payBtn.style.backgroundColor = "#00c73c"; 
+            }
+        });
+    </script>
+</body>
+</html>
