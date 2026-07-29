@@ -2191,7 +2191,9 @@ a{
     .video-hero {
         height: 100vh; 
     }
-
+    .item-4{
+        display: none;
+    }
     /* 🍩 신메뉴 & 베스트셀러 섹션 여백 축소 */
     .newAndBest {
         padding-top: 60px;
