@@ -1,0 +1,437 @@
+/* ============================================================
+   푸터 (배경 스크롤 / 건물 / 곰돌이 캔버스 / 정보 영역)
+   ============================================================ */
+
+
+/*푸터 전체영역 */
+
+.site-footer {
+    position: relative;
+    width: 100%;
+    height: 800px; /* 높이는 배경 이미지 비율에 맞게 조절 */
+    overflow: hidden;
+    
+}
+/* ✨ 새로운 3단 경계선 (검정 - 하양 - 검정) */
+.site-footer::before {
+    content: ''; /* 가상 요소 필수 속성 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    /* 전체 테두리 높이 (흰색 영역 + 위아래 검은 줄 포함) */
+    height: 24px; 
+    box-sizing: border-box; /* 높이 계산 안에 테두리 두께를 포함시킴 */
+    
+    /* 🎯 색상 및 선 두께 설정 */
+    background-color: #ffffff; /* 가운데 들어갈 흰색 영역 */
+    border-top: 4px solid #1a1a1a; /* 위쪽 검은색(진한 회색) 줄 */
+    border-bottom: 4px solid #1a1a1a; /* 아래쪽 검은색(진한 회색) 줄 */
+    
+    /* 🎯 캔버스(곰돌이)나 배경 건물보다 무조건 위에 덮이도록 가장 높은 z-index 부여 */
+    z-index: 50; 
+}
+
+
+/* 🌳 1층: 나무 배경 무한 스크롤 */
+.footer-bg-trees {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../img/background.webp');
+
+    /* ✨ 수정 1: 가로를 무조건 4096px로 고정하고,, 가로는 원본 비율을 유지합니다 */
+    background-size: 4096px 110%; 
+    background-position: 0 bottom;
+    background-repeat: repeat-x; 
+    
+    animation: scrollTrees 40s linear infinite; 
+    z-index: 1;
+}
+
+/* 나무 배경 무한 스크롤 애니메이션 */
+@keyframes scrollTrees {
+    from { background-position: 0 bottom; }
+    /* ✨ 수정 2: -2000px 대신, 가지고 계신 이미지의 '실제 가로 픽셀 사이즈'를 적어주세요! */
+    /* (예시: 이미지 가로가 1920px이라면 -1920px로 적습니다) */
+    to { background-position: -4096px bottom; } 
+}
+/* 🏪 2층: 스토어 건물들이 지나갈 투명한 컨테이너 */
+.footer-store-building {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* 화면 전체 너비 */
+    height: 100%; /* 푸터 전체 높이 */
+    z-index: 2;
+    overflow: hidden; /* 컨테이너 밖으로 나가는 건물 숨기기 */
+    
+    /* 🎯 핵심 픽스: 이 컨테이너 자체의 배경 이미지와 애니메이션은 삭제합니다! */
+    background-image: none;
+    animation: none;
+}
+
+/* ✨ 새 클래스: 자바스크립트가 생성할 건물 개별 스타일 */
+.spawned-building {
+    position: absolute;
+    bottom: 100px;
+    /* 🎯 핵심 픽스: 모든 건물은 화면 오른쪽 바깥(100%)에서 시작합니다 */
+    left: 100%; 
+    height: auto;
+    
+    /* 원하시는 건물 크기 조절 (데이터에 따라 다르게 할 수도 있습니다) */
+    width: 1000px; /* 예시 크기 */
+    
+    background-size: contain;
+    background-position: bottom left;
+    background-repeat: no-repeat;
+    
+    /* 🎯 핵심 픽스: 움직임은 개별 건물에 적용합니다 */
+    animation: scrollBuilding 30s linear; /* 무한 루프가 아닌 1회 재생 */
+}
+/* 건물이 오른쪽에서 나타나 왼쪽 밖으로 사라지는 애니메이션 (유지) */
+@keyframes scrollBuilding {
+    from { left: 100%; } 
+    to { left: -100%; } /* 건물의 너비만큼 완전히 빠져나갈 때까지 (-100%) */
+}
+/* 🐻 3층: 곰돌이 도화지 */
+#footer-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5; /* 배경보단 위, 글자보단 아래 */
+    /* cursor: pointer; */
+}
+
+/* 🕶️ 3.5층: 텍스트 가독성을 위한 검은색 반투명 유리창 */
+.footer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* ✨ 검은색(0,0,0)에 투명도 72%(0.72) 적용 */
+    background-color: rgba(0, 0, 0, 0); 
+    
+    z-index: 8; /* 캔버스(5)와 글자(10) 사이의 공간! */
+    
+    /* 🎯 아주 중요: 이 유리가 마우스 클릭을 막지 않도록 유령 취급합니다 */
+    pointer-events: none; 
+}
+
+/* ✍️ 4층: 텍스트 정보 */
+/* =========================================
+   ✍️ 4층: 텍스트 정보 레이아웃 (CSS Grid)
+========================================= */
+.footer-ui {
+    position: relative;
+    z-index: 10;
+    
+    /* 🎯 3단 분리 마법: 왼쪽(1fr) 중앙(로고크기) 오른쪽(1fr) */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; 
+    gap: 40px;
+    
+    /* 전체 여백 조절 (위아래 80px, 좌우 100px) */
+    padding: 80px 50px; 
+    color: #ffffff;
+    font-family: 'Pretendard', sans-serif; /* 프로젝트 폰트에 맞게 수정하세요 */
+    
+    /* 배경 클릭이 도화지(캔버스)에 닿을 수 있게 통과시킴 */
+    pointer-events: none; 
+}
+
+/* 텍스트와 버튼은 다시 마우스와 상호작용할 수 있게 복구 */
+.footer-ui a,
+.footer-ui p,
+.footer-ui h2,
+.footer-ui h4,
+.footer-center img {
+    pointer-events: auto;
+}
+
+/* 📌 공통 제목 스타일 */
+.footer-ui h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* 📌 왼쪽 영역 스타일 */
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* 소셜 박스와 회사 정보 사이 간격 */
+    /* ✨ 추가: 숫자를 키울수록 글자가 더 아래로 내려갑니다 */
+    padding-top: 100px;
+}
+
+
+ /* 📌 버튼들을 감싸는 박스 */
+.social-actions-wrap {
+    display: flex;
+    gap: 12px;
+    /* ✨ 핵심 1: 자식 버튼들이 부모 높이에 맞춰 위아래로 쭈욱 늘어나는(stretch) 현상을 방지합니다 */
+    align-items: flex-start; 
+}
+
+/* 📌 개별 소셜 버튼 컴포넌트 */
+.btn-social-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 700;
+    
+    /* ✨ 핵심 2: 패딩 위아래를 조금 줄이고 가로를 넉넉히 주어 안정감을 줍니다 */
+    padding: 12px 20px; 
+    
+    /* ✨ 핵심 3: 글자가 좁아져도 아래로 떨어지면서 박스가 뚱뚱해지지 않도록 보호막을 칩니다 */
+    white-space: nowrap; 
+    
+    transition: transform 0.2s ease;
+}
+
+
+
+.btn-social-item img {
+    width: 16px; /* 아이콘 크기 살짝 다이어트 */
+    height: auto;
+    display: block;
+}
+
+.btn-social-item .btn-text {
+    font-size: 13px;
+    line-height: 1; /* 글자 높이 때문에 박스가 벌어지는 것 방지 */
+}
+
+
+
+
+
+
+
+
+
+/* 회사 정보 텍스트 */
+.footer-company p {
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0;
+    color: #e0e0e0; /* 약간 톤 다운된 흰색 */
+}
+
+.footer-company .copyright {
+    margin-top: 15px;
+    color: #a0a0a0;
+}
+
+/* 📌 가운데 영역 스타일 */
+.footer-center {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* 상단 정렬 */
+}
+
+.footer-logo {
+    width: 480px; /* 로고 크기 조절 (원하는 대로 수정하세요) */
+    height: auto;
+}
+
+/* 📌 오른쪽 영역 스타일 */
+.footer-right {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    /* ✨ 텍스트와 요소를 오른쪽 끝으로 밀착시키는 마법 */
+    align-items: flex-end; 
+    text-align: right; 
+    /* ✨ 추가: 왼쪽과 높이를 맞추기 위해 동일한 값을 줍니다 */
+    padding-top: 100px;
+}
+
+
+/* 약관 링크 */
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+/* 고객센터 텍스트 */
+.footer-cs h2 {
+    font-size: 40px;
+    font-weight: 800;
+    margin: 5px 0 15px 0;
+}
+
+.footer-cs p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+    color: #e0e0e0;
+}
+
+@media (max-width: 1280px) {
+    .footer-left {
+        gap: 24px; 
+        padding-top: 60px; /* 기존 100px에서 노트북에 맞게 업로드 */
+    }
+
+    .footer-logo{
+        width: 320px;
+    }
+    
+    /* 1280px 화면에서도 버튼 글씨가 답답하지 않게 조절 */
+    .btn-social-item .btn-text {
+        font-size: 12px;
+    }
+    .btn-social-item {
+        padding: 6px 14px;
+    }
+    .footer-ui{
+         padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+    }
+}
+
+@media (max-width: 1024px) {
+    /* 푸터 중앙 로고 크기 축소 */
+
+    .site-footer{
+        height: 640px;
+    }
+
+    .footer-ui{
+         padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+    }
+    .footer-logo {
+        width: 200px; 
+    }
+
+    /* 양옆 텍스트 영역 상단 여백 조절 */
+    .footer-left,
+    .footer-right {
+        padding-top: 20px; /* 로고가 작아졌으므로 텍스트 시작 위치도 위로 살짝 당김 */
+        gap: 30px; /* 내부 요소들(소셜 버튼, 회사 정보 등) 사이의 간격 축소 */
+    }
+
+    /* 오른쪽 고객센터 전화번호 크기 축소 */
+    .footer-cs h2 {
+        font-size: 28px; /* 기존 40px -> 28px */
+        margin: 5px 0 10px 0;
+    }
+}
+
+@media (max-width: 767px) {
+    /* -----------------footer */
+    /* 1. 푸터 전체 높이 및 배경 컨테이너 */
+    .site-footer {
+        height: auto; /* 고정 800px 높이를 해제하여 내용물만큼 늘어나게 함 */
+        min-height: 70vh;
+        padding-bottom: 50px; /* 바닥 여백 */
+    }
+
+    /* 2. 3단 그리드를 세로 1줄 플렉스 박스로 변환 */
+    .footer-ui {
+        display: flex;
+        flex-direction: column; /* 가로(Row)에서 세로(Column)로 눕힘 */
+        padding: 60px 30px; /* 모바일 화면에 맞게 좌우 여백 축소 */
+        gap: 20px; /* 각 구역(로고, 정보, SNS) 사이의 시원한 간격 */
+    }
+
+    /* 🍩 [순서 1] 중앙 로고를 맨 위로 & 왼쪽 정렬 */
+    .footer-center {
+        order: 1; /* 배치 순서 1번 */
+        justify-content: flex-start; /* 기존 가운데 정렬에서 왼쪽 정렬로 */
+        padding: 0;
+    }
+    
+    .footer-logo {
+        width: 160px; /* 모바일 화면에 맞게 로고 사이즈 다이어트 */
+    }
+
+    /* ☎️ [순서 2] 우측 고객센터를 로고 밑으로 & 왼쪽 정렬 */
+    .footer-right {
+        order: 2; /* 배치 순서 2번 */
+        align-items: flex-start; /* 요소들을 왼쪽으로 밀착 */
+        text-align: left; /* 글자도 왼쪽 정렬 */
+        padding-top: 0; /* PC에서 맞췄던 상단 여백 제거 */
+        gap: 20px;
+    }
+
+    .footer-cs h2 {
+        font-size: 26px; /* 전화번호 크기 축소 */
+        margin-bottom: 5px;
+    }
+
+    /* 🏢 [순서 3] 좌측 회사정보 및 소셜 버튼을 맨 아래로 */
+    .footer-left {
+        order: 3; /* 배치 순서 3번 */
+        align-items: flex-start; /* 왼쪽 밀착 */
+        text-align: left; 
+        padding-top: 0; /* 여백 제거 */
+        gap: 24px;
+    }
+
+    /* 📱 소셜 버튼 래퍼 줄바꿈 허용 */
+    .social-actions-wrap {
+        flex-wrap: wrap; /* 화면이 좁을 경우 버튼이 다음 줄로 예쁘게 떨어지게 함 */
+        gap: 10px;
+    }
+
+    .btn-social-item {
+        padding: 10px 16px; /* 모바일 터치에 적합하게 사이즈 조절 */
+    }
+    
+    /* ... 기존의 다른 767px 모바일 코드들 유지 ... */
+
+    /* 🏪 모바일 환경에서의 스토어 건물 크기 및 배치 제어 */
+    .spawned-building {
+        /* ✨ 1. 원하는 크기(720px ~ 1000px) 중 가장 자연스러운 크기로 고정 */
+        width: 800px !important; /* 720px~1000px 사이 중 원하시는 값으로 자유롭게 조절해 보세요! */
+        height: auto !important; 
+        
+        /* ✨ 2. 요청하신 대로 바닥 여백을 80px로 올려서 균형을 잡습니다 */
+        bottom: 80px !important; 
+        
+        /* ✨ 3. 덩치가 커졌으므로 화면 왼쪽 끝(-1000px)까지 확실하게 밀어내기 위해 모바일 전용 애니메이션 작동 */
+        animation: scrollBuildingMobile 22s linear !important; 
+    }
+}
+
+/* =======================================================
+   ✨ 새로 추가: 건물이 완전히 화면 왼쪽 바깥으로 나가는 것을 보장하는 모바일 키프레임
+======================================================= */
+@keyframes scrollBuildingMobile {
+    from { 
+        left: 100%; 
+    }
+    to { 
+        /* 🚨 핵심: 건물의 최대 크기가 1000px에 달하므로, 
+           최소 -1000px 지점까지 완전히 밀어내야 삐져나온 꼬리까지 다 숨겨진 뒤 자연스럽게 삭제됩니다. */
+        left: -1100px; 
+    }
+}

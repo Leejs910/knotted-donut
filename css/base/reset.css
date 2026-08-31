@@ -1,0 +1,43 @@
+/* ============================================================
+   reset / 폰트 / 전역 기본값
+   ============================================================ */
+
+body, h1, p, ul { margin: 0; padding: 0; list-style: none; }
+
+body {
+    overflow-x:hidden;
+    width: 100%;
+}
+
+html{
+    width: 100%;
+    box-sizing: inherit;
+    scroll-behavior: smooth;
+    height: fit-content;
+    overflow-x: hidden;
+}
+
+@font-face {
+        font-family: 'recoleta'; 
+        src: url('../../font/RecoletaAlt\ Black.woff2') format('woff2');
+        font-weight: bold;
+        font-style: normal;
+    }
+
+@font-face {
+    font-family: 'Caveat';
+    src: url('../../font/Caveat-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+body { font-family: sans-serif; background: #f8fafc; }
+* {
+    box-sizing: border-box; }
+a{
+    /* 링크 밑줄 제거 */
+    text-decoration: none;
+    color:inherit;
+}

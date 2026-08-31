@@ -1,0 +1,83 @@
+/* ============================================================
+   물결 디바이더 (섹션 경계)
+   ============================================================ */
+
+/* --- 물결을 가두는 틀 --- */
+.wave-container {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 30px; /* SVG 이미지의 실제 높이에 맞게 조절하세요 */
+    overflow: hidden; /* 화면 밖으로 나가는 물결을 숨김 */
+    z-index: 10;
+}
+
+/* --- 실제로 움직이는 물결 무늬 --- */
+.wave-divider {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    /* 💡 핵심 1: 화면 너비(100%)에 패턴 1개 너비(예: 1000px)를 더해줍니다. */
+    width: calc(100% + 1000px); 
+    height: 100%;
+    
+    /* SVG 배경 설정 */
+    /* background-image: url('../../img/waves.svg'); 첨부하신 SVG 경로 */
+    /* background-repeat: repeat-x; 가로로 무한 반복 */
+    /* background-size: 1000px 100%; 💡 핵심 2: 패턴 1개의 고정 너비 지정 */
+    /* 🎨 1. 원하시는 다음 섹션의 노란색을 여기에 적어줍니다! 
+          이 배경색이 그대로 물결의 색상이 됩니다. */
+          
+          /* 🎭 2. 기존 background-image 대신 mask 속성으로 SVG를 불러옵니다. */
+          -webkit-mask-image: url('../../img/waves.svg');
+          mask-image: url('../../img/waves.svg');
+          
+          /* 📦 3. 마스크가 가로로 무한 반복되도록 기존 설정을 그대로 옮겨옵니다. */
+          -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+          -webkit-mask-size: 1000px 100%;
+          mask-size: 1000px 100%;
+          /* GPU 가속을 이용한 무한 애니메이션 (5초 동안 일정한 속도로) */
+          animation: waveMove 5s linear infinite;
+          /* 💡 브라우저에게 "이 요소는 곧 transform이 변할 거니까 메모리를 미리 할당해 둬!" 라고 귀띔해 줍니다. */
+          will-change: transform;
+    /* ✨ 물결 색상도 부드럽게 전환되도록 추가 */
+    transition: background-color 0.4s ease;
+        }
+
+.color-pink {
+    background-color: #FFC9E1;
+}
+        
+.wave-top {
+    bottom: -8px; /* 천장에 붙임 */
+    /* ✨ 꿀팁: 천장에 붙일 때는 물결 모양이 거꾸로 매달려야 자연스럽습니다.
+       이 코드 한 줄이면 SVG 파일을 새로 만들 필요 없이 위아래가 완벽히 뒤집힙니다! */
+    /* transform: scaleY(-1); */
+}
+.wave-bottom {
+    /* 무지개(4)보다 뒤로 가도록 z-index를 낮춥니다 */
+    z-index: 3 ;
+    bottom: -8px;
+}
+
+/* --- 색상 조절 --- */
+.color-yellow {
+    background-color: #FFF09F; /* 노란색 배경에 맞춤 */
+}
+
+.color-blue {
+    background-color: #BDE1EF; /* 파란색 배경에 맞춤 */
+}
+
+@keyframes waveMove {
+    0% { 
+        /* 시작 위치 */
+        transform: translate3d(0, 0, 0); 
+    }
+    100% { 
+        /* 💡 핵심 3: 정확히 패턴 1개 너비(-1000px)만큼만 이동 후 리셋 */
+        transform: translate3d(-1000px, 0, 0); 
+    }
+}

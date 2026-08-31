@@ -1,0 +1,29 @@
+/* ============================================================
+   공용 keyframes (여러 섹션에서 함께 쓰는 애니메이션)
+   ============================================================ */
+
+/* --- 🌟 둥둥 떠다니는 효과 (Keyframes) --- */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); } /* 위로 15px 올라감 */
+    100% { transform: translateY(0px); }  /* 다시 제자리 */
+}
+
+@keyframes sway {
+    0% {rotate: -10deg;}
+    50% {rotate: 20deg;}
+    100% {rotate: -10deg;}
+}
+
+
+@keyframes spin {
+    0% { rotate: 0deg; }
+    100% { rotate: 360deg; }
+}
+
+
+/* 🌟 화면 너비보다 더 멀리(-120vw) 날아가서 완전히 사라지도록 설정 */
+@keyframes flyCloud {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-120vw, 0, 0); } 
+}
