@@ -1,6 +1,9 @@
 // 신메뉴 / 베스트셀러 섹션 — 토글 버튼 + 도넛 카드 스와이퍼 + 테마 색상 전환
+// 카드를 클릭하면 상세 모달이 열립니다.
 // 필요 요소: .mySwiper, #btn-new, #btn-best, .toggle-badge, .newAndBest, .wave-top .wave-divider
 // 필요 라이브러리: Swiper
+
+import { openDonutModal } from './donutModal.js';
 
 const cardThemes = [
     { bgImg: './img/cardPink.png', themeColor: '#FFAFC8' },
@@ -57,6 +60,10 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
         },
     });
 
+    // 현재 화면에 깔려 있는 카드 목록.
+    // 슬라이드의 data-card-index가 이 배열의 몇 번째인지를 가리킵니다.
+    let currentCards = [];
+
     // 카드를 렌더링하는 함수
     function renderDonutCards(dataArray) {
         cardSwiper.removeAllSlides();
@@ -66,13 +73,16 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
         while (safeDataArray.length && safeDataArray.length < 10) {
             safeDataArray = [...safeDataArray, ...dataArray];
         }
+        currentCards = safeDataArray;
 
         const newSlides = safeDataArray.map((item, index) => {
             // 인덱스를 테마 개수로 나눈 '나머지'로 4가지 색을 무한 순환시킵니다.
             const theme = cardThemes[index % cardThemes.length];
 
+            // data-card-index를 심어두면, 스와이퍼가 무한루프용으로 카드를 복제해도
+            // 복제본까지 이 번호를 그대로 물려받습니다. → 클릭한 카드를 정확히 찾아낼 수 있음
             return `
-        <div class="swiper-slide">
+        <div class="swiper-slide" data-card-index="${index}">
             <div class="card-inner">
                 <img src="${theme.bgImg}" class="card-bg" alt="배경">
                 <img src="${item.imgUrl}" class="donut-pic" alt="${item.title}">
@@ -88,6 +98,27 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
         cardSwiper.update();
         cardSwiper.slideToLoop(0, 0);
     }
+
+    // ----- 카드 클릭 → 상세 모달 -----
+    // 슬라이드 하나하나에 거는 대신 스와이퍼 전체에 한 번만 겁니다(이벤트 위임).
+    // 이렇게 해야 카드를 다시 그리거나 스와이퍼가 복제본을 만들어도 계속 동작합니다.
+    document.querySelector('.mySwiper').addEventListener('click', (e) => {
+        const slide = e.target.closest('.swiper-slide[data-card-index]');
+        if (!slide) return;
+
+        const item = currentCards[Number(slide.dataset.cardIndex)];
+        if (!item) return;
+
+        // 카드에 칠해진 것과 똑같은 테마를 모달에 그대로 넘겨줍니다.
+        const theme = cardThemes[Number(slide.dataset.cardIndex) % cardThemes.length];
+
+        // 모달이 떠 있는 동안 뒤에서 카드가 계속 넘어가면 정신없으니 잠시 멈춥니다.
+        cardSwiper.autoplay?.stop();
+
+        openDonutModal(item, theme, {
+            onClose: () => cardSwiper.autoplay?.start()
+        });
+    });
 
     // ----- 토글 버튼 -----
     const btnNew = document.getElementById('btn-new');

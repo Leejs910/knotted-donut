@@ -1,0 +1,237 @@
+/* ============================================================
+   🍩 도넛 상세 3D 카드 모달
+   색상과 카드 이미지는 JS가 아래 두 변수에 넣어줍니다.
+     --modal-color     : 클릭한 카드의 themeColor
+     --modal-card-img  : 클릭한 카드의 배경 이미지
+   ============================================================ */
+
+/* 기본적으로 모달은 숨겨둠 (투명도 0) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+
+    /* JS가 덮어쓰기 전까지 쓰일 기본값 */
+    --modal-color: #79A3DB;
+    --modal-card-img: url('../../img/cardBlue.png');
+}
+
+/* active 클래스가 붙으면 모달이 나타남 */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 🚨 카드 쏠림 현상 해결: 배경과 카드를 각각 분리해서 정중앙에 꽂아줍니다 */
+/* 컨테이너는 화면 전체 크기만 잡아줍니다 */
+.modal-container {
+    position: relative;
+    width: 100vw; height: 100vh;
+}
+
+/* 🚨 배경 원형: top, left, transform을 이용해 화면 정중앙에 완벽히 고정 */
+.modal-circle-bg {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 90vmin; max-width: 750px;
+    height: 90vmin; max-height: 750px;
+
+    /* translate(-50%, -50%)가 핵심입니다. 자신의 크기 절반만큼 다시 당겨서 중앙을 맞춥니다. */
+    transform: translate(-50%, -50%) scale(0.9);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.active .modal-circle-bg {
+    /* active 시에도 translate(-50%, -50%)는 유지해야 중앙이 안 틀어집니다 */
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* 텍스트 크기 비례 확대 및 한글 색상을 카드 테마색으로 */
+.circle-fill { fill: var(--modal-color); }
+.modal-text-eng { font-size: 54px; font-weight: 900; fill: var(--modal-color); letter-spacing: 4px; }
+.modal-text-kor { font-size: 48px; font-weight: 900; fill: var(--modal-color); letter-spacing: 6px; }
+
+/* 🚨 3D 카드 씬: 배경과 똑같은 방식으로 정중앙에 고정 */
+.modal-card-scene {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px; height: 390px;
+    perspective: 1000px;
+    z-index: 10;
+    /* ✨ 카드 위치 미세 조정 (마이너스 값을 주면 왼쪽으로 이동합니다) */
+    margin-left: -20px;
+}
+
+.modal-card-flipper {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d; /* 자식 요소도 3D 공간에 배치 */
+
+    /* 🚀 핵심: 초기에는 -180도(뒷면)로 돌아가 있고, 밑으로 꺼져있음 */
+    transform: translateY(50px) rotateY(-180deg);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1.2) 0.1s;
+}
+
+.modal-overlay.active .modal-card-flipper {
+    /* 모달이 열리면 0도(앞면)로 핑그르르 돌면서 제자리로 솟아오름! */
+    transform: translateY(0) rotateY(0deg);
+}
+
+/* 앞면, 뒷면 공통 속성 */
+.modal-card-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden; /* 뒷면일 때는 안 보이게 숨김 처리 */
+}
+
+/* 카드 뒷면 디자인 */
+.modal-card-back {
+    background: var(--modal-color);
+    transform: rotateY(180deg); /* 거울처럼 뒤집어 둠 */
+    display: flex; justify-content: center; align-items: center;
+    color: white; font-size: 24px; font-weight: bold;
+}
+
+/* 카드 앞면 디자인 */
+.modal-card-front {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 15px 20px;
+    text-align: center;
+
+    /* ✨ 클릭한 카드의 이미지를 그대로 씁니다 (JS가 --modal-card-img를 채워줌) */
+    background-image: var(--modal-card-img);
+    background-size: 100% 100%;   /* 카드 안을 꽉 채움 */
+    background-position: center;  /* 이미지가 한쪽으로 쏠리지 않게 */
+    background-repeat: no-repeat; /* 바둑판 반복 방지 */
+    justify-content: flex-end;
+}
+
+.modal-card-front img {
+    /* 1. 이미지 크기 */
+    width: 200px;
+
+    /* 2. 텍스트 박스와 겹치도록 아래쪽 여백을 마이너스로 설정 */
+    margin-bottom: -45px;
+
+    /* 3. 🚀 겹쳤을 때 도넛이 텍스트 박스 뒤로 숨지 않고 위로 올라오게 만듦 */
+    position: relative;
+    z-index: 2;
+
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+}
+
+/* ✨ 텍스트 박스 전체 영역 */
+.modal-desc-box {
+    width: 100%;
+    color: #FFF;
+    background: var(--modal-color);
+    padding: 0 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* 메인 설명과 하단 정보 사이의 간격 */
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    border: 3px solid #FFF;
+    /* ✨ 겹쳤을 때 도넛보다 항상 뒤에 있도록 설정 */
+    position: relative;
+    z-index: 1;
+}
+
+/* ✨ 메인 설명 텍스트 (중앙 정렬, 굵게) */
+.desc-main {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: center;
+    word-break: keep-all; /* 한국어 단어가 중간에 쪼개지지 않도록 방지 */
+}
+
+/* ✨ 하단 정보 그룹 전체 (좌측 정렬) */
+.desc-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* 알레르기 항목과 원산지 항목 사이의 간격 */
+    text-align: left;
+}
+
+/* 개별 정보 묶음 (라벨 + 데이터) */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* 제목과 내용 사이의 좁은 간격 */
+    margin-block-end: 1em;
+    padding-left: 4px;
+}
+
+/* 고정 라벨 (알레르기 유발 요인, 원산지 정보) */
+.info-label {
+    font-size: 11px;
+    font-weight: 900;
+}
+
+/* 실제 데이터 값 */
+.info-value {
+    font-size: 9px;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* ✨ 반시계 방향 회전 애니메이션 정의 */
+@keyframes spinCCW {
+    100% { transform: rotate(-360deg); }
+}
+
+/* 텍스트 그룹에 회전 애니메이션 적용 */
+.rotating-text {
+    transform-origin: 400px 400px; /* SVG 도화지의 정중앙(400, 400)을 축으로 설정 */
+    animation: spinCCW 30s linear infinite;
+}
+
+/* 닫기 버튼 */
+.modal-close {
+    position: absolute;
+    top: 50%; left: 50%;
+
+    /* 중앙을 기준으로 우측 상단으로 끌어당김 */
+    transform: translate(240px, -320px);
+
+    background: none; border: none;
+    color: #FFF; font-size: 45px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 20; /* 버튼이 배경에 묻히지 않도록 최상단 배치 */
+    transition: transform 0.2s;
+}
+
+/* (선택) X 버튼에 마우스를 올렸을 때 살짝 커지는 효과 */
+.modal-close:hover {
+    transform: translate(240px, -320px) scale(1.2);
+}
+
+/* =========================================
+   📱 좁은 화면 대응
+   고정값(240px / -320px)을 그대로 두면 버튼이 화면 밖으로 나가버립니다.
+   원(90vmin)의 크기에 비례해서 따라오도록 vmin으로 바꿔줍니다.
+========================================= */
+@media (max-width: 767px) {
+    .modal-close {
+        font-size: 36px;
+        transform: translate(36vmin, -42vmin);
+    }
+    .modal-close:hover {
+        transform: translate(36vmin, -42vmin) scale(1.2);
+    }
+
+    /* 원이 작아지는데 카드는 260px 그대로라서, 카드가 원형 글자를 거의 다 가립니다.
+       데스크톱과 비슷한 비율이 되도록 카드만 조금 줄여줍니다.
+       (숫자를 키우면 카드가 커지고, 줄이면 글자가 더 잘 보입니다) */
+    .modal-card-scene {
+        transform: translate(-50%, -50%) scale(0.72);
+    }
+}

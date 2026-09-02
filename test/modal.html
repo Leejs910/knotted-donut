@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <style> 
+        /* =========================================
+   🍩 3D 카드 모달 스타일
+========================================= */
+/* 기본적으로 모달은 숨겨둠 (투명도 0) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999;
+    opacity: 0; 
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    
+    /* JS에서 넣어줄 기본 컬러 변수 (임시) */
+    --modal-color: #79A3DB; 
+}
+
+/* active 클래스가 붙으면 모달이 나타남 */
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 🚨 카드 쏠림 현상 해결: 배경과 카드를 각각 분리해서 정중앙에 꽂아줍니다 */
+/* 컨테이너는 화면 전체 크기만 잡아줍니다 */
+.modal-container {
+    position: relative;
+    width: 100vw; height: 100vh;
+}
+
+/* 🚨 배경 원형: top, left, transform을 이용해 화면 정중앙에 완벽히 고정 */
+.modal-circle-bg {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 90vmin; max-width: 750px; 
+    height: 90vmin; max-height: 750px;
+    
+    /* translate(-50%, -50%)가 핵심입니다. 자신의 크기 절반만큼 다시 당겨서 중앙을 맞춥니다. */
+    transform: translate(-50%, -50%) scale(0.9);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.active .modal-circle-bg {
+    /* active 시에도 translate(-50%, -50%)는 유지해야 중앙이 안 틀어집니다 */
+    transform: translate(-50%, -50%) scale(1);
+}
+/* 텍스트 크기 비례 확대 및 한글 색상 파란색(var(--modal-color))으로 변경 */
+.circle-fill { fill: var(--modal-color); }
+.modal-text-eng { font-size: 54px; font-weight: 900; fill: var(--modal-color); letter-spacing: 4px;}
+.modal-text-kor { font-size: 48px; font-weight: 900; fill: var(--modal-color); letter-spacing: 6px; } /* ✨ 흰색에서 파란색으로 변경 완료 */
+
+/* 🚨 3D 카드 씬: 배경과 똑같은 방식으로 정중앙에 고정 */
+.modal-card-scene {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px; height: 390px; 
+    perspective: 1000px;
+    z-index: 10;
+    /* ✨ 카드 위치 미세 조정 (마이너스 값을 주면 왼쪽으로 이동합니다) */
+    margin-left: -20px; /* 👈 이 숫자를 조절해 완벽한 위치를 찾아보세요! */
+
+}
+.modal-card-flipper {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d; /* 자식 요소도 3D 공간에 배치 */
+    
+    /* 🚀 핵심: 초기에는 -180도(뒷면)로 돌아가 있고, 밑으로 꺼져있음 */
+    transform: translateY(50px) rotateY(-180deg);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1.2) 0.1s; /* 살짝 통통 튀는 텐션 */
+}
+
+.modal-overlay.active .modal-card-flipper {
+    /* 모달이 열리면 0도(앞면)로 핑그르르 돌면서 제자리로 솟아오름! */
+    transform: translateY(0) rotateY(0deg); 
+}
+
+/* 앞면, 뒷면 공통 속성 */
+.modal-card-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden; /* 뒷면일 때는 안 보이게 숨김 처리 */
+    /* border-radius: 12px; */
+    /* box-shadow: 0 10px 30px rgba(0,0,0,0.2); */
+    /* border: 4px solid #FFF; */
+
+ 
+}
+
+/* 카드 뒷면 디자인 */
+.modal-card-back {
+    background: var(--modal-color);
+    transform: rotateY(180deg); /* 거울처럼 뒤집어 둠 */
+    display: flex; justify-content: center; align-items: center;
+    color: white; font-size: 24px; font-weight: bold;
+}
+
+/* 카드 앞면 디자인 (제공해주신 이미지 참고) */
+.modal-card-front {
+    /* background: #E8F0FE; 연한 파스텔 배경 (필요시 JS로 제어 가능) */
+    /* background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.4) 0, rgba(255,255,255,0.4) 10px, transparent 10px, transparent 20px); */
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 15px 20px;
+     text-align: center;
+       /* ✨ cardBlue.png 이미지를 꽉 차게 넣는 4가지 핵심 속성 */
+    background-image: url('./img/cardBlue.png'); /* 프로젝트 폴더 경로에 맞게 수정하세요 */
+    /* ✨ 수정: cover 대신 가로 100%, 세로 100%로 강제 맞춤 */
+    background-size: 100% 100%;       /* 비율을 유지하며 카드 안을 꽉 채움 */
+    background-position: center;  /* 이미지가 한쪽으로 쏠리지 않고 정중앙에 오도록 정렬 */
+    background-repeat: no-repeat; /* 이미지 바둑판 반복 방지 */
+    justify-content: flex-end;
+}
+
+/* .modal-card-front img { width: 140px; margin-bottom: 20px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); } */
+.modal-card-front img { 
+    /* 1. 이미지 크기 확대 (원하는 만큼 숫자를 조절하세요) */
+    width: 200px; 
+    
+    /* 2. 중앙으로 내리기 위해 위쪽 여백 추가 */
+    /* margin-top: 20px;  */
+    
+    /* 3. 텍스트 박스와 겹치도록 아래쪽 여백을 마이너스로 설정 */
+    margin-bottom: -45px; 
+    
+    /* 4. 🚀 핵심: 겹쳤을 때 도넛이 텍스트 박스 뒤로 숨지 않고 위로 올라오게 만듦 */
+    position: relative;
+    z-index: 2; 
+    
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3)); 
+}
+
+/* ✨ 텍스트 박스 전체 영역 */
+.modal-desc-box {
+    width: 100%;
+    color: #FFF;
+    background: var(--modal-color); /* 카드 배경 이미지가 보이도록 투명하게 */
+    padding: 0 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* 메인 설명과 하단 정보 사이의 간격 */
+    /* margin-top: -10px;  */
+    /* 도넛 이미지와의 간격 미세 조정 */
+    border-radius: 8px; 
+    font-size: 11px; 
+    line-height: 1.4;
+    border: 3px solid #FFF;
+    /* ✨ 겹쳤을 때 도넛보다 항상 뒤에 있도록 설정 */
+    position: relative;
+    z-index: 1;
+}
+
+/* ✨ 메인 설명 텍스트 (중앙 정렬, 굵게) */
+.desc-main {
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-align: center;
+    word-break: keep-all; /* 한국어 단어가 중간에 쪼개지지 않도록 방지 */
+}
+
+/* ✨ 하단 정보 그룹 전체 (좌측 정렬) */
+.desc-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* 알레르기 항목과 원산지 항목 사이의 간격 */
+    text-align: left; 
+}
+
+/* 개별 정보 묶음 (라벨 + 데이터) */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* 제목과 내용 사이의 좁은 간격 */
+    margin-block-end:1em;
+    padding-left: 4px;
+}
+
+/* 고정 라벨 (알레르기 유발 요인, 원산지 정보) */
+.info-label {
+    font-size: 11px;
+    font-weight: 900;
+}
+
+/* 실제 데이터 값 */
+.info-value {
+    font-size: 9px;
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+
+.allergy-text { margin-top: 10px; font-size: 9px; opacity: 0.8;}
+/* ✨ 반시계 방향 회전 애니메이션 정의 */
+@keyframes spinCCW {
+    100% { transform: rotate(-360deg); }
+}
+
+/* 텍스트 그룹에 회전 애니메이션 적용 */
+.rotating-text {
+    transform-origin: 400px 400px; /* SVG 도화지의 정중앙(400, 400)을 축으로 설정 */
+    animation: spinCCW 30s linear infinite; /* 30초 동안 일정한 속도로 영원히 1바퀴 회전 */
+}
+/* 닫기 버튼 */
+.modal-close {
+    position: absolute; 
+    top: 50%; left: 50%;
+    
+    /* 중앙을 기준으로 우측 상단으로 끌어당김 (카드가 가리지 않는 선까지 안쪽으로 이동) */
+    transform: translate(240px, -320px); 
+    
+    background: none; border: none; 
+    color: #FFF; font-size: 45px; 
+    cursor: pointer;
+    z-index: 20; /* 버튼이 배경에 묻히지 않도록 최상단 배치 */
+    transition: transform 0.2s; /* 마우스 올렸을 때의 반응을 위해 추가 */
+}
+/* (선택) X 버튼에 마우스를 올렸을 때 살짝 커지는 효과 */
+.modal-close:hover {
+    transform: translate(240px, -320px) scale(1.2);
+}
+    </style>
+</head>
+<body>
+    <!-- 🍩 도넛 상세 3D 모달 -->
+<div id="donut-modal" class="modal-overlay">
+    <div class="modal-container">
+        
+<!-- 1. SVG 원형 배경 및 둥근 텍스트 -->
+        <svg class="modal-circle-bg" viewBox="0 0 800 800">
+            <!-- 배경 원과 하얀 링은 고정 (회전 안 함) -->
+            <circle cx="400" cy="400" r="380" class="circle-fill" />
+            <circle cx="400" cy="400" r="280" fill="transparent" stroke="#FFFFFF" stroke-width="110" />
+            
+            <!-- ✨ 이 안의 요소들만 통째로 반시계 방향으로 회전합니다 -->
+            <g class="rotating-text">
+                <path id="top-curve" d="M 120 400 A 280 280 0 0 1 680 400" fill="transparent" />
+                <path id="bottom-curve" d="M 110 400 A 290 290 0 0 0 690 400" fill="transparent" />
+                
+                <text class="modal-text-eng" dy="20">
+                    <textPath href="#top-curve" startOffset="50%" text-anchor="middle">EARL GREY DONUT</textPath>
+                </text>
+                <text class="modal-text-kor">
+                    <textPath href="#bottom-curve" startOffset="50%" text-anchor="middle">얼그레이 도넛</textPath>
+                </text>
+            </g>
+        </svg>
+
+        <!-- 2. 3D 카드 씬 -->
+        <div class="modal-card-scene">
+            <div class="modal-card-flipper">
+                <!-- 카드 뒷면 (배경색과 동일) -->
+                <div class="modal-card-face modal-card-back">
+                    <div class="back-logo">Knotted</div>
+                </div>
+                <!-- 카드 앞면 (상세 정보) -->
+                <div class="modal-card-face modal-card-front">
+                    <img id="modal-donut-img" src="" alt="도넛 이미지">
+                    <!-- 기존 .modal-desc-box 안쪽 교체 -->
+                    <div class="modal-desc-box">
+                        <!-- 1. 메인 설명 (중앙 정렬) -->
+                        <p id="modal-desc" class="desc-main"></p>
+                        
+                        <!-- 2. 하단 정보 그룹 (좌측 정렬) -->
+                        <div class="desc-info-group">
+                            <div class="info-item">
+                                <span class="info-label">알레르기 유발 요인</span>
+                                <span id="modal-allergy" class="info-value"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">원산지 정보</span>
+                                <span id="modal-origin" class="info-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 닫기 버튼 -->
+        <button id="modal-close-btn" class="modal-close">×</button>
+    </div>
+</div>
+
+    <script>
+        // 카드 리스트 렌더링 할 때 (기존 코드의 일부 수정)
+// 카드를 생성할 때 클릭 이벤트를 달아줍니다.
+function renderDonutCards() {
+    // ... 기존 렌더링 로직 ...
+    
+    // 예시: 스와이퍼 슬라이드(카드) 요소들에 클릭 이벤트 추가
+    const swiperSlides = document.querySelectorAll('.donut-card-slide'); // 클래스명은 실제 쓰신 것에 맞추세요
+    
+    swiperSlides.forEach(slide => {
+        slide.addEventListener('click', (e) => {
+            // 1. 해당 카드의 도넛 ID 가져오기 (HTML에 data-id 속성을 심어두었다고 가정)
+            const donutId = slide.dataset.id; 
+            const selectedDonut = donutData.find(d => d.id == donutId);
+            
+            // 2. 카드의 배경색(클래스) 추출하기
+            // 예: class="card-bg blue" 라면 윈도우 계산된 색상을 빼오거나 클래스를 체크
+            const cardBgColor = window.getComputedStyle(slide).backgroundColor; 
+            // (또는 특정 색상 코드를 직접 넘겨줘도 됩니다)
+
+            // 3. 모달 열기 함수 실행
+            openDonutModal(selectedDonut, cardBgColor);
+        });
+    });
+}
+
+// =========================================
+// 🍩 모달 제어 함수
+// =========================================
+const modalOverlay = document.getElementById('donut-modal');
+const btnClose = document.getElementById('modal-close-btn');
+
+function openDonutModal(data, color) {
+    if (!modalOverlay || !data) return;
+
+    // 1. 클릭한 카드의 색상을 CSS 변수(--modal-color)로 덮어씌움! (완벽한 색상 동기화)
+    modalOverlay.style.setProperty('--modal-color', color);
+
+    // 2. 데이터 뿌려주기
+    // SVG 원형 텍스트
+    document.querySelector('.modal-text-eng textPath').textContent = data.engTitle;
+    document.querySelector('.modal-text-kor textPath').textContent = data.title;
+    
+    // 3D 카드 앞면 정보
+    document.getElementById('modal-donut-img').src = data.imgUrl;
+    document.getElementById('modal-desc').innerHTML = data.desc;
+    document.getElementById('modal-allergy').textContent = data.allergy;
+    // ✨ 새로 추가: 원산지 정보 매칭
+    document.getElementById('modal-origin').textContent = data.origin;
+
+    // 수정: 브라우저가 애니메이션 시작점을 인식할 수 있도록 0.05초 딜레이를 줍니다.
+    setTimeout(() => {
+        modalOverlay.classList.add('active');
+    }, 50);
+}
+
+// 닫기 이벤트 (X 버튼이나 배경 어두운 곳 클릭 시 닫힘)
+function closeModal(e) {
+    if (e.target === modalOverlay || e.target === btnClose) {
+        modalOverlay.classList.remove('active');
+    }
+}
+
+if(modalOverlay) {
+    modalOverlay.addEventListener('click', closeModal);
+    btnClose.addEventListener('click', closeModal);
+}
+
+        // 파일이 열리자마자 바로 애니메이션이 실행되도록 강제 호출
+        openDonutModal({ engTitle: "Earl Grey Donut", title: "얼그레이 도넛", imgUrl: "./img/2.png", desc: "우유 생크림이 듬뿍 들어있는 부드러운 시트에 노란 노티드 스마일을 담아낸 케이크", allergy: "밀, 우유, 계란, 대두, 돼지고기 함유" ,origin:"빵류[가공유크림1(독일산), 전란액(국산)], 식물성크림[팜핵경화유(인도네시아산, 말레이시아산), 쇼트닝{대두경화유(프랑스산)}], 가공유크림(독일산)"}, "#79A3DB");
+    </script>
+</body>
+</html>
