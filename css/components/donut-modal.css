@@ -64,7 +64,7 @@
     perspective: 1000px;
     z-index: 10;
     /* ✨ 카드 위치 미세 조정 (마이너스 값을 주면 왼쪽으로 이동합니다) */
-    margin-left: -20px;
+    margin-left: 0px;
 }
 
 .modal-card-flipper {
@@ -113,10 +113,10 @@
 
 .modal-card-front img {
     /* 1. 이미지 크기 */
-    width: 200px;
+    width: 180px;
 
     /* 2. 텍스트 박스와 겹치도록 아래쪽 여백을 마이너스로 설정 */
-    margin-bottom: -45px;
+    margin-bottom: -10px;
 
     /* 3. 🚀 겹쳤을 때 도넛이 텍스트 박스 뒤로 숨지 않고 위로 올라오게 만듦 */
     position: relative;
@@ -125,7 +125,6 @@
     filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
 }
 
-/* ✨ 텍스트 박스 전체 영역 */
 .modal-desc-box {
     width: 100%;
     color: #FFF;
