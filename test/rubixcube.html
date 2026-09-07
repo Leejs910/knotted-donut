@@ -29,7 +29,7 @@
     </div>
     </div>
 
-    <script>
+    <!-- <script>
 
         // (기존 변수들 아래에 추가)
     // 🖼️ 1. 1~16번까지의 이미지를 담을 배열 준비
@@ -42,12 +42,7 @@
         images.push(img);
     }
 
-
-
-
-
-
-        document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById('checker-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -60,6 +55,8 @@
         '#ffcce0', // 핑크
         '#6ef2cc'  // 민트
     ];
+
+    
 
     // 기존의 고정된 cellSize = 120; 은 지우고 아래 변수들로 교체합니다!
     const VISIBLE_ROWS = 3; // 🌈 화면 상하에 딱 맞게 보여줄 줄(행)의 개수 (예: 3줄)
@@ -203,7 +200,161 @@
     init();
     draw();
 });
+    </script> -->
+<script>
+    // 🖼️ 1. 1~16번까지의 이미지를 담을 배열 준비
+    const images = [];
+    const IMAGE_COUNT = 16;
+
+    for (let i = 1; i <= IMAGE_COUNT; i++) {
+        const img = new Image();
+        img.src = `./img/${i}.png`; 
+        images.push(img);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById('checker-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // ✨ 수정 포인트 1: 기존 colors 배열을 지우고, 새로운 타일 디자인 변수 추가
+        const BG_COLOR = '#F3CFC7';   // 💖 배경 간격(선) 색상
+        const TILE_COLOR = '#F0F1E3'; // 🤍 둥근 타일 색상
+        const GAP = 3;       // 타일 사이의 간격 (px)
+        const RADIUS = 16;   // 모서리 둥근 정도 (px)
+
+        const VISIBLE_ROWS = 3; 
+        let cellSize = 0;       
+        const ANIM_FRAMES = 25;
+        
+        let grid = [];
+        let cols = 0;
+        let rows = 0;
+
+        let animState = 'idle'; 
+        let nextAnim = 'row';   
+        let targetIndex = 0;    
+        let direction = 1;      
+        let offset = 0;         
+
+        // ----------------------------------------------------
+        function init() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            cellSize = canvas.height / VISIBLE_ROWS;
+            cols = Math.ceil(canvas.width / cellSize) + 2;
+            rows = VISIBLE_ROWS + 2;
+
+            grid = [];
+            for (let r = 0; r < rows; r++) {
+                let row = [];
+                for (let c = 0; c < cols; c++) {
+                    row.push({
+                        // ✨ 수정 포인트 2: 랜덤 색상 대신 고정된 TILE_COLOR 넣기
+                        color: TILE_COLOR,
+                        img: images[Math.floor(Math.random() * images.length)]
+                    });
+                }
+                grid.push(row);
+            }
+        }
+
+        // 🔄 실제 데이터를 한 칸씩 밀어주는 함수 (변경 없음)
+        function shiftGridData() {
+            if (animState === 'row') {
+                if (direction === 1) {
+                    grid[targetIndex].unshift(grid[targetIndex].pop());
+                } else {
+                    grid[targetIndex].push(grid[targetIndex].shift());
+                }
+            } else if (animState === 'col') {
+                if (direction === 1) {
+                    let lastColor = grid[rows - 1][targetIndex];
+                    for (let r = rows - 1; r > 0; r--) grid[r][targetIndex] = grid[r - 1][targetIndex];
+                    grid[0][targetIndex] = lastColor;
+                } else {
+                    let firstColor = grid[0][targetIndex];
+                    for (let r = 0; r < rows - 1; r++) grid[r][targetIndex] = grid[r + 1][targetIndex];
+                    grid[rows - 1][targetIndex] = firstColor;
+                }
+            }
+        }
+
+        // 🎬 애니메이션 프레임 그리기
+        function draw() {
+            // ✨ 수정 포인트 3-1: 캔버스를 투명하게 지우는 대신 배경색(선 색상)으로 꽉 채웁니다.
+            ctx.fillStyle = BG_COLOR;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 움직임 픽셀 업데이트
+            if (animState !== 'idle') {
+                offset += (cellSize / ANIM_FRAMES); 
+                
+                if (offset >= cellSize) {
+                    shiftGridData(); 
+                    offset = 0;
+                    animState = 'idle'; 
+                }
+            }
+
+            if (animState === 'idle') {
+                animState = nextAnim; 
+                nextAnim = (nextAnim === 'row') ? 'col' : 'row'; 
+                
+                targetIndex = (animState === 'row') 
+                    ? Math.floor(Math.random() * rows) 
+                    : Math.floor(Math.random() * cols);
+                direction = Math.random() > 0.5 ? 1 : -1;
+            }
+
+            // 🎨 캔버스에 사각형과 이미지 그리기
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    let x = (c - 1) * cellSize; 
+                    let y = (r - 1) * cellSize;
+
+                    if (animState === 'row' && r === targetIndex) {
+                        x += offset * direction;
+                    } else if (animState === 'col' && c === targetIndex) {
+                        y += offset * direction;
+                    }
+
+                    let cellData = grid[r][c];
+
+                    // ✨ 수정 포인트 3-2: 간격(GAP)을 반영한 타일 크기와 위치 계산
+                    let tileX = x + GAP;
+                    let tileY = y + GAP;
+                    let tileSize = cellSize - (GAP * 2);
+
+                    // ✨ 수정 포인트 3-3: fillRect 대신 roundRect를 사용해 둥근 사각형 그리기
+                    ctx.fillStyle = cellData.color;
+                    ctx.beginPath();
+                    ctx.roundRect(tileX, tileY, tileSize, tileSize, RADIUS);
+                    ctx.fill();
+
+                    // 중앙에 이미지 그리기 
+                    if (cellData.img && cellData.img.complete) {
+                        // 이미지는 타일 크기(tileSize)를 기준으로 100% 채웁니다
+                        let imgDrawSize = tileSize * 1; 
+                        
+                        let imgX = tileX + (tileSize - imgDrawSize) / 2;
+                        let imgY = tileY + (tileSize - imgDrawSize) / 2;
+
+                        ctx.drawImage(cellData.img, imgX, imgY, imgDrawSize, imgDrawSize);
+                    }
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        
+        init();
+        draw();
+    });
     </script>
+
 </body>
 
 </html>

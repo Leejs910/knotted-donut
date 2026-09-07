@@ -16,5 +16,9 @@ export function initSmoothScroll() {
     }
     requestAnimationFrame(raf);
 
+    // 모달처럼 "열려 있는 동안 뒷배경 스크롤을 막아야 하는" 기능들이
+    // window.lenis.stop() / start()로 잠글 수 있도록 밖에서도 닿게 열어둡니다.
+    window.lenis = lenis;
+
     return lenis;
 }
