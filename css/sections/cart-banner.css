@@ -1,0 +1,95 @@
+/* ============================================================
+   장바구니 상단 가방 배너 (cart.html 헤더)
+   SVG는 js/modules/cartBanner.js 가 문서 안에 펼쳐 넣습니다.
+   ============================================================ */
+
+.cart-banner {
+    position: relative;
+    width: 100%;
+
+    /* 피그마 기준 1920 x 502.23 (= 너비의 26.2%) */
+    aspect-ratio: 1920 / 502.23;
+    min-height: 220px;
+
+    overflow: hidden;
+    background-color: #8FD6A8; /* SVG가 뜨기 전에도 위쪽 초록이 보이도록 */
+}
+
+.cart-banner-art,
+.cart-banner-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* SVG 파일을 못 찾았을 때 자리만 비어 보이지 않게 */
+.cart-banner-art.is-missing::after {
+    content: 'img/cartBanner.svg 를 넣어 주세요';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* ------------------------------------------------------------
+   🛍️ 가운데 가방(middlebeg)이 2~3번 커졌다 작아지는 등장 애니메이션
+   화면에 들어올 때 딱 한 번만 재생합니다. (JS가 .is-popping 을 한 번 붙임)
+------------------------------------------------------------ */
+/* ⚠️ 기준점을 fill-box + center bottom 으로 잡았더니 브라우저에 따라 아예
+   먹지 않았습니다. SVG 의 기본값인 view-box 를 쓰고 좌표를 직접 적어 줍니다.
+   (숫자는 피그마에서 middlebeg 가 놓인 자리 — 가로 중앙 955.5, 바닥 459.6.
+    js/modules/cartBanner.js 가 실제 getBBox() 값으로 한 번 더 정확히 맞춥니다) */
+.middlebeg {
+    transform-box: view-box;
+    transform-origin: 955.5px 459.6px;
+    will-change: transform;
+}
+
+/* 0.35s 늦게 시작합니다. 페이지가 뜨자마자 바로 재생하면 첫 페인트에 묻혀
+   못 보고 지나치기 쉽습니다. both 라서 기다리는 동안엔 원래 크기로 가만히 있습니다. */
+.middlebeg.is-popping {
+    animation: begPop 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both;
+}
+
+/* 세 번 통통 튀되 갈수록 작아져서 자연스럽게 멈춥니다. */
+@keyframes begPop {
+    0%   { transform: scale(1); }
+    12%  { transform: scale(1.16); }
+    24%  { transform: scale(0.97); }
+    38%  { transform: scale(1.10); }
+    50%  { transform: scale(0.98); }
+    62%  { transform: scale(1.05); }
+    74%  { transform: scale(0.99); }
+    100% { transform: scale(1); }
+}
+
+/* 움직임을 불편해하는 사용자(OS의 '동작 줄이기' 설정)에게는
+   아예 끄는 대신, 같은 '세 번 통통' 리듬을 폭만 줄여서 보여 줍니다.
+   ⚠️ 여기서 animation: none 으로 꺼버렸더니 해당 설정이 켜진 환경에서는
+      가방이 전혀 움직이지 않았습니다. 완전히 끄지 말 것. */
+@keyframes begPopSoft {
+    0%   { transform: scale(1); }
+    12%  { transform: scale(1.07); }
+    24%  { transform: scale(1); }
+    38%  { transform: scale(1.05); }
+    50%  { transform: scale(1); }
+    62%  { transform: scale(1.03); }
+    74%  { transform: scale(1); }
+    100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .middlebeg.is-popping {
+        animation: begPopSoft 1.6s ease-out 0.35s both;
+    }
+}
+
+@media (max-width: 767px) {
+    .cart-banner {
+        min-height: 160px;
+    }
+}

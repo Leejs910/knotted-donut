@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="./css/components/donut-card.css">
     <link rel="stylesheet" href="./css/components/donut-modal.css">
     <link rel="stylesheet" href="./css/components/product-card.css">
+    <link rel="stylesheet" href="./css/components/shop-item-modal.css">
 
     <!-- 섹션: 그 페이지에 있는 것만 -->
     <link rel="stylesheet" href="./css/sections/hero.css">
@@ -45,14 +46,14 @@
         </a>
 
         <h1 class="logo">
-            <a>
+            <a href="./index.html">
                 <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
                 <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
             </a>
         </h1>
 
         <ul class="nav-links">
-            <li><a href="#">SHOP</a></li>
+            <li><a href="./onlineShop.html">SHOP</a></li>
             <li><a href="#">STORE</a></li>
             <li><a href="#">MENU</a></li>
             <li><a href="#">BRAND</a></li>
@@ -68,17 +69,6 @@
                 <span></span>
                 <span></span>
             </button>
-
-            <a href="#" id="sound-toggle-btn" class="sound-toggle btn-sound-outline is-on">
-                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <line x1="23" y1="9" x2="17" y2="15" class="icon-off"></line>
-                    <line x1="17" y1="9" x2="23" y2="15" class="icon-off"></line>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="icon-on"></path>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="icon-on"></path>
-                </svg>
-            </a>
         </div>
     </nav>
 
@@ -101,7 +91,9 @@
 
     <header class="video-hero">
         <video autoplay muted loop playsinline poster="./img/donut_fallback.png" class="bg-video">
-            <source src="./video/donutVideo.mp4" type="video/mp4">
+            <!-- 정방향 → 역방향이 이어지는 부메랑 영상이라, loop 만으로
+                 끊김 없이 왔다 갔다 반복됩니다. (원본: video/donutVideo.mp4) -->
+            <source src="./video/donutVideo_boomerang.mp4" type="video/mp4">
             브라우저가 비디오를 지원하지 않습니다.
         </video>
         <div class="decorations">

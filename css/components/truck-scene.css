@@ -1,0 +1,205 @@
+/* ============================================================
+   🚚 결제 트럭 연출
+   test/truckAnime.html 의 scene-container 를 페이지에 맞게 옮긴 것입니다.
+
+   순서: ① 노란 짐칸 문이 위에서 내려와 결제 화면을 덮음
+         ② 문이 닫히면 트럭 무대로 교체 (닫힌 문 = 트럭 뒷면이라 이어져 보임)
+         ③ 뒷면 → 옆면으로 프레임이 넘어가며 카메라가 줌아웃
+         ④ 오른쪽으로 달려 나감 → 결제완료 화면
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   ① 위에서 내려오는 짐칸 문
+   트럭 뒷면(#FFFF99 + 검은 아래 띠)과 같은 모양이라야 ②에서 안 튑니다.
+------------------------------------------------------------ */
+/* 원본(test/truckAnime.html)과 같이 top: -96% 로 두어,
+   평소에도 문의 아래쪽 4%와 검은 띠가 결제 화면 위쪽에 살짝 걸쳐 보입니다.
+   (셔터가 올라가 있는 모습) */
+.truck-door {
+    position: absolute;
+    top: -96%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 30;
+
+    background-color: #FFFF99;
+    border-bottom: 10px solid #333;
+
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.truck-door.is-closed {
+    transform: translateY(96%);
+    pointer-events: auto; /* 닫힌 뒤엔 아래 폼을 못 누르게 막습니다 */
+}
+
+/* ------------------------------------------------------------
+   ② 트럭 무대
+------------------------------------------------------------ */
+.truck-stage {
+    /* 🎚️ 연출 속도 — 여기 네 값만 바꾸면 전부 따라갑니다.
+       (바퀴 회전·차체 덜컹임의 시작 시점도 자동으로 맞춰집니다)
+
+         --zoom-dur  : 카메라가 줌아웃하는 시간
+         --hold      : 줌아웃이 끝난 뒤 멈춰 서 있는 시간
+         --drive-dur : 오른쪽으로 달려 나가는 시간
+         --drive-to  : 얼마나 멀리 나갈지 (화면 밖까지 확실히 빠지도록)
+
+       출발 시점 = --zoom-dur + --hold 로 자동 계산됩니다. */
+    --zoom-dur: 0.231s;
+    --hold: 0.5s;
+    --drive-dur: 2s;
+    --drive-to: 150vw;
+
+    position: relative;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+
+    /* SVG viewBox(515 x 270)와 같은 비율 — 트럭이 무대를 꽉 채웁니다 */
+    aspect-ratio: 515 / 270;
+
+    /* ⚠️ 여기에 overflow: hidden 을 주면 트럭이 이 1080px 상자 안에 갇혀
+       화면 끝까지 못 가고 도중에 사라집니다.
+       잘라내는 역할은 바깥의 .checkout(화면 폭 전체)이 맡습니다. */
+    overflow: visible;
+    background-color: transparent;
+}
+
+/* SVG 는 기본적으로 viewBox 밖을 잘라냅니다.
+   트럭이 무대 밖으로 달려 나가려면 이것도 풀어 줘야 합니다. */
+.truck-svg svg {
+    overflow: visible;
+}
+
+.truck-stage[hidden] {
+    display: none;
+}
+
+/* ⚠️ 무대를 결제 섹션 '위에 겹쳐' 띄웁니다.
+   예전처럼 섹션을 숨기고 무대를 아래에 따로 두면, 섹션이 사라지는 순간
+   페이지 높이가 줄어 화면이 확 튀면서 애니메이션을 놓쳤습니다. */
+.truck-stage-band {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #fff;
+    padding: 24px;
+}
+
+.truck-stage-band[hidden] {
+    display: none;
+}
+
+.truck-svg,
+.truck-svg svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* 기본 상태: 1번 프레임(트럭 뒷면)만 보임 */
+#truck1 { opacity: 1; }
+
+#truck2, #truck3, #truck4,
+#truck5, #truck6, #truck7 { opacity: 0; }
+
+/* ------------------------------------------------------------
+   ③ 카메라 워킹 + ④ 주행
+   ⚠️ 원본(test/truckAnime.html)에서 고친 점
+      · 줌아웃이 0.231s 에 끝나는데 주행 시작이 1s 라 0.77초 동안 트럭이
+        멈춰 있었습니다 → 0.53s 로 당겨 '한 박자 쉬고 출발'로 다듬었습니다.
+      · 바퀴 회전과 몸통 바운스가 0.8s 부터라 트럭이 서 있는 동안 바퀴만
+        돌았습니다 → 출발 시점(0.53s)에 맞췄습니다.
+      · 주행 끝점이 80vw 라 넓은 화면에서 트럭 꼬리가 남았습니다 → 150vw.
+------------------------------------------------------------ */
+.start-animation #truckStripe {
+    transform-origin: 50% 50%;
+    animation:
+        zoomOutAndPan var(--zoom-dur) cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+        driveAway var(--drive-dur) ease-in calc(var(--zoom-dur) + var(--hold)) forwards;
+}
+
+@keyframes zoomOutAndPan {
+    0%   { transform: translate(30px, 34px) scale(2.8); } /* 문에 딱 붙은 뒷면 */
+    14%  { transform: translate(60px, 15px) scale(2.5); }
+    100% { transform: translate(80px, 10px) scale(1); }   /* 줌아웃 완료 */
+}
+
+@keyframes driveAway {
+    0%   { transform: translate(80px, 10px) scale(1); }
+    100% { transform: translate(var(--drive-to), 10px) scale(1); }
+}
+
+/* 뒷면 → 옆면으로 넘어가는 7장짜리 프레임 애니메이션 */
+.start-animation #truck1 { animation: showF1 var(--zoom-dur) 0s forwards; }
+.start-animation #truck2 { animation: showF2 var(--zoom-dur) 0s forwards; }
+.start-animation #truck3 { animation: showF3 var(--zoom-dur) 0s forwards; }
+.start-animation #truck4 { animation: showF4 var(--zoom-dur) 0s forwards; }
+.start-animation #truck5 { animation: showF5 var(--zoom-dur) 0s forwards; }
+.start-animation #truck6 { animation: showF6 var(--zoom-dur) 0s forwards; }
+.start-animation #truck7 { animation: showF7 var(--zoom-dur) 0s forwards; }
+
+@keyframes showF1 { 0%, 14.2% { opacity: 1; } 14.3%, 100% { opacity: 0; } }
+@keyframes showF2 { 0%, 14.2% { opacity: 0; } 14.3%, 28.5% { opacity: 1; } 28.6%, 100% { opacity: 0; } }
+@keyframes showF3 { 0%, 28.5% { opacity: 0; } 28.6%, 42.8% { opacity: 1; } 42.9%, 100% { opacity: 0; } }
+@keyframes showF4 { 0%, 42.8% { opacity: 0; } 42.9%, 57.1% { opacity: 1; } 57.2%, 100% { opacity: 0; } }
+@keyframes showF5 { 0%, 57.1% { opacity: 0; } 57.2%, 71.4% { opacity: 1; } 71.5%, 100% { opacity: 0; } }
+@keyframes showF6 { 0%, 71.4% { opacity: 0; } 71.5%, 85.7% { opacity: 1; } 85.8%, 100% { opacity: 0; } }
+@keyframes showF7 { 0%, 85.7% { opacity: 0; } 85.8%, 100% { opacity: 1; } }
+
+/* 바퀴 — 출발할 때부터 돕니다 */
+.start-animation #truck7 #tireBack_2,
+.start-animation #truck7 #tireFront_2,
+.start-animation #truck7 #tireBack_1,
+.start-animation #truck7 #tireMid,
+.start-animation #truck7 #tireFront_1 {
+    /* 도형의 정중앙을 회전축으로 */
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: spinTire 0.4s linear calc(var(--zoom-dur) + var(--hold)) infinite;
+}
+
+@keyframes spinTire {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 몸통 — 달리는 동안 쫀득하게 흔들립니다 */
+.start-animation #truck7 #truckbody,
+.start-animation #truck7 #truckLogo {
+    animation: truckJelly 0.35s ease-in-out calc(var(--zoom-dur) + var(--hold)) infinite;
+}
+
+@keyframes truckJelly {
+    0%, 100% { transform: translateY(0); }
+    35% { transform: translateY(-5px); }  /* 경쾌하게 튀어오름 */
+    65% { transform: translateY(0); }     /* 바닥에 닿음 */
+    80% { transform: translateY(2.5px); } /* 서스펜션이 눌리는 느낌 */
+}
+
+/* 움직임을 불편해하는 사용자에게는 흔들림만 빼고 주행은 짧게 보여 줍니다.
+   ⚠️ 전부 꺼버리면 결제완료로 넘어가는 흐름이 끊깁니다. */
+/* ⚠️ 예전에는 여기서 zoomOutAndPan / driveAway 를 통째로 다시 선언해서,
+      '동작 줄이기'가 켜진 환경에서는 위의 변수를 아무리 바꿔도
+      반영되지 않았습니다. 이제 타이밍은 건드리지 않고
+      멀미를 유발하는 차체 흔들림만 뺍니다. */
+@media (prefers-reduced-motion: reduce) {
+    .start-animation #truck7 #truckbody,
+    .start-animation #truck7 #truckLogo {
+        animation: none;
+    }
+}
+
+@media (max-width: 767px) {
+    .truck-stage-band {
+        padding: 24px 16px;
+    }
+}

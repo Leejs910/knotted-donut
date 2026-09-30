@@ -1,0 +1,104 @@
+/* ============================================================
+   퍼즐 타일 배너 (onlineShop.html 헤더)
+   캔버스는 js/modules/puzzleBanner.js 가 그립니다.
+   ============================================================ */
+
+.puzzle {
+    position: relative;
+    width: 100%;
+
+    /* 피그마 기준 1920 x 730 (= 너비의 38%).
+       화면이 좁아져도 배너가 너무 납작해지지 않도록 최소 높이를 둡니다. */
+    height: clamp(280px, 38vw, 730px);
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* 아래 여백도 피그마 비율(151 / 1920 ≒ 7.9%)을 따라갑니다. */
+    padding: 0 50px clamp(20px, 7.9vw, 151px);
+    color: #fff;
+
+    /* puzzle 배너와 main 사이 경계선. border-box 라 배너 높이에는 영향이 없고,
+       #puzzle-canvas/.puzzle-overlay 는 inset:0 이라 border 바깥이라 가려지지 않습니다. */
+    border-bottom: 3px solid #3E2723;
+}
+
+/* 타일 애니메이션이 그려지는 캔버스 — 배너 전체를 덮습니다. */
+#puzzle-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* 🌓 타일 색(#F0F1E3)이 밝아서 상단 네비게이션(흰 글씨)이 묻힙니다.
+   ⚠️ 예전에는 배너 '아래쪽'도 어둡게 깔았는데, 그 그라데이션이 메인 섹션과
+      맞닿는 곳에서 흐린 가로줄처럼 보여서 위쪽에만 남겼습니다.
+      아래쪽 어둡게 하기는 스크롤에 반응하는 .puzzle-overlay 가 대신합니다. */
+.puzzle::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.30) 0%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, 0) 100%);
+}
+
+/* 🕶️ 스크롤을 내리는 순간 깔리는 검은 막.
+   푸터의 .footer-overlay 와 똑같이 처음엔 완전 투명이고,
+   js/modules/puzzleOverlay.js 가 GSAP으로 rgba(0,0,0,0.5)까지 채웁니다. */
+.puzzle-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+
+    /* 하단(카테고리 탭 알약과 맞닿는 경계)에서는 점점 옅어지도록 마스킹합니다.
+       마스킹이 없으면 스크롤로 막이 짙어졌을 때 탭 바로 위 타일들만 뿌옇게
+       눌린 채로 경계선이 뚝 끊겨 보입니다. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 75%, transparent 100%);
+}
+
+.puzzle-title {
+    position: relative;
+    z-index: 3; /* 어둡게 까는 층(1, 2)보다 위 */
+    margin: 0 0 0 -6px; /* 글자의 시각적 여백을 상쇄해 로고와 왼쪽 끝을 맞춤 */
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-weight: 900;
+
+    /* 기존보다 작게 조정 */
+    font-size: clamp(32px, 6.5vw, 128px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #fff;
+    white-space: nowrap;
+
+    /* 스크롤 전(막이 아직 투명할 때)에도 밝은 타일 위에서 글자가 읽히도록
+       부드러운 그림자를 겹쳐 둡니다. */
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.35),
+        0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 1280px) {
+    /* mainNav 가 30px 패딩으로 줄어드는 구간에 맞춰 puzzle 도 동일하게 좁힘 */
+    .puzzle {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .puzzle {
+        padding: 0 20px clamp(16px, 7.9vw, 151px);
+    }
+}

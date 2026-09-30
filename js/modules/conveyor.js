@@ -1,6 +1,10 @@
 // 온라인 샵 컨베이어 벨트 — 상품 스와이퍼 + 재생/일시정지/배속 컨트롤러
+// 카드를 누르면 onlineShop.html 과 똑같은 상품 상세 모달이 열립니다.
 // 필요 요소: .trail-swiper, .trail-track, #btn-ff, #btn-play, #btn-pause, #btn-rew
+// 필요 CSS: css/components/shop-item-modal.css
 // 필요 라이브러리: Swiper
+
+import { openShopItemModal } from './shopItemModal.js';
 
 const boxThemes = [
     { bgImg: './img/boxPink.png', themeColor: '#FFAFC8' },
@@ -162,6 +166,10 @@ export function initConveyor({ data = [] } = {}) {
     });
 
     // ----- 트레일러 카드 렌더링 -----
+    // 클릭한 슬라이드가 어떤 상품인지 찾으려면 '불린 뒤'의 배열이 필요합니다.
+    // (아래 safeDataArray 와 같은 배열 — data-card-index 가 이 배열의 위치를 가리킵니다)
+    let currentItems = [];
+
     function renderTrailerCards(dataArray) {
         trailSwiper.removeAllSlides();
 
@@ -170,6 +178,7 @@ export function initConveyor({ data = [] } = {}) {
         while (safeDataArray.length && safeDataArray.length < 10) {
             safeDataArray = [...safeDataArray, ...dataArray];
         }
+        currentItems = safeDataArray;
 
         const newSlides = safeDataArray.map((item, index) => {
             // 4개의 테마를 순서대로 무한 반복 배정
@@ -179,7 +188,7 @@ export function initConveyor({ data = [] } = {}) {
             const formattedPrice = Number(item.price).toLocaleString('ko-KR') + '원';
 
             return `
-        <div class="swiper-slide">
+        <div class="swiper-slide" data-card-index="${index}">
             <div class="product-bundle">
 
                 <div class="product-card" style="border-color: ${theme.themeColor};">
@@ -205,6 +214,27 @@ export function initConveyor({ data = [] } = {}) {
     }
 
     renderTrailerCards(data);
+
+    // ----- 카드 클릭 → 상품 상세 모달 -----
+    // 루프 모드라 Swiper 가 슬라이드를 복제하고 순서도 바꿉니다.
+    // 그래서 카드마다 리스너를 다는 대신, 컨테이너에서 한 번만 받아
+    // data-card-index 로 어떤 상품인지 찾습니다. (복제된 슬라이드도 이 값을 그대로 물려받습니다)
+    document.querySelector('.trail-swiper').addEventListener('click', (e) => {
+        const slide = e.target.closest('.swiper-slide[data-card-index]');
+        if (!slide) return;
+
+        const item = currentItems[Number(slide.dataset.cardIndex)];
+        if (!item) return;
+
+        // 모달이 열려 있는 동안 벨트를 세우고, 닫히면 원래 모드로 되돌립니다.
+        // (사용자가 일시정지 상태로 두고 눌렀다면 닫은 뒤에도 그대로 멈춰 있습니다)
+        const modeBeforeModal = currentMode;
+        changeConveyorState('pause');
+
+        openShopItemModal(item, {
+            onClose: () => changeConveyorState(modeBeforeModal || 'play')
+        });
+    });
 
     // 렌더링 직후 꺼져버린 모터에 강제 시동을 겁니다.
     // (브라우저가 상자를 다 그릴 때까지 0.1초 기다린 뒤 출발)

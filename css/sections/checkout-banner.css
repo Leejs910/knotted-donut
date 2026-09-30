@@ -1,0 +1,150 @@
+/* ============================================================
+   주문 / 결제 상단 배너 (checkout.html 헤더)
+   SVG는 js/modules/checkoutBanner.js 가 문서 안에 펼쳐 넣습니다.
+   제목과 어두운 막은 onlineShop.html 의 .puzzle 배너와 같은 규칙을 씁니다.
+   ============================================================ */
+
+.checkout-banner {
+    position: relative;
+    width: 100%;
+
+    /* .puzzle 과 같은 비율로 맞춰 두 페이지의 배너 인상이 통일되게 합니다. */
+    height: clamp(280px, 34vw, 650px);
+
+    overflow: hidden;
+    background-color: #FFF09F; /* SVG가 뜨기 전에도 보이는 바탕색 */
+
+    /* 아래로 내려오는 트럭 짐칸 문(#FFFF99)과 배너 색이 비슷해서
+       경계가 안 보였습니다. 진한 선으로 확실히 끊어 줍니다. */
+    border-bottom: 3px solid #3E2723;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* 제목 위치도 .puzzle-title 과 동일 */
+    padding: 0 50px clamp(20px, 7.9vw, 151px);
+}
+
+/* 🎚️ 그림 크기 — width 값만 바꾸면 됩니다 (가운데 정렬은 그대로 유지됩니다).
+   100% 로 두면 배너를 꽉 채우고, 줄이면 양옆으로 배너 바탕색(#FFF09F)이 보입니다. */
+/* 🎚️ 그림 크기 — width 값만 바꾸면 됩니다.
+   ⚠️ 상자를 SVG 원본 비율(1920:1013)로 맞춰 두는 게 핵심입니다.
+      예전처럼 상자를 배너 높이에 억지로 늘이면(top:0; bottom:0),
+      모바일처럼 배너가 세로로 긴 화면에서 그림의 양옆이 잘려 나갑니다. */
+.checkout-banner-art {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 80%;
+    aspect-ratio: 1920 / 1013; /* checkoutBanner.svg 원본 비율 */
+    height: auto;
+
+    z-index: 0;
+}
+
+/* ⚠️ 여기에 .checkout-banner-art 를 같이 적으면 위에서 정한 width(80%)를
+   100% 로 덮어써 버립니다. 안쪽 svg 에만 적용하세요. */
+.checkout-banner-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* SVG 파일을 못 찾았을 때 자리만 비어 보이지 않게 */
+.checkout-banner-art.is-missing::after {
+    content: 'img/checkoutBanner.svg 를 넣어 주세요';
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* 🌓 위쪽만 살짝 어둡게 — 흰 글씨 네비게이션이 묻히지 않게 합니다.
+   (.puzzle::after 와 같은 규칙. 아래쪽은 깔지 않습니다 — 본문과 맞닿는
+    곳에 흐린 가로줄처럼 보이기 때문입니다) */
+.checkout-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.30) 0%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, 0) 100%);
+}
+
+/* 🕶️ 스크롤을 내리는 순간 깔리는 검은 막
+   (onlineShop.html 의 .puzzle-overlay 와 같은 방식 — js/modules/bannerOverlay.js) */
+.checkout-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+/* 🏷️ 배너 제목 — .puzzle-title 과 같은 크기·위치 규칙 */
+.checkout-banner-title {
+    position: relative;
+    z-index: 3; /* 어두운 막(1, 2)보다 위 */
+    margin: 0;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-weight: 900;
+    font-size: clamp(40px, 9.06vw, 174px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #fff;
+    white-space: nowrap;
+
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.35),
+        0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* ------------------------------------------------------------
+   🐰 토끼가 책상 밑에서 위로 올라오는 등장 애니메이션
+   index.html 의 .product-bundle:hover .product-card 와 같은 곡선을 씁니다.
+   화면에 들어올 때 딱 한 번만 재생합니다.
+------------------------------------------------------------ */
+.bunny {
+    /* translate 만 쓰므로 기준점은 중요하지 않지만,
+       브라우저마다 다른 fill-box 를 피하려고 기본값을 명시해 둡니다. */
+    transform-box: view-box;
+    will-change: transform;
+
+    /* js/modules/checkoutBanner.js 가 getBBox() 로 실제 키를 재서 덮어씁니다. */
+    --bunny-travel: 523px;
+}
+
+.bunny.is-rising {
+    animation: bunnyRise 0.9s cubic-bezier(0.25, 0.8, 0.25, 1) 0.35s both;
+}
+
+@keyframes bunnyRise {
+    from { transform: translateY(var(--bunny-travel)); } /* 책상 밑 */
+    to   { transform: translateY(0); }                   /* 원래 자리 */
+}
+
+/* 움직임을 불편해하는 사용자(OS의 '동작 줄이기')에게는
+   아예 끄지 않고, 짧고 잔잔하게 같은 동작을 보여 줍니다.
+   ⚠️ animation: none 으로 꺼버리면 해당 설정에서 전혀 움직이지 않습니다. */
+@media (prefers-reduced-motion: reduce) {
+    .bunny.is-rising {
+        animation: bunnyRise 0.6s ease-out 0.2s both;
+    }
+}
+
+@media (max-width: 767px) {
+    .checkout-banner {
+        padding: 0 20px clamp(16px, 7.9vw, 151px);
+    }
+}

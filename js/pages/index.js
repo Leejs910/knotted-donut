@@ -10,7 +10,6 @@ import { newMenuData, bestMenuData, cardData, instaData } from '../data/donutDat
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
-import { initSoundToggle } from '../modules/soundToggle.js';
 import { initFooterBear } from '../modules/footerBear.js';
 import { initBuildingSpawner } from '../modules/buildingSpawner.js';
 import { initFooterOverlay } from '../modules/footerOverlay.js';
@@ -28,7 +27,6 @@ import { initInstaSection } from '../modules/instaSwiper.js';
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
-initSoundToggle();
 
 // 히어로
 initShootingStars();

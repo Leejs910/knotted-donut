@@ -23,20 +23,54 @@ export const bestMenuData = [
 ];
 
 
-// 3. 트레일러 컨테이너내 카드 데이터 
+// 3. 트레일러 컨테이너내 카드 데이터
+//    category: onlineShop.html의 카테고리 탭(data-category)과 짝이 맞아야 필터가 걸립니다.
+//              'food'(푸드) | 'living'(리빙) | 'bulk'(대량주문)
 
 export const cardData = [
-    {title: "[노티드] 슈가베어 동화책 쿠키 선물세트",imgUrl: "./img_menu/c_01.webp",imgUrl2: "./img_menu/cc_01.webp",price:"27900"},
-    {title: "[노티드] 고단백질 케이크바 2종 (12개입)",imgUrl: "./img_menu/c_02.webp",imgUrl2: "./img_menu/cc_02.webp",price:"19900"},
-    {title: "[노티드X네추럴라이즈] 유산균 꾸미 비타 젤리",imgUrl: "./img_menu/c_03.webp",imgUrl2: "./img_menu/cc_03.webp",price:"19900"},
-    {title: "[노티드X그로미미] 유아 흡착 식판",imgUrl: "./img_menu/c_04.webp",imgUrl2: "./img_menu/cc_04.webp",price:"18400"},
-    {title: "[노티드] 시그니처 말차라떼 롤케이크",imgUrl: "./img_menu/c_05.webp",imgUrl2: "./img_menu/cc_05.webp",price:"19900"},
-    {title: "[노티드] 두바이 쪽득쿠키(3개입)",imgUrl: "./img_menu/c_06.webp",imgUrl2: "./img_menu/cc_06.webp",price:"18900"},
-    {title: "[노티드] 우유크림 폭탄떡(4개입)",imgUrl: "./img_menu/c_07.webp",imgUrl2: "./img_menu/cc_07.webp",price:"12800"},
-    {title: "[노티드] 버터떡 선물박스(5개입)",imgUrl: "./img_menu/c_08.webp",imgUrl2: "./img_menu/cc_08.webp",price:"12900"},
-    
+    {title: "[노티드] 슈가베어 동화책 쿠키 선물세트",imgUrl: "./img_menu/c_01.webp",imgUrl2: "./img_menu/cc_01.webp",price:"27900",category:"bulk"},
+    {title: "[노티드] 고단백질 케이크바 2종 (12개입)",imgUrl: "./img_menu/c_02.webp",imgUrl2: "./img_menu/cc_02.webp",price:"19900",category:"bulk"},
+    {title: "[노티드X네추럴라이즈] 유산균 꾸미 비타 젤리",imgUrl: "./img_menu/c_03.webp",imgUrl2: "./img_menu/cc_03.webp",price:"19900",category:"living"},
+    {title: "[노티드X그로미미] 유아 흡착 식판",imgUrl: "./img_menu/c_04.webp",imgUrl2: "./img_menu/cc_04.webp",price:"18400",category:"living"},
+    {title: "[노티드] 시그니처 말차라떼 롤케이크",imgUrl: "./img_menu/c_05.webp",imgUrl2: "./img_menu/cc_05.webp",price:"19900",category:"food"},
+    {title: "[노티드] 두바이 쪽득쿠키(3개입)",imgUrl: "./img_menu/c_06.webp",imgUrl2: "./img_menu/cc_06.webp",price:"18900",category:"food"},
+    {title: "[노티드] 우유크림 폭탄떡(4개입)",imgUrl: "./img_menu/c_07.webp",imgUrl2: "./img_menu/cc_07.webp",price:"12800",category:"food"},
+    {title: "[노티드] 버터떡 선물박스(5개입)",imgUrl: "./img_menu/c_08.webp",imgUrl2: "./img_menu/cc_08.webp",price:"12900",category:"bulk"},
+
 ]
 
+
+// 4-1. 주문 관련 공통 규칙 — cart.html 과 checkout.html 이 같은 값을 써야
+//      두 화면의 금액이 어긋나지 않습니다.
+export const orderRules = {
+    SHIPPING_FEE: 3000,       // 기본 배송비
+    FREE_SHIPPING_OVER: 50000, // 이 금액을 넘으면 배송비 무료
+    POINT_RATE: 0.03,         // 적립률 3% (할인 후 상품금액 기준)
+    OWNED_POINT: 3000,        // 보유 포인트 (로그인 기능이 없어 고정값)
+};
+
+// 4. 장바구니(cart.html) 담긴 상품
+//    price        : 실제 결제가
+//    originalPrice: 할인 전 가격 (없으면 할인 표시가 나오지 않습니다)
+//    freeShipping : true 면 카드에 '무료 택배' 배지가 붙습니다
+//    soldOut      : true 면 품절 표시 + '품절 삭제' 버튼의 대상이 됩니다
+export const cartData = [
+    {
+        title: "[노티드X네추럴라이즈] 유산균 꾸미 비타 젤리",
+        imgUrl: "./img_menu/c_03.webp",
+        price: 17900, originalPrice: 19900, qty: 1, freeShipping: true
+    },
+    {
+        title: "[노티드] 시그니처 말차라떼 롤케이크",
+        imgUrl: "./img_menu/c_05.webp",
+        price: 19900, originalPrice: null, qty: 1, freeShipping: true
+    },
+    {
+        title: "[노티드] 우유크림 폭탄떡(4개입)",
+        imgUrl: "./img_menu/c_07.webp",
+        price: 12800, originalPrice: 14800, qty: 2, freeShipping: false, soldOut: true
+    },
+];
 
 // 인스타 섹션
 // 1. 외부 데이터 (실제 프로젝트에서는 donutData.js 등에서 import 해오시면 됩니다)
