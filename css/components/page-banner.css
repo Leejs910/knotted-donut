@@ -1,0 +1,119 @@
+/* ============================================================
+   공통 상단 배너
+   onlineShop.html(.puzzle) / cart.html(.cart-banner) /
+   checkout.html(.checkout-banner) 가 같은 크기·제목·어두운 막을 쓰도록
+   공통분모만 여기에 모았습니다.
+
+   페이지마다 다른 것 — 배경색, 안에 들어가는 그림/캔버스, 등장 애니메이션 —
+   은 각 css/sections/*-banner.css 에 그대로 남겨 둡니다.
+
+   ⚠️ 로드 순서상 components 가 sections 보다 먼저입니다.
+      그래서 각 섹션 파일에서 같은 속성을 다시 적으면 그쪽이 이깁니다.
+      (의도한 개별 조정은 가능하지만, 실수로 다시 어긋나기도 쉬우니
+       크기·제목 관련 값은 되도록 여기서만 건드리세요)
+
+   층 순서: 그림/캔버스(0) → 상단 스크림(1) → 스크롤 막(2) → 제목(3)
+   ============================================================ */
+
+.page-banner {
+    position: relative;
+    width: 100%;
+
+    /* orderComplete.html 의 .oc-banner 와 같은 높이로 맞춰 둡니다. */
+    height: clamp(150px, 20vw, 380px);
+    min-height: 150px;
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    /* 아래 여백은 배너 높이에 대한 비율(20.7%)을 따릅니다.
+       최솟값 44px 은 좁은 화면에서 제목이 배너 아래 경계선에 붙지 않게
+       잡아 주는 바닥값입니다. (원래는 배너 경계에 걸쳐 있던 onlineShop 의
+        카테고리 탭과 겹치지 않으려고 둔 값인데, 탭이 본문 안으로 내려간
+        뒤에도 세 페이지의 제목 위치를 맞추는 기준으로 그대로 씁니다) */
+    padding: 0 50px clamp(44px, 4.1vw, 79px);
+
+    color: #fff;
+
+    /* 배너와 본문 사이 경계선. border-box 라 배너 높이에는 영향이 없습니다. */
+    border-bottom: 3px solid #3E2723;
+}
+
+/* 🌓 위쪽만 살짝 어둡게 — 밝은 배너 위에서 흰 글씨 네비게이션이 묻히지 않게.
+   ⚠️ 아래쪽에는 깔지 않습니다. 본문과 맞닿는 곳에서 흐린 가로줄처럼 보입니다.
+      아래쪽 어둡게 하기는 스크롤에 반응하는 .page-banner-overlay 가 맡습니다. */
+.page-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.30) 0%,
+            rgba(0, 0, 0, 0) 30%,
+            rgba(0, 0, 0, 0) 100%);
+}
+
+/* 🕶️ 스크롤을 내리는 순간 깔리는 검은 막.
+   처음엔 완전 투명이고, js/modules/bannerOverlay.js 가 GSAP 으로
+   rgba(0, 0, 0, 0.5) 까지 채웁니다. 맨 위로 돌아오면 다시 투명해집니다.
+
+   ⚠️ 여기에 mask-image 로 그라데이션을 주지 마세요.
+      예전에 onlineShop 에만 하단 페이드 마스크가 있어서 혼자 다른 색으로
+      보였습니다. 세 페이지가 같아야 하므로 단색 막만 씁니다. */
+.page-banner-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+/* 🏷️ 배너 제목 — 세 페이지가 같은 크기·같은 자리에 놓입니다. */
+.page-banner-title {
+    position: relative;
+    z-index: 3; /* 어둡게 까는 층(1, 2)보다 위 */
+    margin: 0 0 0 -6px; /* 글자의 시각적 여백을 상쇄해 로고와 왼쪽 끝을 맞춤 */
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-weight: 900;
+
+    font-size: clamp(24px, 5.5vw, 106px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #fff;
+    white-space: nowrap;
+
+    /* 스크롤 전(막이 아직 투명할 때)에도 밝은 배경 위에서 글자가 읽히도록 */
+    text-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.35),
+        0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* 데스크톱 네비(높이 76px)가 유지되는 구간의 바닥값.
+   배너가 최소치(150px)까지 내려가면 제목이 네비 밑으로 파고듭니다.
+   네비(76) + 여유(28) + 제목(42) + 아래 여백(44) ≒ 190px 가 필요합니다.
+   폭 950px 부터는 20vw 가 190px 를 넘으므로 이 규칙은 저절로 무의미해집니다. */
+@media (min-width: 768px) {
+    .page-banner {
+        min-height: 190px;
+    }
+}
+
+/* mainNav 가 30px 패딩으로 줄어드는 구간에 맞춰 배너도 동일하게 좁힘 */
+@media (max-width: 1280px) {
+    .page-banner {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    /* 좌우만 좁히고, 아래 여백의 44px 하한은 그대로 지킵니다 */
+    .page-banner {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}

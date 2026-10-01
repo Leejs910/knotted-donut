@@ -1,5 +1,8 @@
 # Claude Code 개인 설정 (허용 목록 등 — 사람마다 다름)
 .claude/settings.local.json
 
+# 미리보기 서버 설정 — 포트가 사람/상황마다 달라서 공유하지 않습니다
+.claude/launch.json
+
 # 작업 중 확인용 스크린샷 모음 (저장소에 올릴 필요 없음)
 dummy/

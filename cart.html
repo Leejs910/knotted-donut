@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./css/layout/nav.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/page-banner.css">
     <link rel="stylesheet" href="./css/components/cart-item.css">
 
     <!-- 섹션: 그 페이지에 있는 것만 -->
@@ -80,8 +81,13 @@
     </div>
 
     <!-- 🛍️ 가방 배너 — SVG는 js/modules/cartBanner.js 가 펼쳐 넣습니다 -->
-    <header class="cart-banner">
+    <header class="cart-banner page-banner">
         <div class="cart-banner-art" id="cartBannerArt"></div>
+
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (onlineShop / checkout 과 같은 규칙) -->
+        <div class="cart-overlay page-banner-overlay"></div>
+
+        <h2 class="cart-banner-title page-banner-title">CART</h2>
     </header>
 
     <main>

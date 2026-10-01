@@ -74,22 +74,23 @@
     padding: 0 24px;
 
     /* ⚠️ flow-root 가 꼭 필요합니다.
-       첫 자식인 .shop-tabs 의 음수 margin-top 이 이 박스 밖으로 새어 나가면
-       (마진 상쇄) 섹션 전체가 위로 끌려 올라가 파란 배경이 배너를 덮어버립니다.
-       실제로 그래서 경계에 흐린 가로줄이 생겼었습니다. */
+       첫 자식(지금은 .shop-sort)의 margin-top 이 이 박스 밖으로 새어 나가면
+       (마진 상쇄) 섹션 위쪽 여백이 통째로 사라져 배너와 딱 붙어 버립니다.
+       예전에 .shop-tabs 가 첫 자식이고 음수 마진이었을 때는 섹션이 위로
+       끌려 올라가 경계에 흐린 가로줄이 생겼었습니다. */
     display: flow-root;
 }
 
 /* ------------------------------------------------------------
    카테고리 탭
-   알약이 배너와 메인의 경계선 '정중앙'에 걸치도록,
-   알약 높이(68px)의 절반만큼 위로 끌어올립니다.
+   정렬 드롭다운과 상품 그리드 사이, 예전에 ribbonTop 이 있던 자리입니다.
+   (한때 배너 경계에 걸쳐 있어서 margin-top 이 음수였는데, 지금은
+    본문 흐름 안에 들어왔으므로 ribbonTop 이 쓰던 61px 를 그대로 씁니다)
    색상은 index.html 의 .menu-toggle-wrapper 를 따랐습니다.
 ------------------------------------------------------------ */
 .shop-tabs {
-    position: relative;
-    z-index: 3; /* 배너의 어두운 막(2)보다 위 */
-    margin: -34px auto 0;
+    position: relative; /* 안쪽 .shop-tabs-badge 의 기준 상자 */
+    margin: 61px auto 0;
 
     width: min(812px, 100%);
     height: 68px;
@@ -293,7 +294,8 @@
 }
 
 /* ------------------------------------------------------------
-   리본 장식 (그리드 위/아래)
+   리본 장식 (그리드 아래)
+   위쪽 리본(ribbonTop)은 그 자리에 카테고리 탭이 들어오면서 뺐습니다.
 ------------------------------------------------------------ */
 .shop-ribbon {
     display: block;
@@ -311,19 +313,29 @@
 .shop-grid[data-active="living"] .shop-ribbon { filter: hue-rotate(119deg) saturate(1.2); }
 .shop-grid[data-active="bulk"] .shop-ribbon { filter: hue-rotate(-63deg) saturate(1.3); }
 
-.shop-ribbon-top {
-    width: 871px;
-    margin-top: 61px;
-}
-
 .shop-ribbon-bottom {
     width: 812px;
     margin-top: 117px;
 }
 
 /* ------------------------------------------------------------
-   상품 그리드 — 피그마: 4열, 가로 간격 65px, 세로 간격 63px
+   상품 그리드 + 좌우 페이지 넘김 버튼
 ------------------------------------------------------------ */
+
+/* 버튼(.grid-nav-btn 은 position:absolute)의 기준 상자입니다.
+   그리드와 같은 폭이라, 버튼이 그리드 양 끝에 정확히 걸칩니다. */
+.shop-grid-nav {
+    position: relative;
+}
+
+/* 🎨 버튼 배경색만 카테고리에 따라 바뀝니다 (화살표 색은 #3E2723 고정).
+   섹션 배경색 전환(.shop-grid[data-active])과 같은 방식입니다. */
+.shop-grid[data-active="all"]    .grid-nav-btn { background-color: #BDE1EF; } /* 하늘 */
+.shop-grid[data-active="food"]   .grid-nav-btn { background-color: #FFF09F; } /* 옐로우 */
+.shop-grid[data-active="living"] .grid-nav-btn { background-color: #FFC9E1; } /* 핑크 */
+.shop-grid[data-active="bulk"]   .grid-nav-btn { background-color: #50BD83; } /* 초록 */
+
+/* 상품 그리드 — 피그마: 4열, 가로 간격 65px, 세로 간격 63px */
 .shop-card-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -354,7 +366,7 @@
         row-gap: 48px;
     }
 
-    .shop-ribbon-top { width: min(700px, 100%); margin-top: 48px; }
+    .shop-tabs { margin-top: 48px; }
     .shop-ribbon-bottom { width: min(650px, 100%); margin-top: 90px; }
 
     .shop-grid { padding-bottom: 180px; }
@@ -368,7 +380,6 @@
         margin-top: 56px;
     }
 
-    .shop-ribbon-top { width: min(540px, 100%); }
     .shop-ribbon-bottom { width: min(500px, 100%); margin-top: 70px; }
 
     .shop-grid { padding-bottom: 140px; }
@@ -377,10 +388,8 @@
 @media (max-width: 767px) {
     .shop-grid-inner { padding: 0 16px; }
 
-    /* 높이가 54px로 줄어드니 위로 끌어올리는 값도 그 절반(27px)으로 맞춥니다.
-       그래야 좁은 화면에서도 알약이 경계선 정중앙에 놓입니다. */
     .shop-tabs {
-        margin-top: -27px;
+        margin-top: 32px;
         height: 54px;
         padding: 2px;
         border-width: 2px;
@@ -424,7 +433,6 @@
         margin-top: 40px;
     }
 
-    .shop-ribbon-top { width: min(320px, 100%); margin-top: 32px; }
     .shop-ribbon-bottom { width: min(300px, 100%); margin-top: 48px; }
 
     .shop-grid { padding-bottom: 90px; }

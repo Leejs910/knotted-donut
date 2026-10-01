@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="./css/layout/nav.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/page-banner.css">
+    <link rel="stylesheet" href="./css/components/grid-nav.css">
     <link rel="stylesheet" href="./css/components/shop-item-card.css">
     <link rel="stylesheet" href="./css/components/shop-item-modal.css">
 
@@ -84,35 +86,19 @@
 
 
     <!-- 🧩 퍼즐 타일 배너 — 캔버스는 js/modules/puzzleBanner.js 가 그립니다 -->
-    <header class="puzzle">
+    <header class="puzzle page-banner">
         <canvas id="puzzle-canvas"></canvas>
 
-        <!-- 스크롤을 내리는 순간 어두워지는 막 (푸터의 .footer-overlay 와 같은 방식) -->
-        <div class="puzzle-overlay"></div>
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (cart / checkout 과 같은 규칙) -->
+        <div class="puzzle-overlay page-banner-overlay"></div>
 
-        <h2 class="puzzle-title">ONLINE SHOP</h2>
+        <h2 class="puzzle-title page-banner-title">ONLINE SHOP</h2>
     </header>
     <main>
 
         <!-- 🛒 상품 섹션 — 카드는 js/modules/shopGrid.js 가 그려 넣습니다 -->
         <section class="shop-grid">
             <div class="shop-grid-inner">
-
-                <!-- 카테고리 탭 (배너와 파란 배경 경계에 걸쳐 있습니다) -->
-                <div class="shop-tabs" id="shopTabs" role="tablist" aria-label="상품 카테고리">
-                    <button type="button" class="shop-tab is-active" data-category="all" role="tab"
-                        aria-selected="true">전체</button>
-                    <button type="button" class="shop-tab" data-category="food" role="tab"
-                        aria-selected="false">푸드</button>
-                    <button type="button" class="shop-tab" data-category="living" role="tab"
-                        aria-selected="false">리빙</button>
-                    <button type="button" class="shop-tab" data-category="bulk" role="tab"
-                        aria-selected="false">대량주문</button>
-
-                    <div class="shop-tabs-badge">
-                        <img src="./img/blue_ribbon.png" alt="">
-                    </div>
-                </div>
 
                 <!-- 정렬 (네이티브 select 의 각진 옵션 목록이 기존 UI와 이질감이 있어
                      둥근 알약 형태의 커스텀 드롭다운으로 대체했습니다) -->
@@ -132,9 +118,34 @@
                     </ul>
                 </div>
 
-                <img src="./img/ribbonTop.svg" class="shop-ribbon shop-ribbon-top" alt="">
+                <!-- 카테고리 탭 (예전에는 ribbonTop 자리였고, 그 전에는 배너 경계에
+                     걸쳐 있었습니다. 지금은 정렬과 상품 그리드 사이에 놓입니다) -->
+                <div class="shop-tabs" id="shopTabs" role="tablist" aria-label="상품 카테고리">
+                    <button type="button" class="shop-tab is-active" data-category="all" role="tab"
+                        aria-selected="true">전체</button>
+                    <button type="button" class="shop-tab" data-category="food" role="tab"
+                        aria-selected="false">푸드</button>
+                    <button type="button" class="shop-tab" data-category="living" role="tab"
+                        aria-selected="false">리빙</button>
+                    <button type="button" class="shop-tab" data-category="bulk" role="tab"
+                        aria-selected="false">대량주문</button>
 
-                <div class="shop-card-grid" id="shopCardGrid"></div>
+                    <div class="shop-tabs-badge">
+                        <img src="./img/blue_ribbon.png" alt="">
+                    </div>
+                </div>
+
+                <!-- 상품 그리드 + 좌우 페이지 넘김 버튼
+                     (버튼이 그리드 양옆에 걸치도록 함께 감쌉니다) -->
+                <div class="shop-grid-nav">
+                    <button type="button" class="grid-nav-btn grid-nav-prev" id="shopPrev"
+                        aria-label="이전 상품 보기" aria-controls="shopCardGrid"></button>
+
+                    <div class="shop-card-grid" id="shopCardGrid"></div>
+
+                    <button type="button" class="grid-nav-btn grid-nav-next" id="shopNext"
+                        aria-label="다음 상품 보기" aria-controls="shopCardGrid"></button>
+                </div>
 
                 <img src="./img/ribbonBottom.svg" class="shop-ribbon shop-ribbon-bottom" alt="">
             </div>

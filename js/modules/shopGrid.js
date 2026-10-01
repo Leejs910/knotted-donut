@@ -1,5 +1,6 @@
-// 온라인 샵 상품 그리드 — 카테고리 탭 필터 + 정렬(커스텀 드롭다운) + 카드 렌더링
-// 필요 요소: #shopCardGrid  (선택: #shopTabs, #shopSortWrap + #shopSort + #shopSortOptions)
+// 온라인 샵 상품 그리드 — 카테고리 탭 필터 + 정렬(커스텀 드롭다운) + 페이지 넘김 + 카드 렌더링
+// 필요 요소: #shopCardGrid
+//   (선택: #shopTabs, #shopSortWrap + #shopSort + #shopSortOptions, #shopPrev + #shopNext)
 // 필요 라이브러리: 없음
 //
 // 데이터 한 건의 모양: { title, imgUrl, imgUrl2, price, category }
@@ -15,6 +16,11 @@ const RIBBON_BY_CATEGORY = {
     bulk: './img/green_ribbon.png',
 };
 
+// 🎚️ 한 페이지에 보여줄 '줄' 수.
+//    한 페이지 상품 수 = 이 값 × 지금 화면의 열 수(CSS가 정합니다. 4 / 3 / 2열).
+//    1 로 바꾸면 index.html 의 캐러셀처럼 한 줄씩 넘어갑니다.
+const PAGE_ROWS = 2;
+
 export function initShopGrid({ data = [] } = {}) {
     const gridEl = document.getElementById('shopCardGrid');
     if (!gridEl) return null;
@@ -29,8 +35,12 @@ export function initShopGrid({ data = [] } = {}) {
     const sortValueEl = sortTriggerEl ? sortTriggerEl.querySelector('.shop-sort-value') : null;
     const sortOptionsEl = document.getElementById('shopSortOptions');
 
+    const prevBtn = document.getElementById('shopPrev');
+    const nextBtn = document.getElementById('shopNext');
+
     let currentCategory = 'all';
     let currentSort = 'default';
+    let currentPage = 0;
     let renderedItems = []; // 지금 화면에 그려진 카드들 — "담기" 클릭 시 몇 번째 카드인지로 찾습니다.
 
     // 27900 -> "27,900 원"
@@ -70,16 +80,72 @@ export function initShopGrid({ data = [] } = {}) {
         </article>`;
     }
 
-    function render() {
-        const items = getVisibleItems();
-        renderedItems = items;
+    // 📐 지금 몇 열로 보이는지는 CSS(반응형)가 정하므로, 계산하지 않고 물어봅니다.
+    //    grid-template-columns 의 계산값은 '열 너비 목록'이라 개수를 세면 됩니다.
+    function getColumnCount() {
+        const cols = getComputedStyle(gridEl).gridTemplateColumns;
+        if (!cols || cols === 'none') return 1;
+        return cols.split(' ').filter(Boolean).length;
+    }
 
-        if (!items.length) {
+    // 한 페이지에 몇 개를 보여줄지. 767px 이하에서는 버튼을 숨기므로(CSS)
+    // 페이지를 나누지 않고 전부 보여 줍니다.
+    function getPageSize(total) {
+        if (window.matchMedia('(max-width: 767px)').matches) return total || 1;
+        return Math.max(1, getColumnCount() * PAGE_ROWS);
+    }
+
+    function render() {
+        const all = getVisibleItems();
+
+        if (!all.length) {
+            renderedItems = [];
             gridEl.innerHTML = `<p class="shop-empty">이 카테고리에는 아직 상품이 없습니다.</p>`;
+            updateNav(1);
             return;
         }
-        gridEl.innerHTML = items.map(cardHTML).join('');
+
+        const pageSize = getPageSize(all.length);
+        const pageCount = Math.ceil(all.length / pageSize);
+
+        // 열 수가 바뀌거나 상품이 줄어 페이지가 사라졌으면 마지막 페이지로 당겨옵니다.
+        if (currentPage > pageCount - 1) currentPage = pageCount - 1;
+        if (currentPage < 0) currentPage = 0;
+
+        const start = currentPage * pageSize;
+        renderedItems = all.slice(start, start + pageSize);
+
+        gridEl.innerHTML = renderedItems.map(cardHTML).join('');
+        updateNav(pageCount);
     }
+
+    // 페이지가 하나뿐이면 버튼을 통째로 숨기고, 끝에 닿으면 비활성화합니다.
+    function updateNav(pageCount) {
+        if (!prevBtn || !nextBtn) return;
+
+        const onlyOnePage = pageCount <= 1;
+        prevBtn.hidden = onlyOnePage;
+        nextBtn.hidden = onlyOnePage;
+
+        prevBtn.disabled = currentPage <= 0;
+        nextBtn.disabled = currentPage >= pageCount - 1;
+    }
+
+    function goToPage(next) {
+        currentPage = next;
+        render();
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+
+    // 창 폭이 바뀌면 열 수가 달라져 페이지 구성이 통째로 바뀝니다.
+    // (연속 호출은 마지막 것만 실행)
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(render, 150);
+    });
 
     // ----- 카테고리 탭 -----
     if (tabsEl) {
@@ -88,6 +154,7 @@ export function initShopGrid({ data = [] } = {}) {
             if (!tab || !tabsEl.contains(tab)) return;
 
             currentCategory = tab.dataset.category || 'all';
+            currentPage = 0; // 카테고리를 바꾸면 첫 페이지부터
 
             tabsEl.querySelectorAll('.shop-tab').forEach((btn) => {
                 const on = btn === tab;
@@ -140,6 +207,7 @@ export function initShopGrid({ data = [] } = {}) {
         optionEls.forEach((opt) => {
             opt.addEventListener('click', () => {
                 currentSort = opt.dataset.value || 'default';
+                currentPage = 0; // 정렬을 바꾸면 첫 페이지부터
                 if (sortValueEl) sortValueEl.textContent = opt.textContent;
 
                 optionEls.forEach((o) => o.setAttribute('aria-selected', String(o === opt)));

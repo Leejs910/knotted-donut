@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./css/layout/nav.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/page-banner.css">
     <link rel="stylesheet" href="./css/components/truck-scene.css">
 
     <!-- 섹션: 그 페이지에 있는 것만 -->
@@ -80,13 +81,13 @@
     </div>
 
     <!-- 🐰 배너 — SVG는 js/modules/checkoutBanner.js 가 펼쳐 넣습니다 -->
-    <header class="checkout-banner">
+    <header class="checkout-banner page-banner">
         <div class="checkout-banner-art" id="checkoutBannerArt"></div>
 
-        <!-- 스크롤을 내리는 순간 어두워지는 막 (onlineShop.html 과 같은 방식) -->
-        <div class="checkout-overlay"></div>
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (onlineShop / cart 와 같은 규칙) -->
+        <div class="checkout-overlay page-banner-overlay"></div>
 
-        <h2 class="checkout-banner-title">CHECKOUT</h2>
+        <h2 class="checkout-banner-title page-banner-title">CHECKOUT</h2>
     </header>
 
     <main>

@@ -13,6 +13,7 @@ import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initFooterBear } from '../modules/footerBear.js';
 import { initBuildingSpawner } from '../modules/buildingSpawner.js';
 import { initFooterOverlay } from '../modules/footerOverlay.js';
+import { initBannerOverlay } from '../modules/bannerOverlay.js';
 
 // --- 이 페이지에만 있는 섹션 ---
 import { initCartBanner } from '../modules/cartBanner.js';
@@ -25,6 +26,9 @@ initMobileMenu();
 
 // 가방 배너 (가운데 가방이 한 번 통통 튑니다)
 initCartBanner();
+
+// 스크롤을 내리면 배너가 어두워집니다 (onlineShop / checkout 과 같은 연출)
+initBannerOverlay({ trigger: '.cart-banner', overlay: '.cart-overlay' });
 
 // 장바구니 목록 + 주문 예상 금액
 initCartList({ data: cartData });

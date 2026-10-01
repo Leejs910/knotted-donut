@@ -11,7 +11,7 @@ const BG_COLOR = '#F3CFC7';  // 타일 사이로 비치는 배경(선) 색
 const TILE_COLOR = '#F0F1E3';// 둥근 타일 바탕색
 const GAP = 3;               // 타일 사이 간격(px)
 const RADIUS = 16;           // 타일 모서리 둥근 정도(px)
-const VISIBLE_ROWS = 3;      // 화면에 꽉 차게 보여줄 줄 수
+const VISIBLE_ROWS = 2;      // 화면에 꽉 차게 보여줄 줄 수 (타일 크기 = 배너높이 / 이 값)
 const ANIM_FRAMES = 25;      // 한 칸 미는 데 쓰는 프레임 수 (클수록 느림)
 
 export function initPuzzleBanner() {

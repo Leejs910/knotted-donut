@@ -1,17 +1,36 @@
-// 🛍️ 장바구니 상단 가방 배너
+// 🛍️ 장바구니 상단 배너 — 쇼핑백 5개가 물결치듯 차례로 튀어오릅니다
 //
-// SVG를 <img> 로 넣으면 안쪽의 'middlebeg'(가운데 가방)만 따로 움직일 수 없습니다.
-// 그래서 파일을 받아 와 문서 안에 그대로 펼친 뒤(인라인), 그 요소에만 클래스를 붙입니다.
+// SVG를 <img> 로 넣으면 안쪽 그룹을 따로 움직일 수 없어서,
+// 파일을 받아 와 문서 안에 그대로 펼친 뒤(인라인) 각 그룹을 직접 제어합니다.
 //
 // 필요 요소: #cartBannerArt
 // 필요 CSS: css/sections/cart-banner.css
-// 필요 에셋: img/cartBanner.svg  (피그마 'beg대지 1 사본 1' 프레임)
-//   ⚠️ 피그마에서 내보낼 때 Export 설정의 "Include 'id' attribute" 를 켜야
-//      가운데 가방이 <g id="middlebeg"> 로 들어옵니다. 이 id 가 있어야 애니메이션이 걸립니다.
+// 필요 에셋: img/cartBanner.svg  ← tools/build_cart_banner.py 가 만듭니다
+//
+// 움직임 계산은 test/shoppingBags_anime.html 의 로직을 그대로 옮겼습니다.
+// 가방마다 시작 위상(phase)을 조금씩 어긋나게 줘서 물결처럼 보이게 합니다.
 
 import { playOnceOnView } from './playOnceOnView.js';
 
 const SVG_URL = './img/cartBanner.svg';
+
+// 🎚️ 움직임 조절 — 이 숫자들만 바꾸면 됩니다.
+const SETTINGS = {
+    SPEED: 0.4,          // 한 번 튀는 데 걸리는 속도 (클수록 빠름)
+    BOUNCE_HEIGHT: 170,  // 바닥에서 위로 튀는 높이 (가방 자체 좌표 기준)
+    SQUASH: 0.1,         // 착지할 때 좌우로 퍼지는 정도
+    STRETCH: 0.1,        // 착지할 때 위아래로 눌리는 정도
+    SHADOW_SHRINK: 0.35, // 공중에 떴을 때 그림자가 작아지는 정도
+
+    // 🌊 물결 — 옆 가방과 얼마나 어긋나게 시작할지 (한 사이클을 1로 봤을 때)
+    //    0 이면 다섯 개가 동시에 튀고, 0.2 면 정확히 한 바퀴에 걸쳐 퍼집니다.
+    WAVE_OFFSET: 0.12,
+};
+
+// 0 → 1 → 0. 바닥에서 0, 꼭대기에서 1.
+function bounceCurve(phase) {
+    return 4 * phase * (1 - phase);
+}
 
 export async function initCartBanner() {
     const holder = document.getElementById('cartBannerArt');
@@ -33,56 +52,77 @@ export async function initCartBanner() {
     const svg = holder.querySelector('svg');
     if (!svg) return;
 
-    // 배너가 가로 폭에 맞춰 늘어나도록 고정 크기를 지우고 viewBox 만 남깁니다.
     svg.removeAttribute('width');
     svg.removeAttribute('height');
+    // 배너를 가득 채우되 가방 비율은 지킵니다. 배경 사각형이 viewBox 밖까지
+    // 넉넉히 그려져 있어서, 잘려도 초록·핑크가 빈 곳 없이 덮입니다.
     svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
 
-    // 대소문자나 접미사가 붙어도 찾도록 단계적으로 시도합니다.
-    const middle =
-        svg.querySelector('#middlebeg') ||
-        svg.querySelector('[id^="middlebeg" i]') ||
-        svg.querySelector('[id*="middlebeg" i]');
+    const bodies = [...svg.querySelectorAll('.bag-body')];
+    const shadows = [...svg.querySelectorAll('.bag-shadow')];
 
-    if (!middle) {
+    if (!bodies.length) {
         console.warn(
-            '[cartBanner] SVG 안에서 middlebeg 를 찾지 못했습니다. ' +
-            '피그마에서 Export 시 "Include \'id\' attribute" 를 켜고 다시 내보내 주세요.'
+            '[cartBanner] SVG 안에서 .bag-body 를 찾지 못했습니다. ' +
+            'tools/build_cart_banner.py 로 img/cartBanner.svg 를 다시 만들어 주세요.'
         );
         return;
     }
 
-    middle.classList.add('middlebeg');
+    // '동작 줄이기'가 켜진 환경에서도 멈추지는 않고, 폭만 줄여 잔잔하게 움직입니다.
+    // ⚠️ 여기서 아예 꺼버리면 해당 설정에서는 가방이 전혀 움직이지 않습니다.
+    // (0.6 은 '눈에 보이되 과하지 않은' 선입니다. 더 줄이면 이 설정을 켠 환경에서는
+    //  움직이지 않는 것처럼 보입니다)
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const height = SETTINGS.BOUNCE_HEIGHT * (calm ? 0.6 : 1);
+    const squash = SETTINGS.SQUASH * (calm ? 0.6 : 1);
+    const stretch = SETTINGS.STRETCH * (calm ? 0.6 : 1);
+    const speed = SETTINGS.SPEED * (calm ? 0.8 : 1);
 
-    // 🎯 기준점 잡기
-    // getBBox() 는 viewBox 좌표계 값을 돌려줍니다. transform-box 를 기본값(view-box)으로
-    // 두고 이 좌표를 그대로 쓰면, 브라우저마다 지원이 갈리는 fill-box 를 피할 수 있습니다.
-    // (가로 중앙 / 세로 바닥 → 바닥은 붙어 있고 위로 부푸는 느낌)
-    try {
-        const box = middle.getBBox();
-        if (box.width && box.height) {
-            middle.style.transformBox = 'view-box';
-            middle.style.transformOrigin = `${box.x + box.width / 2}px ${box.y + box.height}px`;
-        }
-    } catch (e) {
-        // 측정에 실패해도 CSS 에 적어 둔 기본 좌표로 동작합니다.
+    let startTime = null;
+    let rafId = null;
+
+    function frame(now) {
+        if (startTime === null) startTime = now;
+        const t = ((now - startTime) / 1000) * speed;
+
+        bodies.forEach((body, i) => {
+            // 가방마다 시작점을 어긋나게 해서 물결이 만들어집니다.
+            const phase = (((t - i * SETTINGS.WAVE_OFFSET) % 1) + 1) % 1;
+            const jump = bounceCurve(phase);
+
+            // 착지 직전·직후에만 아주 잠깐 눌립니다.
+            const contact = Math.pow(1 - phase, 14);
+
+            body.style.transform =
+                `translateY(${(-jump * height).toFixed(2)}px) ` +
+                `scale(${(1 + contact * squash).toFixed(4)}, ${(1 - contact * stretch).toFixed(4)})`;
+
+            const shadow = shadows[i];
+            if (shadow) {
+                shadow.style.transform =
+                    `scaleX(${(1 - jump * SETTINGS.SHADOW_SHRINK).toFixed(4)})`;
+            }
+        });
+
+        rafId = requestAnimationFrame(frame);
     }
 
-    // 화면에 나올 때 딱 한 번만 재생합니다.
+    // 배너가 화면에 들어왔을 때 시작합니다.
     playOnceOnView(holder, () => {
-        middle.classList.add('is-popping');
+        if (rafId === null) rafId = requestAnimationFrame(frame);
+    });
 
-        // 정말 시작됐는지 한 프레임 뒤에 확인하고, 안 됐으면 이유를 알려 줍니다.
-        requestAnimationFrame(() => {
-            if (middle.getAnimations && middle.getAnimations().length > 0) return;
-
-            const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            console.warn(
-                '[cartBanner] middlebeg 애니메이션이 시작되지 않았습니다.' +
-                (reduced
-                    ? ' 운영체제의 "동작 줄이기(reduce motion)" 설정이 켜져 있어 건너뛴 것입니다.'
-                    : ' 원인을 확인해 주세요.')
-            );
-        });
+    // 탭을 벗어나 있는 동안은 돌릴 이유가 없습니다.
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            if (rafId !== null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        } else if (rafId === null && startTime !== null) {
+            startTime = null; // 돌아오면 그 자리에서 이어서
+            rafId = requestAnimationFrame(frame);
+        }
     });
 }
