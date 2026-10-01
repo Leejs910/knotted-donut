@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVG Shopping Bags Animation</title>
+<style>
+  :root {
+    --navy: #0c2f7f;
+    --pink: #f4779a;
+    --pink-dark: #d7477c;
+    --yellow: #ffd25a;
+    --orange: #ff9308;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #ffffff;
+    font-family: system-ui, sans-serif;
+  }
+
+  .demo {
+    width: min(640px, 92vw);
+  }
+
+  .stage {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+
+  /* JS가 transform을 제어하므로 transition은 사용하지 않음 */
+  #backBag,
+  #frontBag,
+  #backHandle,
+  #frontHandle {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .ground-shadow {
+    opacity: .08;
+    transform-origin: center;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  button {
+    border: 1px solid #d6d6d6;
+    background: #fff;
+    border-radius: 8px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  button:hover {
+    background: #f6f6f6;
+  }
+</style>
+</head>
+
+<body>
+<div class="demo">
+  <div class="stage">
+    <svg viewBox="0 0 640 640" role="img" aria-label="움직이는 쇼핑백">
+      <g id="scene">
+
+        <!-- 바닥의 아주 약한 그림자 -->
+        <ellipse
+          id="shadow"
+          class="ground-shadow"
+          cx="320" cy="548" rx="220" ry="24"
+          fill="#000"
+        />
+
+        <!-- 뒤쪽 분홍 쇼핑백 -->
+        <g id="backBag">
+          <!-- 손잡이 -->
+          <g id="backHandle">
+            <path
+              d="M195 144
+                 V127
+                 C195 91 216 72 242 72
+                 C268 72 289 91 289 127
+                 V144"
+              fill="none"
+              stroke="var(--navy)"
+              stroke-width="20"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </g>
+
+          <!-- 가방 본체 -->
+          <path
+            d="M128 145
+               Q125 145 123 160
+               L79 506
+               Q75 544 113 558
+               L333 558
+               Q370 550 365 512
+               L316 158
+               Q314 145 302 145
+               Z"
+            fill="var(--pink)"
+            stroke="var(--navy)"
+            stroke-width="20"
+            stroke-linejoin="round"
+          />
+
+          <!-- 가방 오른쪽의 어두운 면 -->
+          <path
+            d="M263 145
+               L302 145
+               Q314 145 316 158
+               L365 512
+               Q370 550 333 558
+               L219 558
+               Q186 549 193 507
+               L237 216
+               Q242 181 263 145
+               Z"
+            fill="var(--pink-dark)"
+            opacity=".82"
+          />
+
+          <!-- 안쪽 밝은 면 -->
+          <path
+            d="M143 161 L184 161 L147 494 Q143 530 170 543 L112 543 Q96 533 99 506 Z"
+            fill="#ff86a5"
+            opacity=".5"
+          />
+        </g>
+
+        <!-- 앞쪽 노란/주황 쇼핑백 -->
+        <g id="frontBag">
+          <!-- 가방 본체 -->
+          <path
+            d="M286 242
+               Q281 242 278 256
+               L239 505
+               Q233 544 271 557
+               L522 557
+               Q559 549 552 509
+               L514 255
+               Q511 242 499 242
+               Z"
+            fill="var(--yellow)"
+            stroke="var(--navy)"
+            stroke-width="20"
+            stroke-linejoin="round"
+          />
+
+          <!-- 주황색 아랫부분 -->
+          <path
+            d="M257 365
+               C308 459 397 489 546 460
+               L552 509
+               Q559 549 522 557
+               L271 557
+               Q233 544 239 505
+               Z"
+            fill="var(--orange)"
+          />
+
+          <!-- 노란색 곡선 영역 -->
+          <path
+            d="M257 364
+               C303 445 395 476 546 451
+               L550 474
+               C406 500 312 472 257 390
+               Z"
+            fill="#ffd965"
+            opacity=".92"
+          />
+
+          <!-- 앞 가방의 U자 손잡이 -->
+          <g id="frontHandle">
+            <path
+              d="M351 304
+                 V327
+                 C351 361 369 379 394 379
+                 C419 379 437 361 437 327
+                 V304"
+              fill="none"
+              stroke="var(--navy)"
+              stroke-width="19"
+              stroke-linecap="round"
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <button id="pauseBtn" type="button">일시정지</button>
+    <button id="restartBtn" type="button">처음부터</button>
+  </div>
+</div>
+
+<script>
+/*
+  ============================================================
+  여기 숫자를 직접 바꾸면서 애니메이션을 조절하면 됩니다.
+  ============================================================
+*/
+const SETTINGS = {
+  // 바운스 한 번의 속도
+  SPEED: 1,
+
+  // 위로 튀어 오르는 높이(px)
+  BOUNCE_HEIGHT: 20,
+
+  // 좌우 기울어짐은 아주 작게
+  SWAY_DEG: 0.2,
+
+  // 앞 가방은 조금 더 무겁게 튀는 느낌
+  FRONT_BOUNCE_MULTIPLIER: 0.9,
+
+  // 앞 가방이 아주 조금 늦게 반응
+  FRONT_PHASE_DELAY: 0.08,
+
+  // 착지 순간 가방이 눌리는 정도
+  SQUASH: 0.045,
+
+  // 손잡이의 작은 반응
+  HANDLE_SWAY_DEG: 0.5,
+
+  // 그림자 변화
+  SHADOW_SCALE: 0.08,
+
+  START_TIME: 0
+};
+
+const backBag = document.getElementById("backBag");
+const frontBag = document.getElementById("frontBag");
+const backHandle = document.getElementById("backHandle");
+const frontHandle = document.getElementById("frontHandle");
+const shadow = document.getElementById("shadow");
+
+const pauseBtn = document.getElementById("pauseBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+let paused = false;
+let startTimestamp = null;
+let pausedElapsed = SETTINGS.START_TIME;
+let rafId = null;
+
+function animate(timestamp) {
+  if (startTimestamp === null) {
+    startTimestamp = timestamp - pausedElapsed * 1000;
+  }
+
+  if (!paused) {
+    const elapsed = (timestamp - startTimestamp) / 1000;
+    const t = elapsed * SETTINGS.SPEED;
+
+    // 0 → 1 → 0 형태의 "점프" 위상을 만든다.
+    // 위로 갈 때는 서서히 감속하고, 내려올 때는 빨라져서
+    // 단순한 좌우 흔들림보다 "통통 튀는" 느낌이 난다.
+    const bouncePhase = (t % 1 + 1) % 1;
+    const frontPhase =
+      ((t - SETTINGS.FRONT_PHASE_DELAY) % 1 + 1) % 1;
+
+    // 4p(1-p) = 바닥에서 출발 → 꼭대기 → 바닥
+    const backJump = 4 * bouncePhase * (1 - bouncePhase);
+    const frontJump = 4 * frontPhase * (1 - frontPhase);
+
+    const backY = -backJump * SETTINGS.BOUNCE_HEIGHT;
+    const frontY =
+      -frontJump *
+      SETTINGS.BOUNCE_HEIGHT *
+      SETTINGS.FRONT_BOUNCE_MULTIPLIER;
+
+    // 착지 직전/직후에만 살짝 눌리는 느낌
+    const backContact = Math.pow(1 - bouncePhase, 10);
+    const frontContact = Math.pow(1 - frontPhase, 10);
+
+    const backScaleX = 1 + backContact * SETTINGS.SQUASH;
+    const backScaleY = 1 - backContact * SETTINGS.SQUASH;
+
+    const frontScaleX = 1 + frontContact * SETTINGS.SQUASH;
+    const frontScaleY = 1 - frontContact * SETTINGS.SQUASH;
+
+    // 회전은 거의 없애고 아주 미세한 기울기만 남김
+    const backRot =
+      Math.sin(bouncePhase * Math.PI * 2) * SETTINGS.SWAY_DEG;
+
+    const frontRot =
+      Math.sin(frontPhase * Math.PI * 2) * SETTINGS.SWAY_DEG;
+
+    backBag.style.transform =
+      `translateY(${backY.toFixed(2)}px) rotate(${backRot.toFixed(2)}deg) ` +
+      `scale(${backScaleX.toFixed(4)}, ${backScaleY.toFixed(4)})`;
+
+    frontBag.style.transform =
+      `translateY(${frontY.toFixed(2)}px) rotate(${frontRot.toFixed(2)}deg) ` +
+      `scale(${frontScaleX.toFixed(4)}, ${frontScaleY.toFixed(4)})`;
+
+    // 손잡이는 본체보다 조금 늦게 따라오는 정도만
+    const backHandleRot =
+      Math.sin((bouncePhase - 0.08) * Math.PI * 2) *
+      SETTINGS.HANDLE_SWAY_DEG;
+
+    const frontHandleRot =
+      Math.sin((frontPhase - 0.08) * Math.PI * 2) *
+      SETTINGS.HANDLE_SWAY_DEG;
+
+    backHandle.style.transform =
+      `rotate(${backHandleRot.toFixed(2)}deg)`;
+
+    frontHandle.style.transform =
+      `rotate(${frontHandleRot.toFixed(2)}deg)`;
+
+    // 공중에 뜨면 그림자가 조금 작아지고,
+    // 착지하면 원래 크기로 돌아온다.
+    const averageJump = (backJump + frontJump) / 2;
+    const shadowScale =
+      1 - averageJump * SETTINGS.SHADOW_SCALE;
+
+    shadow.style.transform =
+      `scaleX(${shadowScale.toFixed(3)})`;
+
+    pausedElapsed = elapsed;
+  }
+
+  rafId = requestAnimationFrame(animate);
+}
+
+pauseBtn.addEventListener("click", () => {
+  paused = !paused;
+  pauseBtn.textContent = paused ? "재생" : "일시정지";
+
+  if (paused) {
+    if (startTimestamp !== null) {
+      pausedElapsed = (performance.now() - startTimestamp) / 1000;
+    }
+  } else {
+    startTimestamp = performance.now() - pausedElapsed * 1000;
+  }
+});
+
+restartBtn.addEventListener("click", () => {
+  paused = false;
+  pauseBtn.textContent = "일시정지";
+
+  pausedElapsed = SETTINGS.START_TIME;
+  startTimestamp = performance.now();
+
+  backBag.style.transform = "translateY(0) rotate(0)";
+  frontBag.style.transform = "translateY(0) rotate(0)";
+  backHandle.style.transform = "rotate(0)";
+  frontHandle.style.transform = "rotate(0)";
+  shadow.style.transform = "scaleX(1)";
+});
+
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>

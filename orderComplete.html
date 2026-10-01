@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 공통: 모든 페이지에 넣습니다 -->
+    <link rel="stylesheet" href="./css/base/reset.css">
+    <link rel="stylesheet" href="./css/base/animations.css">
+    <link rel="stylesheet" href="./css/layout/nav.css">
+
+    <!-- 섹션: 그 페이지에 있는 것만 -->
+    <link rel="stylesheet" href="./css/sections/order-complete.css">
+
+    <!-- 푸터는 다른 규칙을 덮어쓸 수 있어야 하므로 마지막 -->
+    <link rel="stylesheet" href="./css/layout/footer.css">
+
+    <title>NotedDount — 결제완료</title>
+
+</head>
+
+<body>
+    <nav id="mainNav" class="navbar nav-solid">
+
+        <a href="./cart.html" class="mobile-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </a>
+
+        <h1 class="logo">
+            <a href="./index.html">
+                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+            </a>
+        </h1>
+
+        <ul class="nav-links">
+            <li><a href="./onlineShop.html">SHOP</a></li>
+            <li><a href="#">STORE</a></li>
+            <li><a href="#">MENU</a></li>
+            <li><a href="#">BRAND</a></li>
+            <li><a href="#">SUPPORT</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <a href="./cart.html" class="btn btn-outline pc-btn">Cart</a>
+
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-wrapper" id="mobile-menu">
+        <div class="mobile-login-header">
+            <p>로그인이 필요합니다.</p>
+            <a href="#" class="login-link">로그인</a>
+        </div>
+        <ul class="mobile-menu-list">
+            <li><a href="./onlineShop.html">Online Shop <span class="chevron"></span></a></li>
+            <li><a href="./cart.html">Cart <span class="chevron"></span></a></li>
+            <li><a href="#">Menu <span class="chevron"></span></a></li>
+            <li><a href="#">Event <span class="chevron"></span></a></li>
+            <li><a href="#">Brand <span class="chevron"></span></a></li>
+            <li><a href="#">Help <span class="chevron"></span></a></li>
+            <li><a href="#">Contact <span class="chevron"></span></a></li>
+        </ul>
+    </div>
+
+    <!-- 🚚 배너 — 구름 사이를 달리는 트럭 (트럭 SVG는 truckBanner.js 가 넣습니다)
+         구름 묶음을 똑같이 두 벌 두고 통째로 왼쪽으로 밀어서, 끊김 없이 이어지게 합니다. -->
+    <header class="oc-banner">
+        <!-- 먼 배경 (하늘·구름·언덕) — 가로로 반복되는 SVG를 천천히 흘려보냅니다 -->
+        <div class="oc-road" id="ocRoad" aria-hidden="true"></div>
+
+        <!-- 도로 — 회색 노면 + 가운데 흰 점선 (점선은 더 빨리 흘러 원근감을 냅니다) -->
+        <div class="oc-ground" aria-hidden="true"></div>
+        <div class="oc-road-lines" id="ocRoadLines" aria-hidden="true"></div>
+
+        <!-- 트럭 — SVG는 truckBanner.js 가 넣고, 위치·바퀴·덜컹임도 거기서 계산합니다 -->
+        <div class="oc-truck-wrap" aria-hidden="true">
+            <div class="oc-truck" id="truckBannerArt"></div>
+        </div>
+
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (checkout.html 과 같은 방식) -->
+        <div class="oc-overlay"></div>
+    </header>
+
+    <main>
+        <section class="oc-body">
+            <div class="receipt">
+
+                <img src="./img/black_logo.png" alt="Knotted" class="receipt-logo">
+
+                <h1 class="receipt-headline">주문이 완료 되었습니다.</h1>
+
+                <!-- 주문 내역 — 상품이 늘어나면 이 안에서만 스크롤됩니다 -->
+                <div class="receipt-scroll" tabindex="0" role="region" aria-label="주문 내역">
+
+                <!-- 주문번호 -->
+                <div class="receipt-block">
+                    <div class="receipt-block-head">
+                        <span class="receipt-strong">주문번호</span>
+                        <span class="receipt-order-no" id="receiptOrderNo">—</span>
+                    </div>
+                </div>
+
+                <!-- 주문자 -->
+                <div class="receipt-block" id="receiptBuyer"></div>
+
+                <!-- 주문 상품 -->
+                <div class="receipt-block">
+                    <div class="receipt-block-head">
+                        <span class="receipt-strong">주문상품</span>
+                        <span id="receiptItemCount">0건</span>
+                    </div>
+                    <ul class="receipt-items" id="receiptItems"></ul>
+                </div>
+
+                <!-- 주문금액 -->
+                <div class="receipt-block">
+                    <div class="receipt-total-row">
+                        <span class="receipt-total-label">주문금액</span>
+                        <span class="receipt-total-value" id="receiptTotal">0원</span>
+                    </div>
+                    <div id="receiptAmounts"></div>
+                </div>
+
+                <!-- 결제 상세 -->
+                <div class="receipt-block">
+                    <div class="receipt-block-head">
+                        <span class="receipt-strong">결제 상세</span>
+                    </div>
+                    <div id="receiptPay"></div>
+                </div>
+
+                </div><!-- /.receipt-scroll -->
+
+                <!-- 🔴 도장 — 화면에 들어오면 '쾅' 찍히고 잔상이 번집니다
+                     (본체 한 장 + 뒤따라 퍼지며 사라지는 잔상 두 장) -->
+                <div class="receipt-stamp" id="receiptStamp" aria-hidden="true">
+                    <img src="./img/thankyou.svg" class="receipt-stamp-layer is-ghost1" alt="">
+                    <img src="./img/thankyou.svg" class="receipt-stamp-layer is-ghost2" alt="">
+                    <img src="./img/thankyou.svg" class="receipt-stamp-layer is-main" alt="">
+                </div>
+
+                <p class="receipt-note" id="receiptEmptyNote" hidden>
+                    결제 화면을 거치지 않고 들어와 주문 내용이 비어 있습니다.
+                </p>
+
+                <div class="receipt-actions">
+                    <a href="./index.html" class="receipt-btn">확인</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+
+        <div class="footer-bg-trees"></div>
+        <div class="footer-store-building">
+        </div>
+
+        <canvas id="footer-canvas"></canvas>
+
+        <div class="footer-overlay"></div>
+
+        <div class="footer-ui">
+
+            <div class="footer-left">
+                <div class="footer-social">
+                    <h4>SOCIAL</h4>
+                    <div class="social-actions-wrap">
+                        <a href="#" class="btn-social-item btn-kakao">
+                            <img src="./img/kakao.png" alt="채널 추가하기">
+                            <span class="btn-text">채널 추가하기</span>
+                        </a>
+                        <a href="#" class="btn-social-item btn-insta">
+                            <img src="./img/insta.png" alt="인스타그램">
+                            <span class="btn-text">Instagram</span>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="footer-company">
+                    <h4>COMPANY INFORMATION</h4>
+                    <p>주식회사 지엔에프지</p>
+                    <p>서울 강남구 학동로82길 7</p>
+                    <p>사업자 등록번호 248-81-00620 • 통신판매번호 2020-서울강남-02297 • 대표이사 이준범</p>
+                    <p class="copyright">Copyright © 2023 Knotted. All Rights Reserved.</p>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                <img src="./img/white_logo.svg" alt="Knotted 로고" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                </div>
+                <div class="footer-cs">
+                    <h4>고객센터</h4>
+                    <h2>1800-6067</h2>
+                    <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
+                    <p>점심시간 : 12:00 - 13:00</p>
+                </div>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- 이 페이지가 실제로 쓰는 라이브러리만 불러옵니다. -->
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="./js/pages/orderComplete.js"></script>
+
+</body>
+
+</html>

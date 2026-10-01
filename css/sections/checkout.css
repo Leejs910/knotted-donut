@@ -1,0 +1,539 @@
+/* ============================================================
+   주문 / 결제 본문
+   구조는 cart.html 과 같은 틀(왼쪽 652 + 간격 48 + 오른쪽 380)을 씁니다.
+   ============================================================ */
+
+.checkout {
+    position: relative; /* 트럭 짐칸 문(.truck-door)이 이 영역을 덮습니다 */
+    overflow: hidden;   /* 문이 위에 숨어 있을 때 삐져나오지 않게 */
+    background: #fff;
+    padding: 80px 0 60px;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    color: #2a2625;
+}
+
+.checkout-inner {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* ⚠️ 높이를 고정합니다.
+   내용이 길어지면 페이지가 한없이 늘어나 결제 트럭 애니메이션이
+   화면 밖으로 밀려났습니다. 이제 넘치는 카드는 각 열 안에서 스크롤합니다. */
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 652fr 380fr;
+    column-gap: 48px;
+    height: clamp(420px, 64vh, 620px);
+}
+
+.checkout-main,
+.checkout-side {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain; /* 끝까지 내려도 페이지가 같이 밀리지 않게 */
+
+    /* 스크롤바가 카드 테두리에 딱 붙지 않도록 */
+    padding-right: 10px;
+}
+
+/* 열 안쪽 스크롤바를 페이지 톤에 맞게 얇고 연하게 */
+.checkout-main::-webkit-scrollbar,
+.checkout-side::-webkit-scrollbar {
+    width: 8px;
+}
+
+.checkout-main::-webkit-scrollbar-track,
+.checkout-side::-webkit-scrollbar-track {
+    background: #f4f4f4;
+    border-radius: 4px;
+}
+
+.checkout-main::-webkit-scrollbar-thumb,
+.checkout-side::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 4px;
+}
+
+.checkout-main::-webkit-scrollbar-thumb:hover,
+.checkout-side::-webkit-scrollbar-thumb:hover {
+    background: #bdbdbd;
+}
+
+.checkout-main,
+.checkout-side {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d4 #f4f4f4;
+}
+
+/* ------------------------------------------------------------
+   카드 공통
+------------------------------------------------------------ */
+.co-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.co-card-title {
+    margin: 0 0 18px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #2a2625;
+}
+
+.co-divider {
+    height: 1px;
+    background: #ececec;
+    margin: 18px 0;
+}
+
+.co-help {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #9e9e9e;
+}
+
+.co-empty {
+    margin: 0;
+    padding: 20px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #9e9e9e;
+}
+
+/* ------------------------------------------------------------
+   주문 상품 목록
+------------------------------------------------------------ */
+.co-item-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.co-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    border-top: 1px solid #f2f2f2;
+}
+
+.co-item:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.co-item-thumb {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.co-item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.co-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.co-item-name {
+    margin: 0 0 4px;
+    font-size: 14px
+    ;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #2a2625;
+    word-break: keep-all;
+}
+
+.co-item-price {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    font-size: 13px;
+}
+
+.co-item-now {
+    font-weight: 600;
+    color: #FFC9E1;
+}
+
+.co-item-was {
+    color: #b5b5b5;
+    text-decoration: line-through;
+    font-size: 12px;
+}
+
+.co-item-qty {
+    color: #9e9e9e;
+}
+
+.co-item-total {
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2a2625;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   입력 폼
+------------------------------------------------------------ */
+.co-field + .co-field {
+    margin-top: 14px;
+}
+
+.co-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #858585;
+}
+
+.co-label b {
+    color: #FF6FA5; /* 필수 표시 */
+    font-weight: 700;
+}
+
+.co-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background: #fff;
+
+    font-family: inherit;
+    font-size: 14px;
+    color: #2a2625;
+
+    transition: border-color 0.2s ease;
+}
+
+.co-input::placeholder {
+    color: #c4c4c4;
+}
+
+.co-input:focus {
+    outline: none;
+    border-color: #FFC9E1;
+}
+
+/* '주문자 정보와 동일' 이 켜졌을 때 잠긴 배송지 칸 */
+.co-input.is-locked {
+    background: #f7f7f7;
+    color: #858585;
+}
+
+.co-select {
+    cursor: pointer;
+
+    /* 기본 화살표를 지우고 직접 그립니다 */
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 38px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath d='M5 7 0 0h10z' fill='%23bdbdbd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.co-field-row {
+    display: flex;
+    gap: 8px;
+}
+
+.co-field-row .co-input {
+    flex: 1;
+    min-width: 0;
+}
+
+.co-input.is-short {
+    max-width: 180px;
+}
+
+/* 주소 찾기 / 전액 사용 같은 보조 버튼 */
+.co-btn-sub {
+    flex-shrink: 0;
+    height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 8px;
+    background: #FFC9E1;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+
+    transition: background-color 0.2s ease;
+}
+
+.co-btn-sub:hover {
+    background: #FFA3CC;
+}
+
+/* ------------------------------------------------------------
+   체크박스 / 라디오
+------------------------------------------------------------ */
+.co-check,
+.co-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+
+    font-size: 14px;
+    color: #2a2625;
+}
+
+.co-check {
+    margin-bottom: 16px;
+}
+
+.co-radio + .co-radio {
+    margin-top: 12px;
+}
+
+.co-check input,
+.co-radio input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.co-check-box {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d5d5d5;
+    border-radius: 4px;
+    background: #fff;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.co-check input:checked + .co-check-box {
+    background: #FFC9E1 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='10' viewBox='0 0 12 10'%3E%3Cpath d='M1 5l3.5 3.5L11 1.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px 10px no-repeat;
+    border-color: #FFC9E1;
+}
+
+.co-radio-dot {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d5d5d5;
+    border-radius: 50%;
+    background: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.co-radio input:checked + .co-radio-dot {
+    border-color: #FFC9E1;
+    box-shadow: inset 0 0 0 4px #FFC9E1;
+}
+
+.co-check input:focus-visible + .co-check-box,
+.co-radio input:focus-visible + .co-radio-dot {
+    outline: 2px solid #FFC9E1;
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   주문 요약
+------------------------------------------------------------ */
+.co-sum-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.co-sum-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+    color: #858585;
+}
+
+.co-sum-row .is-strong {
+    color: #2a2625;
+    font-weight: 600;
+}
+
+.co-sum-row .is-accent {
+    color: #FFC9E1;
+}
+
+.co-sum-final {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.co-sum-final-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2625;
+}
+
+.co-sum-final-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #FFC9E1;
+    white-space: nowrap;
+}
+
+.co-sum-point {
+    margin: 6px 0 0;
+    text-align: right;
+    font-size: 12px;
+    color: #9e9e9e;
+}
+
+/* ------------------------------------------------------------
+   결제하기 (본문 아래 띠)
+------------------------------------------------------------ */
+.checkout-submit-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    background: #f4f4f4;
+    padding: 34px 24px;
+}
+
+.checkout-submit {
+    min-width: 200px;
+    padding: 16px 44px;
+    border: none;
+    border-radius: 10px;
+    background: #66CC99; /* 배너 초록과 같은 색 */
+    cursor: pointer;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.checkout-submit:hover {
+    background: #4FBA86;
+}
+
+.checkout-submit:active {
+    transform: translateY(1px);
+}
+
+/* 결제하기를 누른 뒤 안내 문구 (실제 결제는 없습니다) */
+.checkout-result {
+    margin: 0;
+    min-height: 18px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #858585;
+}
+
+.checkout-result.is-error {
+    color: #E4573D;
+}
+
+.checkout-result.is-done {
+    color: #2E9E6B;
+    font-weight: 600;
+}
+
+/* ============================================================
+   📱 반응형
+============================================================ */
+@media (max-width: 1024px) {
+    .checkout {
+        padding: 56px 0 40px;
+    }
+
+    /* 좁아지면 요약을 아래로 내리고, 두 열을 하나의 스크롤 영역으로 합칩니다 */
+    .checkout-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        row-gap: 20px;
+        height: clamp(460px, 70vh, 680px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding-right: 10px;
+    }
+
+    .checkout-main,
+    .checkout-side {
+        height: auto;
+        overflow: visible;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .checkout {
+        padding: 36px 0 28px;
+    }
+
+    .checkout-inner {
+        padding: 0 16px;
+    }
+
+    .co-card {
+        padding: 18px;
+    }
+
+    .co-card-title {
+        font-size: 15px;
+        margin-bottom: 14px;
+    }
+
+    .co-item-thumb {
+        width: 56px;
+        height: 56px;
+    }
+
+    .co-input.is-short {
+        max-width: none;
+    }
+
+    .co-sum-final-value {
+        font-size: 22px;
+    }
+
+    .checkout-submit-band {
+        padding: 24px 16px;
+    }
+
+    .checkout-submit {
+        width: 100%;
+        min-width: 0;
+    }
+}

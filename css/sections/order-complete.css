@@ -1,0 +1,535 @@
+/* ============================================================
+   결제완료 (orderComplete.html)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   🚚 상단 배너 — 도로를 달리는 트럭
+   움직임은 js/modules/truckBanner.js 가 매 프레임 계산합니다.
+   (test/truck7_manual_control.html 의 로직을 그대로 옮겼습니다)
+------------------------------------------------------------ */
+.oc-banner {
+    position: relative;
+    width: 100%;
+
+    /* 배너 높이. 이 값이 바뀌면 아래 세 가지가 함께 움직입니다.
+         · 도로(.oc-ground) 높이 = 30%
+         · 트럭 크기(.oc-truck) — 배너 높이의 약 37%가 되도록 vw 를 맞춰 둠
+         · 배경 SVG 한 장의 폭 = 배너 높이 x 4.539 (truckBanner.js 가 자동 계산) */
+    height: clamp(150px, 20vw, 380px);
+
+    overflow: hidden;
+    background: #BDE1EF; /* 배경 SVG가 뜨기 전에도 보이는 하늘색 */
+    border-bottom: 3px solid #3E2723;
+}
+
+/* 도로 배경 — 한 장짜리 SVG를 가로로 반복시키고,
+   JS가 background-position-x 를 왼쪽으로 밀어 흐르게 합니다.
+   (이 SVG는 좌우 끝의 구름이 이어지도록 그려져 있어 이음매가 보이지 않습니다) */
+.oc-road {
+    position: absolute;
+    inset: 0;
+    background-image: url('../../img/truckBackground.svg');
+    background-repeat: repeat-x;
+    background-size: auto 100%;
+    background-position: 0 center;
+    will-change: background-position;
+}
+
+/* 🛣️ 도로 — test/truck7_manual_control.html 의 .demo-ground 와 같은 구성입니다.
+   (위쪽 12%는 밝은 갓길, 나머지는 아스팔트)
+   배경 SVG의 초록 언덕이 높이의 70% 지점부터 시작하므로,
+   도로를 아래 30%에 깔면 언덕 아래에 자연스럽게 얹힙니다. */
+.oc-ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30%;
+    background: linear-gradient(#b3b3b3 0 10%,#fff09f 10% 12%, #bfbfbf 12% 100%);
+    z-index: 1;
+}
+
+/* 가운데 흰 점선 — JS가 background-position-x 를 밀어 흐르게 합니다.
+   먼 배경보다 빠르게 움직여야 '앞으로 나아가는' 느낌이 납니다.
+
+   ⚠️ 여기서 repeating-linear-gradient 를 쓰면 안 됩니다.
+      그 경우 '무늬 한 장'의 크기가 요소 전체 너비가 되어버려서,
+      요소 너비가 150px 의 배수가 아니면 오른쪽 끝에서 점선이 잘린 채
+      왼쪽으로 넘어옵니다. (점선이 찌그러져 보이던 원인)
+      대신 일반 linear-gradient 로 '정확히 150px 한 마디'만 그리고
+      background-size 로 그 크기를 못 박아 타일링합니다. */
+.oc-road-lines {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 13%;
+    height: 4px;
+    z-index: 1;
+    opacity: 0.75;
+
+    background-image: linear-gradient(
+        to right,
+        transparent 0 35px,
+        rgba(255, 255, 255, 0.82) 35px 95px,
+        transparent 95px 150px
+    );
+    background-size: 150px 100%; /* = LINE_PERIOD (truckBanner.js) */
+    background-repeat: repeat-x;
+    will-change: background-position;
+}
+
+/* 🕶️ 스크롤을 내리는 순간 깔리는 검은 막
+   (checkout.html 의 .checkout-overlay 와 같은 방식 — js/modules/bannerOverlay.js) */
+.oc-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3; /* 도로(0~1) · 트럭(2) 보다 위 */
+    background-color: rgba(0, 0, 0, 0);
+    pointer-events: none;
+}
+
+/* 트럭이 놓일 층 — 바퀴가 아스팔트에 닿도록 도로 안쪽에 둡니다. */
+.oc-truck-wrap {
+    position: absolute;
+    left: 0;
+    bottom: 16%;
+    width: 100%;
+    height: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* 트럭 크기 — 비율이 427:208 이라 25vw 면 높이가 12.2vw 입니다.
+   배너가 20vw 이므로 트럭이 배너 높이의 약 61%를 차지합니다.
+   ⚠️ 이보다 더 키우면 배너 위로 삐져나갑니다.
+      (트럭 바닥은 배너 아래에서 16% 지점 → 남은 공간이 84% = 16.8vw,
+       트럭 높이 12.2vw 라 여유는 4.6vw 뿐입니다) */
+.oc-truck {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: clamp(150px, 25vw, 480px);
+
+    /* JS가 translate3d + rotate 로 위치·덜컹임을 넣습니다 */
+    transform-origin: 50% 100%;
+    will-change: transform;
+}
+
+.oc-truck svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.oc-truck.is-missing::after {
+    content: 'img/truckSide.svg 를 넣어 주세요';
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.45);
+}
+
+/* 바퀴와 차체는 JS가 직접 transform 을 넣으므로 기준점만 잡아 둡니다 */
+.oc-truck #tireMid,
+.oc-truck [id^="tireBack"],
+.oc-truck [id^="tireFront"] {
+    transform-box: fill-box;
+    transform-origin: center;
+    will-change: transform;
+}
+
+.oc-truck #truckbody {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    will-change: transform;
+}
+
+/* ------------------------------------------------------------
+   🧾 영수증
+   색상은 피그마 '결제완료'(349:50) 화면에서 추출했습니다.
+     분홍 바탕 #FFC9E1 · 종이 #EFEDE1 · 초록 #50BD83 · 도장 #DE6572
+------------------------------------------------------------ */
+.oc-body {
+    position: relative;
+    background: #FFC9E1;
+    padding: 70px 24px 90px;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    color: #2a2625;
+}
+
+/* X 무늬가 천천히 흐르는 배경 — onlineShop.html 의 .shop-grid::before 와 같은 방식입니다.
+   배경색(#FFC9E1)은 그대로 두고 무늬만 흰색으로 얹습니다. */
+.oc-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg stroke='white' stroke-opacity='0.55' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='12' y1='12' x2='28' y2='28'/%3E%3Cline x1='28' y1='12' x2='12' y2='28'/%3E%3Cline x1='52' y1='52' x2='68' y2='68'/%3E%3Cline x1='68' y1='52' x2='52' y2='68'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 80px 80px;
+    animation: ocPatternDrift 26s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes ocPatternDrift {
+    from { background-position: 0 0; }
+    to { background-position: 80px 80px; }
+}
+
+/* 움직임을 불편해하는 사용자에게는 아주 느리게 (멈추지는 않습니다) */
+@media (prefers-reduced-motion: reduce) {
+    .oc-body::before { animation-duration: 120s; }
+}
+
+.receipt {
+    z-index: 1; /* 움직이는 X 무늬(::before, z-index 0) 위에 */
+    --zig: 16px; /* 톱니 하나의 너비 */
+
+    position: relative; /* 도장을 모서리에 걸치기 위한 기준 */
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 46px 40px 40px;
+
+    background: #EFEDE1; /* 영수증 종이색 */
+
+    /* 위아래를 톱니 모양으로 뜯어낸 듯하게 만듭니다.
+       가운데는 통째로 남기고(세 번째 레이어), 위아래만 삼각형으로 잘라냅니다. */
+    -webkit-mask:
+        conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg)
+            top / var(--zig) calc(var(--zig) / 2) repeat-x,
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+            bottom / var(--zig) calc(var(--zig) / 2) repeat-x,
+        linear-gradient(#000 0 0) center / 100% calc(100% - var(--zig)) no-repeat;
+    mask:
+        conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg)
+            top / var(--zig) calc(var(--zig) / 2) repeat-x,
+        conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg)
+            bottom / var(--zig) calc(var(--zig) / 2) repeat-x,
+        linear-gradient(#000 0 0) center / 100% calc(100% - var(--zig)) no-repeat;
+}
+
+.receipt-logo {
+    display: block;
+    width: 168px;
+    margin: 0 auto 20px;
+}
+
+.receipt-headline {
+    margin: 0 0 24px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #50BD83;
+}
+
+/* ------------------------------------------------------------
+   주문 내역 상자 — 상품이 늘어나면 여기 안에서만 스크롤됩니다.
+
+   🎚️ 두께 조절 — 아래 두 변수만 바꾸면 테두리와 스크롤바가 함께 따라갑니다.
+      --receipt-line  : 테두리 / 칸 사이 구분선 두께
+      --receipt-bar   : 스크롤바 폭
+   (디자인 스크린샷 실측값: 선 2px, 스크롤바 17px, 색 #50BD83)
+------------------------------------------------------------ */
+.receipt-scroll {
+    --receipt-line: 2px;
+    --receipt-bar: 17px;
+    --receipt-green: #50BD83;
+
+    max-height: clamp(300px, 44vh, 480px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    border: var(--receipt-line) solid var(--receipt-green);
+    padding: 0 16px;
+    background: transparent;
+}
+
+.receipt-scroll:focus-visible {
+    outline: 2px solid var(--receipt-green);
+    outline-offset: 2px;
+}
+
+/* 초록 스크롤바 — 디자인처럼 트랙은 종이색 그대로 두고 막대만 보이게 합니다. */
+.receipt-scroll::-webkit-scrollbar { width: var(--receipt-bar); }
+.receipt-scroll::-webkit-scrollbar-track { background: transparent; }
+.receipt-scroll::-webkit-scrollbar-thumb { background: var(--receipt-green); }
+.receipt-scroll::-webkit-scrollbar-thumb:hover { background: #3FA86F; }
+
+/* ⚠️ 표준 속성 scrollbar-width 를 같이 쓰면 크롬이 그쪽을 우선해서
+   위에서 정한 17px 이 기본값(15px)으로 깎입니다.
+   그래서 ::-webkit-scrollbar 를 지원하지 않는 브라우저(파이어폭스 등)에만 적용합니다. */
+@supports not selector(::-webkit-scrollbar) {
+    .receipt-scroll {
+        scrollbar-width: auto;
+        scrollbar-color: var(--receipt-green) transparent;
+    }
+}
+
+/* 표 한 칸 — 칸 사이 구분선도 테두리와 같은 초록/두께 */
+.receipt-block {
+    border-top: var(--receipt-line) solid var(--receipt-green);
+    padding: 12px 0 14px;
+}
+
+.receipt-block:first-child { border-top: none; }
+.receipt-block:last-of-type { border-bottom: none; }
+
+.receipt-block-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #2a2625;
+}
+
+.receipt-order-no {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+/* 주문자 */
+.receipt-buyer-name {
+    margin: 0 0 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.receipt-buyer-line {
+    margin: 0;
+    font-size: 10.5px;
+    line-height: 1.65;
+    color: #6b6660;
+    word-break: break-all;
+}
+
+/* 주문 상품 */
+.receipt-items { margin: 0; padding: 0; list-style: none; }
+
+.receipt-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px dashed #CFCBBD;
+}
+
+.receipt-item:first-child { border-top: none; }
+
+.receipt-item.is-empty {
+    display: block;
+    padding: 16px 0;
+    text-align: center;
+    font-size: 11px;
+    color: #9a958c;
+}
+
+.receipt-item-thumb {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 5px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.receipt-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.receipt-item-info { min-width: 0; }
+
+.receipt-item-name {
+    margin: 0 0 2px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #2a2625;
+    word-break: keep-all;
+}
+
+.receipt-item-qty { margin: 0; font-size: 10px; color: #8d887f; }
+
+/* 금액 / 결제 상세 줄 */
+.receipt-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 0;
+
+    font-size: 11px;
+    color: #6b6660;
+}
+
+.receipt-row-value { white-space: nowrap; }
+
+/* 주문금액 합계 */
+.receipt-total-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.receipt-total-label { font-size: 12.5px; font-weight: 700; }
+
+.receipt-total-value {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #50BD83;
+}
+
+/* ------------------------------------------------------------
+   🔴 Thank You 도장 — 영수증 오른쪽 아래 모서리에 걸칩니다.
+   화면에 들어오면 '쾅' 찍히고, 뒤따라 잔상 두 장이 번지며 사라집니다.
+------------------------------------------------------------ */
+.receipt-stamp {
+    position: absolute;
+    right: 4px;
+    bottom: 92px;
+    z-index: 2;
+
+    width: clamp(112px, 12vw, 168px);
+    aspect-ratio: 198 / 172; /* thankyou.svg 원본 비율 */
+    pointer-events: none;
+}
+
+/* 본체와 잔상을 같은 자리에 겹쳐 둡니다 */
+.receipt-stamp-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+
+    transform-origin: center;
+    opacity: 0; /* 찍히기 전에는 보이지 않습니다 */
+    will-change: transform, opacity;
+}
+
+/* 본체 — 크게 떠 있다가 내리꽂히고 한 번 튕긴 뒤 자리를 잡습니다 */
+.receipt-stamp.is-stamped .is-main {
+    opacity: 1;
+    animation: stampSlam 0.5s cubic-bezier(0.2, 0.9, 0.25, 1.2) forwards;
+}
+
+/* 잔상 — 본체보다 살짝 늦게 찍히고, 더 크게 번지며 사라집니다 */
+.receipt-stamp.is-stamped .is-ghost1 {
+    animation: stampGhost 0.62s ease-out 0.03s forwards;
+}
+
+.receipt-stamp.is-stamped .is-ghost2 {
+    animation: stampGhost 0.74s ease-out 0.07s forwards;
+}
+
+/* 애니메이션이 진행되지 않는 환경에서 도장이 안 보이는 것을 막는 최후 수단.
+   js/pages/orderComplete.js 가 1.5초 뒤에도 투명하면 이 클래스를 붙입니다. */
+.receipt-stamp.is-forced .is-main {
+    animation: none !important;
+    opacity: 1;
+    transform: rotate(-12deg) scale(1);
+}
+
+@keyframes stampSlam {
+    0%   { opacity: 0; transform: rotate(-30deg) scale(3.2); }
+    42%  { opacity: 1; transform: rotate(-12deg) scale(0.86); } /* 쾅 */
+    60%  { opacity: 1; transform: rotate(-12deg) scale(1.12); } /* 튕김 */
+    78%  { opacity: 1; transform: rotate(-12deg) scale(0.96); }
+    100% { opacity: 1; transform: rotate(-12deg) scale(1); }
+}
+
+@keyframes stampGhost {
+    0%   { opacity: 0;    transform: rotate(-30deg) scale(3.2); }
+    42%  { opacity: 0.45; transform: rotate(-12deg) scale(0.86); }
+    100% { opacity: 0;    transform: rotate(-12deg) scale(2); }  /* 번지며 사라짐 */
+}
+
+/* 움직임을 불편해하는 사용자에게는 잔상 없이 부드럽게 나타납니다.
+   ⚠️ 본체까지 끄면 도장이 아예 안 보입니다(기본 opacity 0). */
+@media (prefers-reduced-motion: reduce) {
+    .receipt-stamp.is-stamped .is-main {
+        animation: stampSoft 0.45s ease-out forwards;
+    }
+
+    /* 잔상도 끄지 않고 번짐 폭만 줄입니다.
+       (끄면 이 설정이 켜진 환경에서 잔상 효과가 통째로 사라집니다) */
+    .receipt-stamp.is-stamped .is-ghost1 {
+        animation: stampGhostSoft 0.5s ease-out 0.04s forwards;
+    }
+
+    .receipt-stamp.is-stamped .is-ghost2 {
+        animation: stampGhostSoft 0.58s ease-out 0.09s forwards;
+    }
+}
+
+@keyframes stampSoft {
+    from { opacity: 0; transform: rotate(-12deg) scale(1.3); }
+    45%  { opacity: 1; transform: rotate(-12deg) scale(0.96); }
+    to   { opacity: 1; transform: rotate(-12deg) scale(1); }
+}
+
+@keyframes stampGhostSoft {
+    0%   { opacity: 0;   transform: rotate(-12deg) scale(1.3); }
+    45%  { opacity: 0.3; transform: rotate(-12deg) scale(0.96); }
+    100% { opacity: 0;   transform: rotate(-12deg) scale(1.4); }
+}
+
+.receipt-note {
+    margin: 12px 0 0;
+    text-align: center;
+    font-size: 10.5px;
+    color: #a8a49c;
+}
+
+.receipt-note[hidden] { display: none; }
+
+/* 확인 버튼 */
+.receipt-actions {
+    margin-top: 26px;
+    text-align: center;
+}
+
+.receipt-btn {
+    display: inline-block;
+    width: 100%;
+    max-width: 320px;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 8px;
+    background: #50BD83;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+
+    transition: background-color 0.2s ease;
+}
+
+.receipt-btn:hover { background: #3FA86F; }
+
+/* ============================================================
+   📱 반응형
+============================================================ */
+@media (max-width: 767px) {
+    .oc-body {
+        padding: 36px 16px 56px;
+    }
+
+    .receipt {
+        padding: 36px 22px 30px;
+    }
+
+    .receipt-logo {
+        width: 120px;
+    }
+
+    .receipt-headline {
+        font-size: 15px;
+    }
+
+}

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 공통: 모든 페이지에 넣습니다 -->
+    <link rel="stylesheet" href="./css/base/reset.css">
+    <link rel="stylesheet" href="./css/base/animations.css">
+    <link rel="stylesheet" href="./css/layout/nav.css">
+
+    <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/page-banner.css">
+    <link rel="stylesheet" href="./css/components/truck-scene.css">
+
+    <!-- 섹션: 그 페이지에 있는 것만 -->
+    <link rel="stylesheet" href="./css/sections/checkout-banner.css">
+    <link rel="stylesheet" href="./css/sections/checkout.css">
+
+    <!-- 푸터는 다른 규칙을 덮어쓸 수 있어야 하므로 마지막 -->
+    <link rel="stylesheet" href="./css/layout/footer.css">
+
+    <title>NotedDount — 주문 / 결제</title>
+
+</head>
+
+<body>
+    <nav id="mainNav" class="navbar">
+
+        <a href="./cart.html" class="mobile-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </a>
+
+        <h1 class="logo">
+            <a href="./index.html">
+                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+            </a>
+        </h1>
+
+        <ul class="nav-links">
+            <li><a href="./onlineShop.html">SHOP</a></li>
+            <li><a href="#">STORE</a></li>
+            <li><a href="#">MENU</a></li>
+            <li><a href="#">BRAND</a></li>
+            <li><a href="#">SUPPORT</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <a href="./cart.html" class="btn btn-outline pc-btn">Cart</a>
+
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-wrapper" id="mobile-menu">
+        <div class="mobile-login-header">
+            <p>로그인이 필요합니다.</p>
+            <a href="#" class="login-link">로그인</a>
+        </div>
+        <ul class="mobile-menu-list">
+            <li><a href="./onlineShop.html">Online Shop <span class="chevron"></span></a></li>
+            <li><a href="./cart.html">Cart <span class="chevron"></span></a></li>
+            <li><a href="#">Menu <span class="chevron"></span></a></li>
+            <li><a href="#">Event <span class="chevron"></span></a></li>
+            <li><a href="#">Brand <span class="chevron"></span></a></li>
+            <li><a href="#">Help <span class="chevron"></span></a></li>
+            <li><a href="#">Contact <span class="chevron"></span></a></li>
+        </ul>
+    </div>
+
+    <!-- 🐰 배너 — SVG는 js/modules/checkoutBanner.js 가 펼쳐 넣습니다 -->
+    <header class="checkout-banner page-banner">
+        <div class="checkout-banner-art" id="checkoutBannerArt"></div>
+
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (onlineShop / cart 와 같은 규칙) -->
+        <div class="checkout-overlay page-banner-overlay"></div>
+
+        <h2 class="checkout-banner-title page-banner-title">CHECKOUT</h2>
+    </header>
+
+    <main>
+        <section class="checkout" id="checkoutSection">
+
+            <!-- 🚚 결제하기를 누르면 위에서 내려와 화면을 덮는 짐칸 문
+                 (평소에도 아래쪽 끝이 화면 위에 살짝 걸쳐 보입니다) -->
+            <div class="truck-door" id="truckDoor" aria-hidden="true"></div>
+
+            <!-- 🚚 트럭 무대 — 문이 닫히면 이 위에 겹쳐 나타납니다
+                 (SVG는 truckScene.js 가 넣습니다) -->
+            <div class="truck-stage-band" id="truckStageBand" hidden aria-hidden="true">
+                <div class="truck-stage" id="truckStage">
+                    <div class="truck-svg" id="truckSvg"></div>
+                </div>
+            </div>
+
+            <div class="checkout-inner">
+                <form class="checkout-layout" id="checkoutForm" novalidate>
+
+                    <!-- ============ 왼쪽 ============ -->
+                    <div class="checkout-main">
+
+                        <!-- 주문 상품 정보 -->
+                        <section class="co-card">
+                            <h2 class="co-card-title">주문 상품 정보</h2>
+                            <ul class="co-item-list" id="checkoutItems"></ul>
+                        </section>
+
+                        <!-- 주문자 정보 -->
+                        <section class="co-card">
+                            <h2 class="co-card-title">주문자 정보</h2>
+
+                            <div class="co-field">
+                                <label class="co-label" for="buyerName">이름 <b>*</b></label>
+                                <input class="co-input" type="text" id="buyerName" name="buyerName"
+                                    placeholder="이름을 입력해 주세요" required>
+                            </div>
+
+                            <div class="co-field">
+                                <label class="co-label" for="buyerPhone">연락처 <b>*</b></label>
+                                <input class="co-input" type="tel" id="buyerPhone" name="buyerPhone"
+                                    placeholder="010-0000-0000" required>
+                            </div>
+
+                            <div class="co-field">
+                                <label class="co-label" for="buyerEmail">이메일</label>
+                                <input class="co-input" type="email" id="buyerEmail" name="buyerEmail"
+                                    placeholder="knotted@example.com">
+                            </div>
+                        </section>
+
+                        <!-- 배송 정보 -->
+                        <section class="co-card">
+                            <h2 class="co-card-title">배송 정보</h2>
+
+                            <label class="co-check">
+                                <input type="checkbox" id="sameAsBuyer" checked>
+                                <span class="co-check-box" aria-hidden="true"></span>
+                                주문자 정보와 동일
+                            </label>
+
+                            <div class="co-field">
+                                <label class="co-label" for="receiverName">받는 분 <b>*</b></label>
+                                <input class="co-input" type="text" id="receiverName" name="receiverName"
+                                    placeholder="받는 분 이름" required>
+                            </div>
+
+                            <div class="co-field">
+                                <label class="co-label" for="receiverPhone">연락처 <b>*</b></label>
+                                <input class="co-input" type="tel" id="receiverPhone" name="receiverPhone"
+                                    placeholder="010-0000-0000" required>
+                            </div>
+
+                            <div class="co-field">
+                                <label class="co-label" for="postcode">주소 <b>*</b></label>
+                                <div class="co-field-row">
+                                    <input class="co-input is-short" type="text" id="postcode" name="postcode"
+                                        placeholder="우편번호" required>
+                                    <button type="button" class="co-btn-sub">주소 찾기</button>
+                                </div>
+                            </div>
+
+                            <div class="co-field">
+                                <input class="co-input" type="text" id="address1" name="address1"
+                                    placeholder="기본 주소" aria-label="기본 주소" required>
+                            </div>
+
+                            <div class="co-field">
+                                <input class="co-input" type="text" id="address2" name="address2"
+                                    placeholder="상세 주소" aria-label="상세 주소">
+                            </div>
+
+                            <div class="co-field">
+                                <label class="co-label" for="deliveryMemo">배송 요청사항</label>
+                                <select class="co-input co-select" id="deliveryMemo" name="deliveryMemo">
+                                    <option value="">배송 시 요청사항을 선택해 주세요</option>
+                                    <option value="door">문 앞에 놓아주세요</option>
+                                    <option value="security">경비실에 맡겨주세요</option>
+                                    <option value="call">배송 전 연락 부탁드려요</option>
+                                    <option value="careful">파손 위험 상품입니다, 조심해 주세요</option>
+                                </select>
+                            </div>
+                        </section>
+
+                        <!-- 포인트 -->
+                        <section class="co-card">
+                            <h2 class="co-card-title">포인트</h2>
+
+                            <div class="co-field">
+                                <div class="co-field-row">
+                                    <input class="co-input" type="number" id="pointInput" name="pointInput"
+                                        min="0" step="1" placeholder="0" aria-label="사용할 포인트">
+                                    <button type="button" class="co-btn-sub" id="pointUseAll">전액 사용</button>
+                                </div>
+                                <p class="co-help">보유 포인트 <b id="pointOwned">0</b>P · 결제금액 내에서만 사용할 수 있어요</p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- ============ 오른쪽 ============ -->
+                    <aside class="checkout-side">
+
+                        <!-- 주문 요약 (js/modules/checkoutOrder.js 가 그립니다) -->
+                        <section class="co-card co-summary" id="checkoutSummary" aria-label="주문 요약"></section>
+
+                        <!-- 결제 수단 -->
+                        <section class="co-card">
+                            <h2 class="co-card-title">결제 수단</h2>
+
+                            <label class="co-radio">
+                                <input type="radio" name="payMethod" value="card" data-label="신용카드" checked>
+                                <span class="co-radio-dot" aria-hidden="true"></span>
+                                신용카드
+                            </label>
+                            <label class="co-radio">
+                                <input type="radio" name="payMethod" value="easy" data-label="간편결제">
+                                <span class="co-radio-dot" aria-hidden="true"></span>
+                                간편결제
+                            </label>
+                            <label class="co-radio">
+                                <input type="radio" name="payMethod" value="bank" data-label="무통장입금">
+                                <span class="co-radio-dot" aria-hidden="true"></span>
+                                무통장입금
+                            </label>
+
+                            <p class="co-help">포트폴리오용 화면이라 카드 정보는 받지 않습니다.</p>
+                        </section>
+                    </aside>
+                </form>
+            </div>
+        </section>
+
+        <!-- 결제하기 -->
+        <div class="checkout-submit-band" id="checkoutSubmitBand">
+            <button type="submit" form="checkoutForm" class="checkout-submit">결제하기</button>
+            <p class="checkout-result" id="checkoutResult" role="status"></p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+
+        <div class="footer-bg-trees"></div>
+        <div class="footer-store-building">
+        </div>
+
+        <canvas id="footer-canvas"></canvas>
+
+        <div class="footer-overlay"></div>
+
+        <div class="footer-ui">
+
+            <div class="footer-left">
+                <div class="footer-social">
+                    <h4>SOCIAL</h4>
+                    <div class="social-actions-wrap">
+                        <a href="#" class="btn-social-item btn-kakao">
+                            <img src="./img/kakao.png" alt="채널 추가하기">
+                            <span class="btn-text">채널 추가하기</span>
+                        </a>
+                        <a href="#" class="btn-social-item btn-insta">
+                            <img src="./img/insta.png" alt="인스타그램">
+                            <span class="btn-text">Instagram</span>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="footer-company">
+                    <h4>COMPANY INFORMATION</h4>
+                    <p>주식회사 지엔에프지</p>
+                    <p>서울 강남구 학동로82길 7</p>
+                    <p>사업자 등록번호 248-81-00620 • 통신판매번호 2020-서울강남-02297 • 대표이사 이준범</p>
+                    <p class="copyright">Copyright © 2023 Knotted. All Rights Reserved.</p>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                <img src="./img/white_logo.svg" alt="Knotted 로고" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                </div>
+                <div class="footer-cs">
+                    <h4>고객센터</h4>
+                    <h2>1800-6067</h2>
+                    <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
+                    <p>점심시간 : 12:00 - 13:00</p>
+                </div>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- 이 페이지가 실제로 쓰는 라이브러리만 불러옵니다. -->
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="./js/pages/checkout.js"></script>
+
+</body>
+
+</html>

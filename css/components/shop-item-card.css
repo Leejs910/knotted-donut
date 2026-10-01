@@ -1,0 +1,131 @@
+/* ============================================================
+   온라인 샵 상품 카드 (이미지 + 상품명 + 가격 + 담기 버튼)
+
+   ⚠️ index.html 컨베이어가 쓰는 components/product-card.css 와는 다른 카드입니다.
+      클래스 이름이 겹치지 않게 전부 shop-item-* 으로 지었습니다.
+   ============================================================ */
+
+.shop-item {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer; /* 카드 전체를 눌러도 상세 모달이 열립니다 */
+
+    background: #fff;
+    border: 4px solid #b4b2b2;
+    border-radius: 20px;
+
+    /* 피그마: 카드 328.86 안에 내용 309.22 → 양쪽 약 6px */
+    padding: 6px;
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.shop-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* 🖼 상품 이미지 */
+.shop-item-thumb {
+    position: relative;
+    width: 100%;
+
+    /* 피그마: 309.22 x 268.32 */
+    aspect-ratio: 309 / 268;
+
+    background: #f1f1f1;
+    border-radius: 13px 13px 0 0;
+    overflow: hidden;
+}
+
+.shop-item-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.35s ease;
+}
+
+/* 두 번째 컷은 평소엔 숨겨두고 마우스를 올렸을 때만 보여줍니다. */
+.shop-item-img.is-hover {
+    opacity: 0;
+}
+
+.shop-item:hover .shop-item-img.is-hover {
+    opacity: 1;
+}
+
+/* 📝 상품명 */
+.shop-item-name {
+    margin: 21px 6px 0;
+    text-align: center;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: clamp(13px, 1vw, 19.2px);
+    font-weight: 500;
+    line-height: 1.35;
+    color: #000;
+    word-break: keep-all;
+
+    /* 상품명이 길어도 두 줄까지만 — 카드 높이가 들쭉날쭉해지지 않게 합니다. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(2 * 1.35em);
+}
+
+/* 💰 가격
+   아래 21px은 버튼과의 '최소' 간격입니다.
+   카드 높이가 남으면 버튼의 margin-top:auto 가 그만큼 더 벌려줍니다. */
+.shop-item-price {
+    margin: 9px 0 21px;
+    text-align: center;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: clamp(16px, 1.25vw, 24px);
+    font-weight: 700;
+    color: #10ABFF;
+}
+
+/* 🛒 담기 버튼 — 카드 아래쪽에 딱 붙도록 남은 공간을 밀어냅니다. */
+.shop-item-cart {
+    margin-top: auto;
+    width: 100%;
+    min-height: 68.85px;
+    padding: 12px;
+    border: none;
+    border-radius: 0 0 13px 13px;
+    cursor: pointer;
+
+    background: #BDE1EF;
+    color: #fff;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: clamp(16px, 1.25vw, 24px);
+    font-weight: 700;
+
+    transition: background-color 0.2s ease;
+}
+
+.shop-item-cart:hover {
+    background: #9CD2E6;
+}
+
+@media (max-width: 767px) {
+    .shop-item {
+        border-width: 3px;
+        border-radius: 14px;
+        padding: 4px;
+    }
+
+    .shop-item-name {
+        margin-top: 12px;
+    }
+
+    .shop-item-cart {
+        min-height: 44px;
+        padding: 8px;
+    }
+}

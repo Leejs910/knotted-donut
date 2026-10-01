@@ -5,7 +5,6 @@
     <!-- <script src="http://unpkg.com"></script> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
     <!-- 공통: 모든 페이지에 넣습니다 -->
     <link rel="stylesheet" href="./css/base/reset.css">
@@ -13,16 +12,19 @@
     <link rel="stylesheet" href="./css/layout/nav.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
-    <link rel="stylesheet" href="./css/components/product-card.css">
+    <link rel="stylesheet" href="./css/components/page-banner.css">
+    <link rel="stylesheet" href="./css/components/grid-nav.css">
+    <link rel="stylesheet" href="./css/components/shop-item-card.css">
+    <link rel="stylesheet" href="./css/components/shop-item-modal.css">
 
     <!-- 섹션: 그 페이지에 있는 것만 -->
-    <link rel="stylesheet" href="./css/sections/hero.css">
-    <link rel="stylesheet" href="./css/sections/online-shop.css">
+    <link rel="stylesheet" href="./css/sections/puzzle.css">
+    <link rel="stylesheet" href="./css/sections/shop-grid.css">
 
     <!-- 푸터는 다른 규칙을 덮어쓸 수 있어야 하므로 마지막 -->
     <link rel="stylesheet" href="./css/layout/footer.css">
 
-    <title>NotedDount</title>
+    <title>NotedDount — ONLINE SHOP</title>
 
 
 </head>
@@ -40,7 +42,7 @@
         </a>
 
         <h1 class="logo">
-            <a>
+            <a href="./index.html">
                 <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
                 <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
             </a>
@@ -63,17 +65,6 @@
                 <span></span>
                 <span></span>
             </button>
-
-            <a href="#" id="sound-toggle-btn" class="sound-toggle btn-sound-outline is-on">
-                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <line x1="23" y1="9" x2="17" y2="15" class="icon-off"></line>
-                    <line x1="17" y1="9" x2="23" y2="15" class="icon-off"></line>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="icon-on"></path>
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="icon-on"></path>
-                </svg>
-            </a>
         </div>
     </nav>
 
@@ -94,96 +85,69 @@
     </div>
 
 
-    <header class="video-hero">
-        <video autoplay muted loop playsinline poster="./img/donut_fallback.png" class="bg-video">
-            <source src="./video/donutVideo.mp4" type="video/mp4">
-            브라우저가 비디오를 지원하지 않습니다.
-        </video>
-        <div class="decorations">
-            <div class="deco-wrap wrap_item-1">
-                <img src="./img_deco/Star 4.png" class="deco item-1" alt="sparkle">
-            </div>
-            <div class="deco-wrap wrap_item-2">
-                <img src="./img_deco/Star 7.png" class="deco item-2" alt="sparkle">
-            </div>
+    <!-- 🧩 퍼즐 타일 배너 — 캔버스는 js/modules/puzzleBanner.js 가 그립니다 -->
+    <header class="puzzle page-banner">
+        <canvas id="puzzle-canvas"></canvas>
 
-            <div class="deco-wrap wrap_item-3">
-                <img src="./img_deco/Star 4.png" class="deco item-5" alt="sparkle">
-            </div>
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (cart / checkout 과 같은 규칙) -->
+        <div class="puzzle-overlay page-banner-overlay"></div>
 
-            <div class="deco-wrap wrap_item-4">
-                <img src="./img_deco/Star 4.png" class="deco item-8" alt="sparkle">
-            </div>
-
-            <img src="./img_deco/clover2.png" class="deco item-3" alt="cloud">
-            <img src="./img_deco/clover2.png" class="deco item-7" alt="cloud">
-            <img src="./img_deco/sweetDay.png" class="deco item-6" alt="have a sweet day">
-            <img src="./img_deco/smile.svg" class="deco item-4" alt="smile">
-        </div>
-        <div class="hero-container">
-
-            <div class="hero-text-box">
-                <span class="sub-title">Fresh & Creamy</span>
-                <h1 class="main-title">Creamy <br class="pc-only-br">Donut</h1>
-
-                <p class="description">
-                    매일 아침, 정성스럽게 만든<br>
-                    부드럽고 달콤한 크림 도넛
-                </p>
-
-                <div class="button-group">
-                    <a href="#" class="btn-primary">ORDER NOW &rarr;</a>
-                    <a href="#" class="btn-secondary">VIEW MENU</a>
-                </div>
-
-
-            </div>
-
-            <div class="hero-image-box">
-            </div>
-
-        </div>
-
-        <div class="scroll-indicator">
-            <div class="mouse-icon"></div>
-            <span>SCROLL</span>
-            <div class="arrow-down"></div>
-        </div>
-
-        <div class="wave-container wave-top">
-            <div class="wave-divider color-blue"></div>
-        </div>
+        <h2 class="puzzle-title page-banner-title">ONLINE SHOP</h2>
     </header>
     <main>
 
+        <!-- 🛒 상품 섹션 — 카드는 js/modules/shopGrid.js 가 그려 넣습니다 -->
+        <section class="shop-grid">
+            <div class="shop-grid-inner">
 
-        <section class="online_shop">
-            <div class="shop-decorations">
-                <img src="./img_deco/star1.png" class="shop-deco deco-star" alt="별">
-                <img src="./img_deco/star2.png" class="shop-deco deco-star2" alt="별">
-                <img src="./img_deco/star3.png" class="shop-deco deco-star3" alt="별">
-                <img src="./img_deco/clover1.png" class="shop-deco deco-clover" alt="클로버">
-                <img src="./img_deco/smile.svg" class="shop-deco deco-smile" alt="스마일">
-            </div>
+                <!-- 정렬 (네이티브 select 의 각진 옵션 목록이 기존 UI와 이질감이 있어
+                     둥근 알약 형태의 커스텀 드롭다운으로 대체했습니다) -->
+                <div class="shop-sort" id="shopSortWrap">
+                    <div class="shop-sort-select" id="shopSort" tabindex="0" role="combobox"
+                        aria-label="상품 정렬" aria-haspopup="listbox" aria-expanded="false"
+                        aria-controls="shopSortOptions">
+                        <span class="shop-sort-value">등록순</span>
+                    </div>
+                    <ul class="shop-sort-options" id="shopSortOptions" role="listbox" aria-labelledby="shopSort">
+                        <li class="shop-sort-option" role="option" data-value="default"
+                            aria-selected="true">등록순</li>
+                        <li class="shop-sort-option" role="option" data-value="priceAsc"
+                            aria-selected="false">낮은 가격순</li>
+                        <li class="shop-sort-option" role="option" data-value="priceDesc"
+                            aria-selected="false">높은 가격순</li>
+                    </ul>
+                </div>
 
-            <div class="shop-title-box" id="shopTitleBox">
-            </div>
+                <!-- 카테고리 탭 (예전에는 ribbonTop 자리였고, 그 전에는 배너 경계에
+                     걸쳐 있었습니다. 지금은 정렬과 상품 그리드 사이에 놓입니다) -->
+                <div class="shop-tabs" id="shopTabs" role="tablist" aria-label="상품 카테고리">
+                    <button type="button" class="shop-tab is-active" data-category="all" role="tab"
+                        aria-selected="true">전체</button>
+                    <button type="button" class="shop-tab" data-category="food" role="tab"
+                        aria-selected="false">푸드</button>
+                    <button type="button" class="shop-tab" data-category="living" role="tab"
+                        aria-selected="false">리빙</button>
+                    <button type="button" class="shop-tab" data-category="bulk" role="tab"
+                        aria-selected="false">대량주문</button>
 
-            <div class="trail-container">
-                <div class="trail-track"></div>
-
-                <div class="swiper trail-swiper">
-                    <div class="swiper-wrapper">
-
-
+                    <div class="shop-tabs-badge">
+                        <img src="./img/blue_ribbon.png" alt="">
                     </div>
                 </div>
-            </div>
-            <div class="trail-controls">
-                <div class="ctrl-btn" id="btn-ff">&lt;&lt;</div>
-                <div class="ctrl-btn active" id="btn-play">▶</div>
-                <div class="ctrl-btn" id="btn-pause">||</div>
-                <div class="ctrl-btn" id="btn-rew">&gt;&gt;</div>
+
+                <!-- 상품 그리드 + 좌우 페이지 넘김 버튼
+                     (버튼이 그리드 양옆에 걸치도록 함께 감쌉니다) -->
+                <div class="shop-grid-nav">
+                    <button type="button" class="grid-nav-btn grid-nav-prev" id="shopPrev"
+                        aria-label="이전 상품 보기" aria-controls="shopCardGrid"></button>
+
+                    <div class="shop-card-grid" id="shopCardGrid"></div>
+
+                    <button type="button" class="grid-nav-btn grid-nav-next" id="shopNext"
+                        aria-label="다음 상품 보기" aria-controls="shopCardGrid"></button>
+                </div>
+
+                <img src="./img/ribbonBottom.svg" class="shop-ribbon shop-ribbon-bottom" alt="">
             </div>
         </section>
 
@@ -245,12 +209,12 @@
 
     </footer>
 
+    <!-- 이 페이지가 실제로 쓰는 라이브러리만 불러옵니다.
+         (Swiper·CustomEase는 index.html 전용 기능에서만 쓰여서 뺐습니다) -->
     <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script type="module" src="./js/pages/index.js"></script>
+    <script type="module" src="./js/pages/onlineShop.js"></script>
 
 
 </body>
