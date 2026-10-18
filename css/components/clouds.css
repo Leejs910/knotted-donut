@@ -1,0 +1,37 @@
+/* ============================================================
+   흘러가는 구름 배경
+   요소는 js/modules/clouds.js 가 #cloud-container 안에 만들어 넣습니다.
+
+   원래 css/sections/new-and-best.css 안에만 있었는데, menu.html 에서도
+   같은 배경을 쓰게 되어 컴포넌트로 옮겼습니다.
+   (@keyframes flyCloud 는 css/base/animations.css 에 있습니다)
+   ============================================================ */
+
+/* 구름이 담기는 상자 — 배경 역할이라 섹션 전체를 덮습니다. */
+.clouds-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 구름이 섹션 밖으로 나가는 것을 가립니다 */
+    pointer-events: none; /* 구름 때문에 클릭이 막히지 않도록 */
+    z-index: 1;
+}
+
+/* 개별 구름.
+   출발선이 left:100% 라 오른쪽 화면 밖에서 시작해 왼쪽으로 흘러갑니다.
+   크기·속도·세로 위치는 js/modules/clouds.js 가 하나씩 다르게 넣어 줍니다. */
+.random-cloud {
+    position: absolute;
+    left: 100%;
+    width: 150px; /* JS가 덮어씁니다 (기본값) */
+    height: auto;
+    opacity: 0.8;
+    will-change: transform;
+}
+
+/* JS가 이 클래스를 붙였다 뗐다 하며 다시 출발시킵니다. */
+.cloud-moving {
+    animation: flyCloud linear forwards;
+}

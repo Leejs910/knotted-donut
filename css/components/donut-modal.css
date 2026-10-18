@@ -60,7 +60,13 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 260px; height: 390px;
+
+    /* 🎚️ 카드 크기 — 이 한 줄만 바꾸면 높이와 글자까지 함께 따라옵니다.
+       (가로:세로 = 1 : 1.5 고정. 예전 값은 260px 이었습니다) */
+    --card-w: 320px;
+    width: var(--card-w);
+    height: calc(var(--card-w) * 1.5);
+
     perspective: 1000px;
     z-index: 10;
     /* ✨ 카드 위치 미세 조정 (마이너스 값을 주면 왼쪽으로 이동합니다) */
@@ -100,7 +106,7 @@
 /* 카드 앞면 디자인 */
 .modal-card-front {
     display: flex; flex-direction: column; align-items: center;
-    padding: 15px 20px;
+    padding: 18px 22px;
     text-align: center;
 
     /* ✨ 클릭한 카드의 이미지를 그대로 씁니다 (JS가 --modal-card-img를 채워줌) */
@@ -112,8 +118,8 @@
 }
 
 .modal-card-front img {
-    /* 1. 이미지 크기 */
-    width: 180px;
+    /* 1. 이미지 크기 (카드 폭에 비례) */
+    width: 68%;
 
     /* 2. 텍스트 박스와 겹치도록 아래쪽 여백을 마이너스로 설정 */
     margin-bottom: -10px;
@@ -134,8 +140,8 @@
     flex-direction: column;
     gap: 5px; /* 메인 설명과 하단 정보 사이의 간격 */
     border-radius: 8px;
-    font-size: 11px;
-    line-height: 1.4;
+    font-size: 13px;
+    line-height: 1.5;
     border: 3px solid #FFF;
     /* ✨ 겹쳤을 때 도넛보다 항상 뒤에 있도록 설정 */
     position: relative;
@@ -144,7 +150,7 @@
 
 /* ✨ 메인 설명 텍스트 (중앙 정렬, 굵게) */
 .desc-main {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 800;
     line-height: 1.4;
     text-align: center;
@@ -170,15 +176,21 @@
 
 /* 고정 라벨 (알레르기 유발 요인, 원산지 정보) */
 .info-label {
-    font-size: 11px;
+    font-size: 12.5px;
     font-weight: 900;
 }
 
 /* 실제 데이터 값 */
 .info-value {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 400;
     opacity: 0.9;
+}
+
+/* 📱 카드 위 메뉴 이름 — 폰에서만 보입니다.
+   데스크톱에서는 원 둘레를 도는 글자가 이름을 알려 주므로 숨겨 둡니다. */
+.modal-card-title {
+    display: none;
 }
 
 /* ✨ 반시계 방향 회전 애니메이션 정의 */
@@ -213,24 +225,74 @@
     transform: translate(240px, -320px) scale(1.2);
 }
 
+/* ⚠️ 크롬은 포커스가 가면 기본 포커스 링(outline: auto)을 그립니다.
+   배경이 투명한 X 버튼에서는 이게 '검은 사각 테두리'처럼 보였습니다.
+   마우스로 열었을 때는 숨기고, 키보드로 Tab 해서 왔을 때만
+   디자인에 맞는 흰 동그란 링을 보여 줍니다. */
+.modal-close:focus {
+    outline: none;
+}
+
+.modal-close:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 6px;
+    border-radius: 50%;
+}
+
 /* =========================================
    📱 좁은 화면 대응
    고정값(240px / -320px)을 그대로 두면 버튼이 화면 밖으로 나가버립니다.
    원(90vmin)의 크기에 비례해서 따라오도록 vmin으로 바꿔줍니다.
 ========================================= */
 @media (max-width: 767px) {
+    /* ⚠️ 카드가 커지면서 화면 중앙 기준으로 띄워 둔 닫기 버튼이 카드에 가립니다.
+       폰에서는 중앙이 아니라 '화면 오른쪽 위 모서리'에 고정합니다. */
     .modal-close {
-        font-size: 36px;
-        transform: translate(36vmin, -42vmin);
+        top: 16px;
+        left: auto;
+        right: 16px;
+        transform: none;
+        font-size: 40px;
     }
     .modal-close:hover {
-        transform: translate(36vmin, -42vmin) scale(1.2);
+        transform: scale(1.2);
     }
 
-    /* 원이 작아지는데 카드는 260px 그대로라서, 카드가 원형 글자를 거의 다 가립니다.
-       데스크톱과 비슷한 비율이 되도록 카드만 조금 줄여줍니다.
-       (숫자를 키우면 카드가 커지고, 줄이면 글자가 더 잘 보입니다) */
+    /* 폰에서는 글자가 읽히는 게 우선이라 카드를 최대한 키웁니다. */
     .modal-card-scene {
-        transform: translate(-50%, -50%) scale(0.72);
+        --card-w: min(330px, 84vw);
+    }
+
+    /* 카드가 거의 다 덮어서 보이지도 않는 원형 배경은 아예 뺍니다.
+       (원 둘레의 이름도 함께 사라지므로 아래에서 카드 위에 다시 띄웁니다) */
+    .modal-circle-bg {
+        display: none;
+    }
+
+    /* 카드 바로 위에 뜨는 메뉴 이름.
+       색과 테두리는 카드 안 이름표(.menu-card-name)와 같은 규칙입니다. */
+    .modal-card-title {
+        display: block;
+        position: absolute;
+        bottom: 100%;          /* 카드 위쪽에 붙임 */
+        left: 50%;
+        transform: translateX(-50%);
+        margin-bottom: 14px;   /* 카드와 겹치지 않게 띄우는 간격 */
+
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 16px;
+
+        background: var(--modal-color);
+        border: 2px solid #fff;
+        border-radius: 4px;
+
+        color: #fff;
+        font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+        font-weight: 900;
+        font-size: 1rem;
+        line-height: 1.3;
+        text-align: center;
+        word-break: keep-all;  /* 한국어 단어가 중간에 쪼개지지 않도록 */
     }
 }

@@ -18,8 +18,16 @@ export function initClouds({ maxClouds = 6 } = {}) {
         cloudElement.style.animationDuration = `${randomDuration}s`;
 
         if (isFirstSpawn) {
-            // 처음 렌더링될 때 구름들이 뭉쳐서 나오지 않도록 0~20초 랜덤 딜레이
-            cloudElement.style.animationDelay = `${Math.random() * 20}s`;
+            // 🌥️ 처음 그려질 때는 '음수' 딜레이를 줍니다.
+            //    양수 딜레이를 주면 화면 오른쪽 밖에서 한참 기다렸다가 들어오기 때문에,
+            //    페이지를 열자마자 하늘이 한동안 텅 비어 있었습니다.
+            //    음수로 주면 애니메이션이 이미 그만큼 진행된 상태에서 시작해서
+            //    구름들이 처음부터 화면 곳곳(가운데 포함)에 흩어져 보입니다.
+            //
+            //    0.05~0.75 구간만 쓰는 이유: 0 에 가까우면 아직 화면 밖이고,
+            //    1 에 가까우면 이미 왼쪽으로 빠져나가는 중이라 잘 안 보입니다.
+            const progress = 0.05 + Math.random() * 0.7;
+            cloudElement.style.animationDelay = `${-(randomDuration * progress).toFixed(2)}s`;
         } else {
             // 끝까지 갔다가 다시 스폰될 때는 딜레이 없이 바로 출발
             cloudElement.style.animationDelay = '0s';

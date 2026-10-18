@@ -1,0 +1,121 @@
+/* ============================================================
+   메뉴 카드 (menu.html)
+
+   index.html 의 도넛 카드(css/components/donut-card.css)와 같은 생김새지만,
+   그쪽은 Swiper 슬라이드 전용 규칙이 섞여 있어서 그리드용으로 따로 뒀습니다.
+   구성은 동일합니다 — 배경 카드 그림 위에 메뉴 사진과 이름표를 얹습니다.
+
+   층 순서: 배경 카드(1) → 메뉴 사진(2) → 이름표(3)
+   ============================================================ */
+
+.menu-card {
+    position: relative;
+    display: block;
+    cursor: pointer;
+
+    /* 카드 그림 자체가 비율을 가지므로 높이는 그림이 정합니다. */
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .menu-card:hover {
+        transform: translateY(-10px) scale(1.03);
+    }
+}
+
+/* 1. 바닥에 깔리는 배경 카드 그림 (cardBlue / cardYellow / cardPink / cardGreen) */
+.menu-card-bg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* 2. 카드 가운데서 살짝 위로 띄운 메뉴 사진 */
+.menu-card-pic {
+    position: absolute;
+    top: 42%; /* 숫자를 줄이면 위로 올라갑니다 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 75%; /* 카드 안쪽 동그라미에 맞춘 크기 */
+    filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.3));
+    z-index: 2;
+}
+
+/* 3. 사진 아래 이름표 — 배경색은 JS가 카테고리 색으로 넣어 줍니다. */
+.menu-card-name {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+
+    width: 90%;
+    box-sizing: border-box;
+    padding: 8px 20px;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-weight: 900;
+    color: #fff;
+
+    /* 글자 크기는 index.html 의 .donut-name-box 와 똑같은 사다리를 씁니다.
+       (기본 1rem → 1280px 이하 0.9rem → 767px 이하 1rem → 1920px 이상 1.25rem) */
+    font-size: 1rem;
+    text-align: center;
+    word-break: keep-all; /* 단어가 중간에서 뚝 끊기지 않게 */
+
+    border: 2px solid #fff;
+    border-radius: 4px;
+}
+
+/* 📏 자리만 차지하는 빈 칸.
+   마지막 페이지가 덜 찼을 때 그리드 높이가 줄어드는 것을 막습니다.
+   (js/modules/menuGrid.js 가 필요한 개수만큼 넣습니다)
+   카드 그림(cardBlue.png 등)이 전부 301x458 이라 같은 비율을 줍니다. */
+.menu-card-blank {
+    aspect-ratio: 301 / 458;
+    pointer-events: none;
+}
+
+/* 카드가 하나도 없을 때 */
+.menu-empty {
+    grid-column: 1 / -1;
+    margin: 60px 0;
+    text-align: center;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: clamp(15px, 1.2vw, 20px);
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* ------------------------------------------------------------
+   📐 이름표 글자 크기 — index.html 의 .donut-name-box 와 동일
+------------------------------------------------------------ */
+/* ⚠️ 예전에는 여기(max-width: 1280px)에서 글자를 0.9rem 으로, 위아래 여백을
+   2px 로 줄였습니다. 그런데 바로 이 지점에서 카드가 한 열 줄면서 오히려
+   '넓어집니다'. 1280x800 노트북에서 실측하니
+
+       1281px → 4열, 카드 268px, 글자 16px, 위아래 여백 8px
+       1280px → 3열, 카드 381px, 글자 14.4px, 위아래 여백 2px   ← 더 넓은데 더 작음
+
+   카드가 넓어지는 자리에서 글자만 작아지니 이름표가 얇고 작아 보였습니다.
+   이 구간은 기본값(1rem / 8px 20px)을 그대로 쓰는 게 맞아 규칙을 지웠습니다.
+   글자를 줄여야 하는 건 카드가 실제로 좁아지는 모바일(767px 이하)뿐입니다. */
+
+@media (max-width: 767px) {
+    .menu-card-name {
+        font-size: 1rem;
+        padding: 4px 2px;
+        line-height: 1.2;
+    }
+}
+
+@media (min-width: 1920px) {
+    .menu-card-name {
+        font-size: 1.25rem;
+        padding: 10px 26px;
+        border-width: 3px;
+    }
+}

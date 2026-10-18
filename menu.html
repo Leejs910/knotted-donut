@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 공통: 모든 페이지에 넣습니다 -->
+    <link rel="stylesheet" href="./css/base/reset.css">
+    <link rel="stylesheet" href="./css/base/animations.css">
+    <link rel="stylesheet" href="./css/base/scrollbar.css">
+    <link rel="stylesheet" href="./css/layout/nav.css">
+
+    <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/page-banner.css">
+    <link rel="stylesheet" href="./css/components/category-tabs.css">
+    <link rel="stylesheet" href="./css/components/grid-nav.css">
+    <link rel="stylesheet" href="./css/components/clouds.css">
+    <link rel="stylesheet" href="./css/components/menu-card.css">
+    <link rel="stylesheet" href="./css/components/donut-modal.css">
+
+    <!-- 섹션: 그 페이지에 있는 것만 -->
+    <link rel="stylesheet" href="./css/sections/puzzle.css">
+    <link rel="stylesheet" href="./css/sections/menu-grid.css">
+
+    <!-- 푸터는 다른 규칙을 덮어쓸 수 있어야 하므로 마지막 -->
+    <link rel="stylesheet" href="./css/layout/footer.css">
+
+    <title>NotedDount — MENU</title>
+
+</head>
+
+<body>
+    <nav id="mainNav" class="navbar">
+
+        <a href="#" class="mobile-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </a>
+
+        <h1 class="logo">
+            <a href="./index.html">
+                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+            </a>
+        </h1>
+
+        <ul class="nav-links">
+            <li><a href="./onlineShop.html">SHOP</a></li>
+            <li><a href="./menu.html">MENU</a></li>
+            <li><a href="#">BRAND</a></li>
+            <li><a href="#">SUPPORT</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <a href="#" class="btn btn-outline pc-btn">Cart</a>
+
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-wrapper" id="mobile-menu">
+        <div class="mobile-login-header">
+            <p>로그인이 필요합니다.</p>
+            <a href="#" class="login-link">로그인</a>
+        </div>
+        <ul class="mobile-menu-list">
+            <li><a href="./onlineShop.html">Shop</a></li>
+            <li><a href="#">Menu</a></li>
+            <li><a href="#">Brand</a></li>
+            <li><a href="#">Support</a></li>
+        </ul>
+
+        <!-- 🌈 바닥에 걸치는 무지개 장식 (CSS 로 그립니다 — img/rainbow.svg 는 1.18MB 라 안 씁니다) -->
+        <div class="mobile-menu-rainbow" aria-hidden="true"></div>
+
+        <!-- 🐰 메뉴 아래 빈 자리 장식: 무지개 위에 앉은 토끼 + 천천히 도는 별.
+             (@keyframes spin 은 css/base/animations.css 에 있어 그대로 재사용) -->
+        <div class="mobile-menu-stars" aria-hidden="true">
+            <span class="mm-circle"></span>
+            <img src="./img_deco/star1.png" class="mm-star mm-star-1" alt="">
+            <img src="./img_deco/star2.png" class="mm-star mm-star-2" alt="">
+            <img src="./img/phoneRabbit.svg" class="mm-rabbit" alt="">
+        </div>
+    </div>
+
+
+    <!-- 🧩 퍼즐 타일 배너 — 캔버스는 js/modules/puzzleBanner.js 가 그립니다 -->
+
+    <!-- 🧩 퍼즐 타일 배너 — onlineShop.html 과 같은 연출, 제목만 다릅니다 -->
+    <header class="puzzle page-banner">
+        <canvas id="puzzle-canvas"></canvas>
+
+        <!-- 스크롤을 내리는 순간 어두워지는 막 -->
+        <div class="puzzle-overlay page-banner-overlay"></div>
+
+        <h2 class="puzzle-title page-banner-title">MENU</h2>
+    </header>
+
+    <main>
+
+        <!-- 🍩 메뉴 섹션 — 카드는 js/modules/menuGrid.js 가 그려 넣습니다 -->
+        <section class="menu-grid">
+
+            <!-- 흘러가는 구름 배경 (index.html 과 같은 모듈이 채웁니다) -->
+            <div class="clouds-bg" id="cloud-container"></div>
+
+            <div class="menu-grid-inner">
+
+                <!-- 카테고리 탭 (onlineShop.html 과 같은 컴포넌트) -->
+                <div class="shop-tabs" id="menuTabs" role="tablist" aria-label="메뉴 카테고리">
+                    <button type="button" class="shop-tab is-active" data-category="all" role="tab"
+                        aria-selected="true">전체</button>
+                    <button type="button" class="shop-tab" data-category="donut" role="tab"
+                        aria-selected="false">도넛</button>
+                    <button type="button" class="shop-tab" data-category="cake" role="tab"
+                        aria-selected="false">케이크</button>
+                    <button type="button" class="shop-tab" data-category="drink" role="tab"
+                        aria-selected="false">음료</button>
+
+                    <div class="shop-tabs-badge">
+                        <img src="./img/blue_ribbon.png" alt="">
+                    </div>
+                </div>
+
+                <!-- 카드 그리드 + 좌우 페이지 넘김 버튼 (onlineShop.html 과 같은 컴포넌트) -->
+                <div class="menu-grid-nav">
+                    <button type="button" class="grid-nav-btn grid-nav-prev" id="menuPrev"
+                        aria-label="이전 메뉴 보기" aria-controls="menuCardGrid"></button>
+
+                    <div class="menu-card-grid" id="menuCardGrid"></div>
+
+                    <button type="button" class="grid-nav-btn grid-nav-next" id="menuNext"
+                        aria-label="다음 메뉴 보기" aria-controls="menuCardGrid"></button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+
+        <div class="footer-bg-trees"></div>
+        <div class="footer-store-building">
+        </div>
+
+        <canvas id="footer-canvas"></canvas>
+
+        <div class="footer-overlay"></div>
+
+        <div class="footer-ui">
+
+            <div class="footer-left">
+                <div class="footer-social">
+                    <h4>SOCIAL</h4>
+                    <div class="social-actions-wrap">
+                        <a href="#" class="btn-social-item btn-kakao">
+                            <img src="./img/kakao.png" alt="채널 추가하기">
+                            <span class="btn-text">채널 추가하기</span>
+                        </a>
+                        <a href="#" class="btn-social-item btn-insta">
+                            <img src="./img/insta.png" alt="인스타그램">
+                            <span class="btn-text">Instagram</span>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="footer-company">
+                    <h4>COMPANY INFORMATION</h4>
+                    <p>주식회사 지엔에프지</p>
+                    <p>서울 강남구 학동로82길 7</p>
+                    <p>사업자 등록번호 248-81-00620 • 통신판매번호 2020-서울강남-02297 • 대표이사 이준범</p>
+                    <p class="copyright">Copyright © 2023 Knotted. All Rights Reserved.</p>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                <img src="./img/white_logo.svg" alt="Knotted 로고" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                </div>
+                <div class="footer-cs">
+                    <h4>고객센터</h4>
+                    <h2>1800-6067</h2>
+                    <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
+                    <p>점심시간 : 12:00 - 13:00</p>
+                </div>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="./js/pages/menu.js"></script>
+
+</body>
+
+</html>

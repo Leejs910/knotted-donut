@@ -107,40 +107,8 @@
 
 
 
-/* --- 1. 구름 컨테이너 --- */
-.clouds-bg {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    overflow: hidden; /* 구름이 화면 밖으로 나가는 것 가리기 */
-    pointer-events: none; /* 구름 클릭 방지 */
-    z-index: 1;
-    /* z-index: 5 !important; */
-}
-
-/* --- 2. 개별 구름 공통 스타일 --- */
-.random-cloud {
-    position: absolute;
-    /* 출발선을 화면 오른쪽 끝(100%) 바깥으로 설정 */
-    left: 100%; 
-    height: auto;
-    
-    /* 구름 크기는 100px ~ 180px 사이로 CSS/JS에서 적절히 혼용 (기본값) */
-    width: 150px; 
-    opacity: 0.8;
-    
-    /* GPU에게 연산 준비를 시킴 */
-    will-change: transform; 
-}
-
-/* --- 3. 구름이 흘러가는 애니메이션 (JS에서 클래스로 부여) --- */
-.cloud-moving {
-    /* JS에서 주입한 랜덤 시간(duration)을 바탕으로 이동 */
-    animation: flyCloud linear forwards;
-}
-
-
-
+/* 구름 배경(.clouds-bg / .random-cloud / .cloud-moving)은
+   menu.html 과 함께 쓰려고 css/components/clouds.css 로 옮겼습니다. */
 
 /* --- 3. 토글 버튼 위로 띄우기 --- */
 .menu-toggle-wrapper {

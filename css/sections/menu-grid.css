@@ -1,0 +1,150 @@
+/* ============================================================
+   메뉴 섹션 (menu.html)
+
+   구성은 onlineShop.html 의 .shop-grid 와 같은 뼈대입니다.
+     · 카테고리에 따라 배경(하늘)색이 바뀝니다
+     · 흘러가는 구름 배경은 index.html 과 같은 모듈을 씁니다
+       (css/components/clouds.css + js/modules/clouds.js)
+     · 카테고리 탭은 css/components/category-tabs.css 를 그대로 씁니다
+
+   층 순서: 하늘(배경색) → 구름(1) → 본문(2)
+   ============================================================ */
+
+.menu-grid {
+    position: relative;
+
+    /* 카테고리에 따라 바뀌는 하늘색 (기본: 전체 = 하늘색)
+       onlineShop 의 .shop-grid 와 같은 색을 씁니다. */
+    background-color: #8CD8FF;
+    transition: background-color 0.4s ease;
+
+    padding-bottom: 180px;
+
+    /* ⚠️ overflow: hidden 을 주지 않습니다. 구름은 .clouds-bg 가 자체적으로
+       잘라내고, 여기서 자르면 카드 hover 가 위로 떠오를 때 잘립니다. */
+}
+
+/* 탭으로 바뀌는 카테고리별 하늘색 (js/modules/categoryTabs.js 가 data-active 를 붙입니다) */
+.menu-grid[data-active="all"]   { background-color: #8CD8FF; } /* 하늘 */
+.menu-grid[data-active="donut"] { background-color: #FFF09F; } /* 노랑 */
+.menu-grid[data-active="cake"]  { background-color: #FFC9E1; } /* 핑크 */
+.menu-grid[data-active="drink"] { background-color: #50BD83; } /* 초록 */
+
+/* 구름이 담기는 상자 — 섹션 전체를 덮습니다.
+   (.clouds-bg 자체 규칙은 css/components/clouds.css 에 있습니다) */
+.menu-grid .clouds-bg {
+    z-index: 1;
+}
+
+/* 본문은 구름보다 위에 */
+.menu-grid-inner {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 0 24px;
+
+    /* ⚠️ flow-root 가 필요합니다. 첫 자식인 .shop-tabs 의 margin-top 이
+       이 박스 밖으로 새어 나가면(마진 상쇄) 섹션 위쪽 여백이 사라져
+       배너와 딱 붙어 버립니다. (onlineShop 의 .shop-grid-inner 와 같은 이유) */
+    display: flow-root;
+}
+
+/* 카테고리 탭 — 모양은 컴포넌트가, 자리만 여기서 정합니다. */
+.menu-grid .shop-tabs {
+    margin: 61px auto 0;
+}
+
+/* ------------------------------------------------------------
+   카드 그리드 — 4열 기본, 화면이 좁아지면 3 → 2열
+------------------------------------------------------------ */
+
+/* 좌우 페이지 넘김 버튼(.grid-nav-btn 은 position:absolute)의 기준 상자입니다.
+   그리드와 같은 폭이라, 버튼이 그리드 양 끝에 정확히 걸칩니다.
+   (onlineShop.html 의 .shop-grid-nav 와 같은 역할) */
+.menu-grid-nav {
+    position: relative;
+}
+
+/* 🎨 버튼 배경색만 카테고리에 따라 바뀝니다 (화살표 색은 #3E2723 고정) */
+.menu-grid[data-active="all"]   .grid-nav-btn { background-color: #BDE1EF; }
+.menu-grid[data-active="donut"] .grid-nav-btn { background-color: #FFF09F; }
+.menu-grid[data-active="cake"]  .grid-nav-btn { background-color: #FFC9E1; }
+.menu-grid[data-active="drink"] .grid-nav-btn { background-color: #50BD83; }
+.menu-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 48px;
+    row-gap: 56px;
+    margin-top: 70px;
+}
+
+@media (max-width: 1280px) {
+    .menu-card-grid {
+        grid-template-columns: repeat(3, 1fr);
+        column-gap: 36px;
+        row-gap: 44px;
+    }
+
+    .menu-grid .shop-tabs { margin-top: 48px; }
+    .menu-grid { padding-bottom: 140px; }
+}
+
+@media (max-width: 1024px) {
+    .menu-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 28px;
+        row-gap: 36px;
+        margin-top: 56px;
+    }
+
+    .menu-grid { padding-bottom: 110px; }
+}
+
+@media (max-width: 767px) {
+    .menu-grid-inner { padding: 0 16px; }
+    .menu-grid .shop-tabs { margin-top: 32px; }
+
+    /* ◀▶ 폰에서는 페이지 넘김 버튼을 카드 양옆이 아니라 '그리드 아래 가운데'에 둡니다.
+       양옆에 두면 좁은 화면에서 카드를 너무 많이 가립니다.
+       (공통 컴포넌트 css/components/grid-nav.css 는 이 폭에서 버튼을 숨기는데,
+        여기서 다시 켜고 자리를 바꿉니다. onlineShop 은 숨긴 그대로 둡니다) */
+    .menu-grid-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .menu-grid-nav .menu-card-grid {
+        order: 1;
+        flex: 0 0 100%; /* 그리드가 한 줄을 통째로 차지 → 버튼은 다음 줄로 */
+    }
+
+    .menu-grid-nav .grid-nav-prev { order: 2; }
+    .menu-grid-nav .grid-nav-next { order: 3; }
+
+    .menu-grid-nav .grid-nav-btn {
+        display: flex;          /* 컴포넌트의 display:none 을 되돌림 */
+        position: static;       /* 양옆 absolute 배치 해제 */
+        left: auto;
+        right: auto;
+        transform: none;        /* 세로 가운데 맞춤용 translateY 해제 */
+        margin-top: 28px;
+    }
+
+    .menu-grid-nav .grid-nav-btn:hover:not(:disabled) {
+        transform: translateY(-5px);
+    }
+
+    .menu-card-grid {
+        column-gap: 16px;
+        row-gap: 24px;
+        margin-top: 40px;
+    }
+
+    .menu-grid { padding-bottom: 80px; }
+}
