@@ -1,0 +1,55 @@
+/* ============================================================
+   스크롤바 공통 모양
+
+   orderComplete.html 영수증(.receipt-scroll)의 스크롤바를 기준으로,
+   이 사이트에서 생기는 모든 스크롤바가 같은 생김새를 갖도록 맞춥니다.
+
+   모양은 고정 — 굵은 폭(17px), 투명한 트랙, 모서리가 각진 막대.
+   색만 자리마다 다르게 쓰고 싶으면 그 요소에 변수만 다시 적어 주면 됩니다.
+
+       .내가쓸칸 {
+           --sb-thumb: #50BD83;
+           --sb-thumb-hover: #3FA86F;
+       }
+
+   ⚠️ 표준 속성 scrollbar-width 를 함께 쓰면 크롬이 그쪽을 우선해서
+      위에서 정한 17px 이 기본값(15px)으로 깎입니다. 그래서 파이어폭스처럼
+      ::-webkit-scrollbar 를 지원하지 않는 브라우저에만 따로 적용합니다.
+   ============================================================ */
+
+:root {
+    --sb-size: 17px;              /* 스크롤바 굵기 */
+    --sb-track: transparent;      /* 트랙(배경) — 비워 두는 게 기본 */
+    --sb-thumb: #c9c9c9;          /* 막대 */
+    --sb-thumb-hover: #ababab;
+}
+
+*::-webkit-scrollbar {
+    width: var(--sb-size);
+    height: var(--sb-size);
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--sb-track);
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb);
+    border-radius: 0; /* 영수증 스크롤바처럼 각진 막대 */
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--sb-thumb-hover);
+}
+
+/* 모서리(가로·세로 스크롤바가 만나는 네모)도 트랙과 같게 */
+*::-webkit-scrollbar-corner {
+    background: var(--sb-track);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: var(--sb-thumb) var(--sb-track);
+    }
+}

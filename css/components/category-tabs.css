@@ -1,0 +1,119 @@
+/* ============================================================
+   카테고리 탭 (알약 모양 토글 + 가운데 리본 뱃지)
+
+   onlineShop.html 의 상품 카테고리와 menu.html 의 메뉴 카테고리가
+   같은 모양·같은 동작을 쓰므로 컴포넌트로 뺐습니다.
+   동작은 js/modules/categoryTabs.js 가 담당합니다.
+
+   색상은 index.html 의 .menu-toggle-wrapper 를 따랐습니다.
+   위치(위아래 여백)만 각 섹션 CSS 에서 정합니다.
+   ============================================================ */
+
+.shop-tabs {
+    position: relative; /* 안쪽 .shop-tabs-badge 의 기준 상자 */
+
+    width: min(812px, 100%);
+    height: 68px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    gap: 0;
+    padding: 3px; /* 모니터 기준. 767px 이하에서는 아래 미디어쿼리가 2px 로 줄입니다 */
+
+    background-color: #fff;
+    border: 3px solid #3E2723;   /* 진한 브라운 테두리 */
+    border-radius: 40px;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1); /* 살짝 떠보이는 그림자 */
+}
+
+.shop-tab {
+    height: 56px;
+    /* 브라우저 기본 버튼 padding 을 지우고 flex 정렬로 직접 중앙 정렬합니다 */
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    border-radius: 40px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-size: clamp(14px, 1vw, 19.2px);
+    font-weight: 800;
+    line-height: 1; /* 'normal'은 폰트마다 줄높이가 달라 상하 중앙이 미묘하게 어긋나 보일 수 있어 고정값으로 둡니다 */
+    color: #3E2723;
+    white-space: nowrap;
+
+    transition: all 0.3s ease;
+}
+
+.shop-tab:hover {
+    background-color: rgba(62, 39, 35, 0.08);
+}
+
+.shop-tab.is-active {
+    background-color: #3E2723;
+    color: #fff;
+}
+
+/* 🎀 탭 한가운데(푸드와 리빙 사이)에 얹히는 원형 리본 뱃지 */
+.shop-tabs-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 70px;
+    height: 70px;
+    background-color: #fff;
+    border: 3px solid #3E2723;
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    z-index: 2; /* 버튼 글자를 가리도록 위로 */
+    pointer-events: none; /* 뱃지가 탭 클릭을 막지 않게 */
+}
+
+/* 탭을 누를 때마다 js/modules/categoryTabs.js 가 잠깐 붙였다 떼는 통통 튀는 효과 */
+@keyframes badgeBounce {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    30%  { transform: translate(-50%, -50%) scale(1.25); }
+    55%  { transform: translate(-50%, -50%) scale(0.9); }
+    75%  { transform: translate(-50%, -50%) scale(1.08); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.shop-tabs-badge.animate-bounce {
+    animation: badgeBounce 0.5s ease;
+}
+
+.shop-tabs-badge img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+}
+
+/* 📱 좁은 화면에서는 알약을 한 단계 작게 */
+@media (max-width: 767px) {
+    .shop-tabs {
+        height: 54px;
+        padding: 2px;
+        border-width: 2px;
+    }
+
+    .shop-tab {
+        height: 46px;
+        font-size: 13px;
+    }
+
+    /* 알약이 좁아지면 뱃지가 탭 글자를 가려서 숨깁니다. */
+    .shop-tabs-badge { display: none; }
+}

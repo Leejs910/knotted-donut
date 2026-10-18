@@ -18,8 +18,17 @@
 .truck-door {
     position: absolute;
     top: -96%;
-    left: 0;
+
+    /* 📏 폭은 .checkout-inner 와 똑같이 맞춥니다.
+       예전에는 width:100% 라 넓은 모니터에서 문이 화면 끝까지 퍼졌는데,
+       뒤이어 나오는 트럭 무대(.truck-stage)는 max-width:1080px 이라
+       문 → 트럭 뒷면으로 넘어가는 순간 폭이 뚝 줄어 어색했습니다.
+       좁은 화면에서는 width:100% 가 그대로 쓰여 예전과 같습니다. */
+    left: 50%;
     width: 100%;
+    max-width: 1080px;
+    transform: translateX(-50%);
+
     height: 100%;
     z-index: 30;
 
@@ -31,7 +40,9 @@
 }
 
 .truck-door.is-closed {
-    transform: translateY(96%);
+    /* ⚠️ 가운데 정렬용 translateX(-50%) 를 유지한 채 내려와야 합니다.
+       translateY 만 쓰면 문이 오른쪽으로 밀립니다. */
+    transform: translate(-50%, 96%);
     pointer-events: auto; /* 닫힌 뒤엔 아래 폼을 못 누르게 막습니다 */
 }
 
@@ -43,13 +54,21 @@
        (바퀴 회전·차체 덜컹임의 시작 시점도 자동으로 맞춰집니다)
 
          --zoom-dur  : 카메라가 줌아웃하는 시간
-         --hold      : 줌아웃이 끝난 뒤 멈춰 서 있는 시간
+         --hold      : 줌아웃이 끝난 뒤 가만히 서 있는 시간
+         --judder    : 제자리에서 덜컹거리는 시간 (이 뒤에 출발합니다)
          --drive-dur : 오른쪽으로 달려 나가는 시간
          --drive-to  : 얼마나 멀리 나갈지 (화면 밖까지 확실히 빠지도록)
 
-       출발 시점 = --zoom-dur + --hold 로 자동 계산됩니다. */
+       진행 순서
+         ①  0                              줌아웃 시작 (뒷면 → 옆면)
+         ②  zoom-dur + hold                바퀴가 돌고 차체가 덜컹거리기 시작 (아직 제자리)
+         ③  zoom-dur + hold + judder       그제서야 출발
+
+       ②와 ③ 사이의 틈이 test/truckAnime.html 의 '덜컹거린 다음 움직이는' 느낌입니다.
+       (원본은 0.8s 에 덜컹, 1.0s 에 출발 — 그 간격 0.2s 를 그대로 가져왔습니다) */
     --zoom-dur: 0.231s;
     --hold: 0.5s;
+    --judder: 0.2s;
     --drive-dur: 2s;
     --drive-to: 150vw;
 
@@ -124,7 +143,7 @@
     transform-origin: 50% 50%;
     animation:
         zoomOutAndPan var(--zoom-dur) cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
-        driveAway var(--drive-dur) ease-in calc(var(--zoom-dur) + var(--hold)) forwards;
+        driveAway var(--drive-dur) ease-in calc(var(--zoom-dur) + var(--hold) + var(--judder)) forwards;
 }
 
 @keyframes zoomOutAndPan {
@@ -185,16 +204,22 @@
     80% { transform: translateY(2.5px); } /* 서스펜션이 눌리는 느낌 */
 }
 
-/* 움직임을 불편해하는 사용자에게는 흔들림만 빼고 주행은 짧게 보여 줍니다.
-   ⚠️ 전부 꺼버리면 결제완료로 넘어가는 흐름이 끊깁니다. */
 /* ⚠️ 예전에는 여기서 zoomOutAndPan / driveAway 를 통째로 다시 선언해서,
       '동작 줄이기'가 켜진 환경에서는 위의 변수를 아무리 바꿔도
-      반영되지 않았습니다. 이제 타이밍은 건드리지 않고
-      멀미를 유발하는 차체 흔들림만 뺍니다. */
+      반영되지 않았습니다. 이제 타이밍은 건드리지 않습니다. */
+/* 폭만 줄인 약한 덜컹임. 완전히 끄면 '덜컹거린 다음 출발'이라는
+   연출 자체가 사라지므로, 흔들림 폭만 1/3 로 줄여서 그대로 보여 줍니다. */
+@keyframes truckJellySoft {
+    0%, 100% { transform: translateY(0); }
+    35% { transform: translateY(-1.6px); }
+    65% { transform: translateY(0); }
+    80% { transform: translateY(0.8px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .start-animation #truck7 #truckbody,
     .start-animation #truck7 #truckLogo {
-        animation: none;
+        animation: truckJellySoft 0.35s ease-in-out calc(var(--zoom-dur) + var(--hold)) infinite;
     }
 }
 

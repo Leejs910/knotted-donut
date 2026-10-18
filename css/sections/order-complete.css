@@ -78,6 +78,10 @@
     will-change: background-position;
 }
 
+/* ℹ️ 다른 배너와 달리 여기에는 상단 어둡게(스크림)를 두지 않습니다.
+   이 페이지의 네비게이션은 처음부터 .nav-solid (노란 불투명 바탕 + 진한 글씨)라
+   가독성 문제가 없고, 스크림을 깔면 하늘과 언덕만 괜히 어두워집니다. */
+
 /* 🕶️ 스크롤을 내리는 순간 깔리는 검은 막
    (checkout.html 의 .checkout-overlay 와 같은 방식 — js/modules/bannerOverlay.js) */
 .oc-overlay {
@@ -252,20 +256,13 @@
     outline-offset: 2px;
 }
 
-/* 초록 스크롤바 — 디자인처럼 트랙은 종이색 그대로 두고 막대만 보이게 합니다. */
-.receipt-scroll::-webkit-scrollbar { width: var(--receipt-bar); }
-.receipt-scroll::-webkit-scrollbar-track { background: transparent; }
-.receipt-scroll::-webkit-scrollbar-thumb { background: var(--receipt-green); }
-.receipt-scroll::-webkit-scrollbar-thumb:hover { background: #3FA86F; }
-
-/* ⚠️ 표준 속성 scrollbar-width 를 같이 쓰면 크롬이 그쪽을 우선해서
-   위에서 정한 17px 이 기본값(15px)으로 깎입니다.
-   그래서 ::-webkit-scrollbar 를 지원하지 않는 브라우저(파이어폭스 등)에만 적용합니다. */
-@supports not selector(::-webkit-scrollbar) {
-    .receipt-scroll {
-        scrollbar-width: auto;
-        scrollbar-color: var(--receipt-green) transparent;
-    }
+/* 초록 스크롤바 — 모양(굵기·각진 막대·투명 트랙)은 css/base/scrollbar.css 가
+   정하고, 여기서는 색만 영수증 초록으로 바꿉니다.
+   이 사이트의 다른 스크롤바도 모두 같은 모양을 쓰며, 색만 자리마다 다릅니다. */
+.receipt-scroll {
+    --sb-size: var(--receipt-bar);
+    --sb-thumb: var(--receipt-green);
+    --sb-thumb-hover: #3FA86F;
 }
 
 /* 표 한 칸 — 칸 사이 구분선도 테두리와 같은 초록/두께 */

@@ -6,11 +6,20 @@
 // 세로는 항상 VISIBLE_ROWS 줄로 딱 나누어 떨어지게 잘라서,
 // 배너 높이가 바뀌어도 아래쪽 타일이 어중간하게 잘리지 않습니다.
 
-const IMAGE_COUNT = 18;      // img/puzzle/1.png ~ 18.png
+// 🎚️ 타일에 올릴 그림 — img/puzzle/1.webp ~ {IMAGE_COUNT}.webp
+//    파일을 더 넣거나 빼면 이 숫자만 맞춰 주면 됩니다.
+//    (512px WebP. 실제로 그려지는 크기는 배너 높이의 절반이라 184px 정도이고,
+//     고해상도 화면까지 감안해 512px 로 두었습니다)
+const IMAGE_COUNT = 15;
+const IMAGE_EXT = 'webp';
 const BG_COLOR = '#F3CFC7';  // 타일 사이로 비치는 배경(선) 색
 const TILE_COLOR = '#F0F1E3';// 둥근 타일 바탕색
 const GAP = 3;               // 타일 사이 간격(px)
 const RADIUS = 16;           // 타일 모서리 둥근 정도(px)
+
+// 🎚️ 타일 대비 그림 크기. 1 이면 타일을 꽉 채우고, 0.96 이면 4% 작아집니다.
+//    타일 바탕(크림색 둥근 사각형)은 그대로 두고 그림만 가운데에서 줄어듭니다.
+const IMAGE_SCALE = 0.96;
 const VISIBLE_ROWS = 2;      // 화면에 꽉 차게 보여줄 줄 수 (타일 크기 = 배너높이 / 이 값)
 const ANIM_FRAMES = 25;      // 한 칸 미는 데 쓰는 프레임 수 (클수록 느림)
 
@@ -24,9 +33,14 @@ export function initPuzzleBanner() {
     const images = [];
     for (let i = 1; i <= IMAGE_COUNT; i++) {
         const img = new Image();
-        img.src = `./img/puzzle/${i}.png`;
+        img.src = `./img/puzzle/${i}.${IMAGE_EXT}`;
         images.push(img);
     }
+
+    // 보이는 크기(CSS 픽셀). 그리기 계산은 전부 이 값을 씁니다.
+    // canvas.width/height 는 DPR 이 곱해진 '칸 수'라 여기에 쓰면 안 됩니다.
+    let viewW = 0;
+    let viewH = 0;
 
     let cellSize = 0;
     let grid = [];
@@ -42,17 +56,33 @@ export function initPuzzleBanner() {
     let rafId = null;
 
     // 📏 캔버스 크기와 격자 데이터를 다시 계산합니다.
+    //
+    // 🔍 고해상도(레티나) 화면 대응
+    //    캔버스는 '담는 칸 수'(canvas.width)와 '보이는 넓이'(CSS width)가 따로입니다.
+    //    둘을 같게 두면 DPR 2 화면에서 칸 하나를 점 두 개로 늘려 그려서 뿌옇게 보입니다.
+    //    그래서 칸 수는 DPR 배만큼 늘리고, 보이는 넓이는 그대로 고정한 뒤,
+    //    ctx.scale 로 좌표계를 되돌립니다. 덕분에 아래 그리기 코드는 손대지 않아도
+    //    예전처럼 CSS 픽셀 기준으로 계산하면 됩니다.
     function init() {
         const parent = canvas.parentElement;
-        canvas.width = parent.clientWidth;
-        canvas.height = parent.clientHeight;
-        if (!canvas.width || !canvas.height) return;
+        viewW = parent.clientWidth;
+        viewH = parent.clientHeight;
+        if (!viewW || !viewH) return;
+
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(viewW * dpr);
+        canvas.height = Math.round(viewH * dpr);
+        canvas.style.width = `${viewW}px`;
+        canvas.style.height = `${viewH}px`;
+
+        // setTransform 이라 init 이 여러 번 불려도 배율이 겹쳐 쌓이지 않습니다.
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         // 배너 높이를 VISIBLE_ROWS로 정확히 나눠 셀 크기를 정합니다.
-        cellSize = canvas.height / VISIBLE_ROWS;
+        cellSize = viewH / VISIBLE_ROWS;
 
         // 좌우/상하로 한 칸씩 여유를 둬서 미는 동안 빈틈이 보이지 않게 합니다.
-        cols = Math.ceil(canvas.width / cellSize) + 2;
+        cols = Math.ceil(viewW / cellSize) + 2;
         rows = VISIBLE_ROWS + 2;
 
         grid = [];
@@ -98,7 +128,7 @@ export function initPuzzleBanner() {
 
         // 타일 사이 간격으로 비칠 배경색을 먼저 깔아줍니다.
         ctx.fillStyle = BG_COLOR;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, viewW, viewH);
 
         if (animState !== 'idle') {
             offset += cellSize / ANIM_FRAMES;
@@ -142,8 +172,12 @@ export function initPuzzleBanner() {
                 ctx.roundRect(tileX, tileY, tileSize, tileSize, RADIUS);
                 ctx.fill();
 
+                // 그림만 타일보다 조금 작게, 가운데 맞춰 올립니다.
+                // (크림색 타일 바탕은 그대로 두고 도넛만 줄어듭니다)
                 if (cell.img && cell.img.complete) {
-                    ctx.drawImage(cell.img, tileX, tileY, tileSize, tileSize);
+                    const imgSize = tileSize * IMAGE_SCALE;
+                    const inset = (tileSize - imgSize) / 2;
+                    ctx.drawImage(cell.img, tileX + inset, tileY + inset, imgSize, imgSize);
                 }
             }
         }

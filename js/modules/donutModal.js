@@ -11,7 +11,7 @@
 //   openDonutModal(도넛데이터, { themeColor: '#A6C8FF', bgImg: './img/cardBlue.png' });
 
 const MODAL_HTML = `
-<div id="donut-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+<div id="donut-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
     <div class="modal-container">
 
         <!-- 1. SVG 원형 배경 및 둥근 텍스트 -->
@@ -36,6 +36,10 @@ const MODAL_HTML = `
 
         <!-- 2. 3D 카드 씬 -->
         <div class="modal-card-scene">
+            <!-- 📱 폰에서만 보이는 메뉴 이름.
+                 좁은 화면에서는 뒤쪽 원형 배경을 숨기는데, 그 원에 적혀 있던
+                 이름까지 함께 사라지므로 카드 위에 따로 띄워 줍니다. -->
+            <div class="modal-card-title" id="modal-card-title"></div>
             <div class="modal-card-flipper">
                 <!-- 카드 뒷면 (배경색과 동일) -->
                 <div class="modal-card-face modal-card-back">
@@ -93,6 +97,7 @@ function ensureModal() {
         origin: overlay.querySelector('#modal-origin'),
         originItem: overlay.querySelector('#modal-origin-item'),
         closeBtn: overlay.querySelector('#modal-close-btn'),
+        cardTitle: overlay.querySelector('#modal-card-title'),
     };
 
     // 어두운 배경을 눌렀을 때만 닫힘 (카드 위를 눌렀을 때는 안 닫힘)
@@ -146,6 +151,7 @@ export function openDonutModal(data, theme = {}, opts = {}) {
     // 2. 데이터 뿌려주기
     els.eng.textContent = data.engTitle || '';
     els.kor.textContent = data.title || '';
+    els.cardTitle.textContent = data.title || ''; // 폰에서 카드 위에 뜨는 이름
 
     els.img.src = data.imgUrl || '';
     els.img.alt = data.title || '';
@@ -164,7 +170,11 @@ export function openDonutModal(data, theme = {}, opts = {}) {
     requestAnimationFrame(() => {
         overlay.classList.add('active');
         overlay.setAttribute('aria-hidden', 'false');
-        els.closeBtn.focus();
+
+        // ⚠️ 닫기 버튼에 포커스를 주면 크롬이 기본 포커스 링(검은 사각 테두리)을
+        //    그려서 X 둘레에 상자가 생깁니다. 대화상자 자체에 포커스를 옮기면
+        //    키보드 Tab / ESC 는 그대로 쓰면서 링만 사라집니다.
+        overlay.focus({ preventScroll: true });
     });
 }
 

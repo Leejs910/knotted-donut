@@ -253,6 +253,11 @@
         z-index: 990; /* 네비게이션 헤더 바로 아래 레이어 */
         transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         overflow-y: auto;
+
+        /* 세로 흐름으로 두면 별 장식(.mobile-menu-stars)이 목록 아래
+           '남은 공간'만 정확히 차지합니다. */
+        display: flex;
+        flex-direction: column;
     }
 
     .mobile-menu-wrapper.active {
@@ -271,26 +276,150 @@
     .mobile-login-header .login-link { color: #222; font-weight: 700; text-decoration: none; }
 
     /* 모바일 리스트 */
-    .mobile-menu-list { list-style: none; padding: 0; margin: 0; }
-    .mobile-menu-list li { border-bottom: 1px solid #000000; }
+    .mobile-menu-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+        z-index: 1; /* 무지개(0)보다 위 */
+    }
+
+    /* 칸마다 위아래로 선이 보이도록, 첫 항목에만 윗선을 더해 줍니다 */
+    .mobile-menu-list li { border-bottom: 2px solid #000000; }
+    .mobile-menu-list li:first-child { border-top: 2px solid #000000; }
+
+    /* 🎨 칸마다 다른 색. 사이트 팔레트를 그대로 씁니다.
+       ⚠️ 두 번째(Menu)만 노랑인데, 메뉴 전체 바탕(#FFF09F)과 같은 색을 쓰면
+          칸이 안 보이므로 한 톤 진한 노랑을 씁니다. */
+    .mobile-menu-list li:nth-child(1) { background-color: #FFC9E1; } /* 분홍 */
+    .mobile-menu-list li:nth-child(2) { background-color: #FBE98E; } /* 노랑 */
+    .mobile-menu-list li:nth-child(3) { background-color: #50BD83; } /* 초록 */
+    .mobile-menu-list li:nth-child(4) { background-color: #A8DCEF; } /* 하늘 */
     .mobile-menu-list a {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding: 20px 24px;
-        color: #333;
+        padding: 26px 24px;
+        color: #1d1d1d;
         text-decoration: none;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 500;
     }
-    .chevron::after {
-        content: '';
-        display: block;
-        width: 8px;
-        height: 8px;
-        border-bottom: 2px solid #000000;
-        border-right: 2px solid #000000;
-        transform: rotate(45deg);
+    /* 🌈 메뉴 바닥에 걸치는 무지개
+       아주 큰 원 하나를 그리고 중심을 왼쪽 아래 바깥 멀리 두면, 화면에는
+       왼쪽에서 들어와 오른쪽 아래로 완만하게 흐르는 호만 보입니다.
+       띠는 radial-gradient 의 '딱 끊기는 색 정지점'으로 만들어 이미지 없이 그립니다.
+       (img/rainbow.svg 는 1.18MB 라 장식 하나에 쓰기엔 너무 무겁습니다)
+
+       🎚️ 조절점
+         --rb-r    : 가장 안쪽(하늘색) 반지름. 키우면 호가 더 완만해집니다
+         --rb-band : 띠 하나의 두께
+         --rb-cy   : 화면 아래 끝에서 원 중심까지의 거리. 줄이면 호가 올라옵니다
+
+       ⚠️ 중심 y 를 상자 높이의 % (예전 216%) 로 주면 안 됩니다. 상자가 화면
+          높이의 60% 라서, 화면이 세로로 길어질 때 중심이 1.7배 빠르게 내려가
+          무지개가 점점 아래로 밀립니다. 화면 아래 끝 기준(100% + px)으로 두면
+          어느 높이에서나 바닥에서 같은 자리에 뜹니다.
+          (565px 은 375x812 에서 보던 자리 그대로입니다) */
+    /* 🐰 메뉴 아래 빈 자리를 채우는 장식 — 무지개 위에 앉은 토끼와 별 몇 개.
+       별은 index.html 의 .shop-deco 와 같은 이미지이고, 여기서는 둥둥 뜨지 않고
+       천천히 돌기만 합니다. (@keyframes spin 은 css/base/animations.css)
+
+       무지개(z-index 0)보다 위, 메뉴 목록(1)과 같은 층에 둡니다.
+       목록은 위쪽에만 있으므로 겹치지 않고, 무지개와는 일부러 겹칩니다. */
+    .mobile-menu-stars {
+        /* ⚠️ absolute + height:% 로 두면 목록 길이와 무관하게 자리가 정해져서
+           장식이 메뉴 칸 위로 올라옵니다. 남은 공간을 flex 로 받아야 합니다. */
+        position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
+        z-index: 1;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .mm-star {
+        position: absolute;
+        will-change: transform;
+    }
+
+    /* 자리와 크기는 하나씩 따로. 속도를 다르게 줘야 한 박자로 돌지 않습니다 */
+    .mm-star-1 {
+        top: 9%; left: 9%; width: 62px;
+        animation: spin 18s linear infinite;
+    }
+    .mm-star-2 {
+        top: 40%; right: 9%; width: 36px;
+        animation: spin 24s linear infinite reverse;
+    }
+
+    /* 작은 원 — 이미지 없이 테두리만으로 그립니다 */
+    .mm-circle {
+        position: absolute;
+        top: 3%; left: 6%;
+        width: 22px;
+        height: 22px;
+        border: 3px solid #1d1d1d;
+        border-radius: 50%;
+        background-color: #FFFFFF;
+    }
+
+    /* 🐰 무지개 위에 앉은 토끼.
+       가로 비율로 크기를 잡아 화면 폭이 달라져도 같은 크기로 앉아 있게 합니다.
+
+       바닥에서 24px 만 띄우면 어느 높이에서나 무지개 위 같은 자리에 앉습니다
+       (--rb-cy 덕분에 호가 바닥 기준으로 고정이라서요). 다만 화면이 세로로 길면
+       메뉴와 토끼 사이가 허전해서, 남는 공간이 커질수록 호를 따라 조금씩 올려
+       붙입니다. 아래위 끝은 clamp 로 막습니다.
+         274px(360x740) → 24px · 346px(375x812) → 24px · 449px(412x915) → 72px */
+    .mm-rabbit {
+        position: absolute;
+        left: 36%;
+        bottom: clamp(24px, calc(46% - 135px), 20%);
+        width: 42%;
+        max-width: 240px;
+        height: auto;
+        transform: rotate(7deg);
+        transform-origin: bottom center;
+    }
+
+    /* 움직임을 불편해하는 사용자에게는 훨씬 느리게.
+       ⚠️ 전부 꺼버리면 장식이 그냥 멈춘 그림이 됩니다. */
+    @media (prefers-reduced-motion: reduce) {
+        .mm-star {
+            animation-duration: 60s !important;
+        }
+    }
+
+    .mobile-menu-rainbow {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 60%;
+        z-index: 0;
+        pointer-events: none;
+
+        --rb-r: 690px;   /* 가장 안쪽(하늘) 반지름 */
+        --rb-band: 45px;
+        --rb-line: 3px;
+        --rb-cy: 565px;  /* 화면 아래 끝에서 원 중심까지 */
+
+        background: radial-gradient(circle at -53% calc(100% + var(--rb-cy)),
+                transparent 0 var(--rb-r),
+                #3E2723 var(--rb-r) calc(var(--rb-r) + var(--rb-line)),
+                /* 하늘 */
+                #A8DCEF calc(var(--rb-r) + var(--rb-line)) calc(var(--rb-r) + var(--rb-line) + var(--rb-band)),
+                #3E2723 calc(var(--rb-r) + var(--rb-line) + var(--rb-band)) calc(var(--rb-r) + var(--rb-line) * 2 + var(--rb-band)),
+                /* 초록 */
+                #50BD83 calc(var(--rb-r) + var(--rb-line) * 2 + var(--rb-band)) calc(var(--rb-r) + var(--rb-line) * 2 + var(--rb-band) * 2),
+                #3E2723 calc(var(--rb-r) + var(--rb-line) * 2 + var(--rb-band) * 2) calc(var(--rb-r) + var(--rb-line) * 3 + var(--rb-band) * 2),
+                /* 노랑 — 바탕색 그대로라 테두리만 보입니다 */
+                transparent calc(var(--rb-r) + var(--rb-line) * 3 + var(--rb-band) * 2) calc(var(--rb-r) + var(--rb-line) * 3 + var(--rb-band) * 3),
+                #3E2723 calc(var(--rb-r) + var(--rb-line) * 3 + var(--rb-band) * 3) calc(var(--rb-r) + var(--rb-line) * 4 + var(--rb-band) * 3),
+                /* 분홍 */
+                #FFC9E1 calc(var(--rb-r) + var(--rb-line) * 4 + var(--rb-band) * 3) calc(var(--rb-r) + var(--rb-line) * 4 + var(--rb-band) * 4),
+                #3E2723 calc(var(--rb-r) + var(--rb-line) * 4 + var(--rb-band) * 4) calc(var(--rb-r) + var(--rb-line) * 5 + var(--rb-band) * 4),
+                transparent calc(var(--rb-r) + var(--rb-line) * 5 + var(--rb-band) * 4));
     }
 }
 

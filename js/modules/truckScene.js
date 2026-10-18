@@ -69,21 +69,50 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
         void stageEl.offsetWidth;
         stageEl.classList.add('start-animation');
 
-        // 주행(driveAway)이 끝나면 완료 화면으로 넘어갑니다.
-        // animationend 는 프레임 전환 등 여러 번 오므로 이름으로 걸러냅니다.
-        const onEnd = (e) => {
-            if (e.animationName !== 'driveAway') return;
+        // ⏱️ 트럭이 화면을 벗어나는 순간 바로 넘어갑니다.
+        //
+        //    예전에는 driveAway 의 animationend 를 기다렸는데, 주행 거리가
+        //    150vw 라서 트럭은 주행의 43% 쯤(화면 폭 100vw 를 지나는 지점)에
+        //    이미 사라집니다. 나머지 57% 동안은 빈 화면만 보고 있었습니다.
+        //    1600px 화면에서 실측하니 약 1.1초가 그렇게 버려졌습니다.
+        //
+        //    EXIT_RATIO 는 '주행 시간의 몇 %가 지나면 넘어갈지'입니다.
+        //    0.55 는 실측 퇴장 시점(0.43)보다 조금 넉넉하게 잡은 값으로,
+        //    트럭이 사라지고 아주 짧은 여운만 남기고 전환됩니다.
+        //    더 빠르게 하려면 줄이고, 여운을 더 주려면 키우세요.
+        const EXIT_RATIO = 0.55;
+
+        const css = getComputedStyle(stageEl);
+        const ms = (name) => (parseFloat(css.getPropertyValue(name)) || 0) * 1000;
+        const driveStart = ms('--zoom-dur') + ms('--hold') + ms('--judder');
+        const exitAt = driveStart + ms('--drive-dur') * EXIT_RATIO;
+
+        let settled = false;
+        const timers = [];
+
+        const done = () => {
+            if (settled) return;
+            settled = true;
+            timers.forEach(clearTimeout);
             stripe.removeEventListener('animationend', onEnd);
             finish();
         };
+
+        // animationend 는 프레임 전환 등 여러 번 오므로 이름으로 걸러냅니다.
+        // (위 타이머보다 늦게 오지만, 타이머가 실패했을 때의 보험으로 남겨 둡니다)
+        function onEnd(e) {
+            if (e.animationName !== 'driveAway') return;
+            done();
+        }
         stripe.addEventListener('animationend', onEnd);
 
+        timers.push(setTimeout(done, exitAt));
+
         // 애니메이션이 어떤 이유로든 끝나지 않아도 멈춰 있지 않도록 안전장치
-        setTimeout(() => {
+        timers.push(setTimeout(() => {
             if (bandEl.hidden) return;
-            stripe.removeEventListener('animationend', onEnd);
-            finish();
-        }, 4000);
+            done();
+        }, 4000));
     }
 
     async function play() {
