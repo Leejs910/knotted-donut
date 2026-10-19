@@ -10,9 +10,10 @@ import { newMenuData, bestMenuData, cardData, instaData } from '../data/donutDat
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
+import { initLoginModal } from '../modules/loginModal.js';
+import { initAuthNav } from '../modules/authNav.js';
+import { initCartSeed } from '../modules/cartStore.js';
 import { initFooterBear } from '../modules/footerBear.js';
-import { initBuildingSpawner } from '../modules/buildingSpawner.js';
-import { initFooterOverlay } from '../modules/footerOverlay.js';
 
 // --- 이 페이지에만 있는 섹션 ---
 import { initShootingStars } from '../modules/shootingStar.js';
@@ -27,6 +28,9 @@ import { initInstaSection } from '../modules/instaSwiper.js';
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
+initLoginModal();
+initAuthNav();
+initCartSeed();
 
 // 히어로
 initShootingStars();
@@ -45,5 +49,3 @@ initInstaSection({ data: instaData });
 
 // 푸터
 initFooterBear();
-initBuildingSpawner();
-initFooterOverlay();

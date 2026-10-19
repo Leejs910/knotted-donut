@@ -1,0 +1,93 @@
+/* ============================================================
+   브랜드 소개 — 맨 아래 인사 구간
+   (피그마 brand1 / node 562:118 의 3509 ~ 4600px 구간)
+
+   하늘색이 꽉 찬 배경 위에 'HAPPINES ON ITS WAYS' 글자가 뜨고,
+   아래쪽에 남산이 보이는 도시 그림이 깔립니다.
+   ============================================================ */
+
+.brand-outro {
+    position: relative;
+    height: calc(1091 * var(--u));
+    min-height: 300px;
+    overflow: hidden;
+
+    background: linear-gradient(180deg,
+            rgba(189, 225, 239, 0.58) 0,
+            #BDE1EF 49.7%,
+            #BDE1EF 100%);
+}
+
+/* 🏙️ 도시 그림 — 폭을 화면에 맞춰 두어 남산과 캐릭터가 잘리지 않습니다.
+   (1920px 화면에서는 시안의 1920 x 1000 과 정확히 같아집니다)
+   js/modules/brandCity.js 가 img/brand/cityscape.svg 를 여기에 펼쳐 넣습니다. */
+.brand-city {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: block;
+
+    /* 🎚️ 구름이 왼쪽 밖으로 빠져나가는 데 걸리는 시간. 아주 느립니다. */
+    --city-cloud-time: 150s;
+}
+
+.brand-city svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ☁️ 구름 뭉치가 오른쪽에서 왼쪽으로 한 번 흘러가고 그대로 사라집니다.
+   ⚠️ 일부러 반복하지 않습니다(한 번 + forwards). 그래서 한 번 나간 구름은
+      새로고침하기 전까지 다시 돌아오지 않습니다.
+      밀어낼 거리(--cloud-shift)는 그림마다 달라서 JS 가 재서 넣어 줍니다. */
+@keyframes brand-city-clouds {
+    from { translate: 0 0; }
+    to   { translate: calc(-1 * var(--cloud-shift)) 0; }
+}
+
+.brand-city.is-drifting #cloudGroup {
+    animation: brand-city-clouds var(--city-cloud-time) linear 1 both;
+}
+
+/* ✍️ 손글씨 인사 — 도시 그림의 하늘 부분에 겹칩니다 */
+.brand-happiness {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    translate: -50% 0;
+    width: calc(728 * var(--u));
+    height: auto;
+    display: block;
+
+    /* 흰 글자가 연한 하늘색 위에 놓이므로 아주 옅은 그림자로 가장자리를 세웁니다 */
+    filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(62, 39, 35, 0.12));
+
+    opacity: 0;
+    translate: -50% 24px;
+    transition: opacity 0.8s ease, translate 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.brand-outro.is-in .brand-happiness {
+    opacity: 1;
+    translate: -50% 0;
+}
+
+@media (max-width: 767px) {
+    .brand-outro {
+        /* 도시 그림(폭 100%)이 얇아지는 만큼 구간도 같이 낮춥니다 */
+        height: calc(100vw * 0.52 + 150px);
+    }
+
+    .brand-happiness {
+        width: min(74%, 360px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .brand-happiness {
+        translate: -50% 8px;
+        transition-duration: 1.1s;
+    }
+}

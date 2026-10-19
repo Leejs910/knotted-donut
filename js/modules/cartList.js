@@ -15,7 +15,7 @@ const { SHIPPING_FEE, FREE_SHIPPING_OVER, POINT_RATE } = orderRules;
 
 const won = (n) => Math.round(n).toLocaleString('ko-KR') + '원';
 
-export function initCartList({ data = [] } = {}) {
+export function initCartList({ data = [], onChange = () => {} } = {}) {
     const listEl = document.getElementById('cartItemList');
     const summaryEl = document.getElementById('cartSummary');
     if (!listEl || !summaryEl) return null;
@@ -164,6 +164,9 @@ export function initCartList({ data = [] } = {}) {
 
     // ----- 그리기 -----
     function render() {
+        // 수량·삭제가 바뀔 때마다 밖에 알려 줍니다 (저장은 부르는 쪽이 맡습니다)
+        onChange(items);
+
         // 담긴 상품이 하나도 없으면 빈 장바구니 화면으로 바꿉니다.
         const isEmpty = items.length === 0;
         if (layoutEl) layoutEl.hidden = isEmpty;

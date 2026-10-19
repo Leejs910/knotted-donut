@@ -1,0 +1,952 @@
+/* ============================================================
+   🔐 로그인 뷰 — 메모패드
+   피그마 "로그인뷰"(531:376) 를 그대로 옮긴 것입니다.
+   마크업은 js/modules/loginModal.js 가 만들어 넣습니다.
+
+   뒷배경(흰 바탕 + 흐르는 X 무늬)은 상품 상세 모달과 같은
+   css/components/modal-screen.css 의 .modal-screen 을 씁니다.
+
+   ── 크기 다루는 법 ──────────────────────────────────────────
+   원본이 944 x 1182 라서, 모든 치수를 '원본 1px = 1u' 로 적고
+   --u 하나만 화면에 맞춰 줄입니다. 값을 옮길 때 계산할 필요가 없고
+   비율도 절대 어긋나지 않습니다.
+     --u: min(1px, 가로여유/944, 세로여유/1182)
+   ⚠️ 작은 글씨(20u)는 폰에서 7px 까지 줄어들어 읽을 수 없으므로
+      max() 로 바닥을 받쳐 둡니다.
+   ============================================================ */
+
+.login-pad {
+    /* 1u = 원본 1px. 셋 중 가장 작은 값이라 가로·세로 모두 화면 안에 들어옵니다 */
+    --u: min(1px, (100vw - 48px) / 944, (100vh - 48px) / 1182);
+
+    --paper: #FFFAE2;   /* 속지 크림색 */
+    --edge: #C4725A;    /* 패드 테두리 갈색 */
+    --ink: #3E2723;     /* 진한 갈색 — 표 테두리, 라벨 */
+    --faint: #D2B39A;   /* 흐린 갈색 — 보조 글씨, 도장 */
+    --pink: #FFC9E1;
+    --blue: #6696DE;
+    --clip: #FFF09F;
+    --clip-dark: #5B5B5B;
+
+    position: relative;
+    width: calc(944 * var(--u));
+    height: calc(1182 * var(--u));
+    flex: 0 0 auto;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+
+    /* 종이가 넘어갈 때 입체로 보이게 하는 깊이 */
+    perspective: calc(2000 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   겹쳐 놓은 종이들 (뒤에서부터)
+------------------------------------------------------------ */
+.pad-base,
+.pad-sheet,
+.pad-page,
+.pad-under {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+/* 분홍 받침 */
+.pad-base {
+    left: 0;
+    top: calc(19.44 * var(--u));
+    width: calc(920 * var(--u));
+    height: calc(1140 * var(--u));
+
+    background: var(--pink);
+    border: calc(3 * var(--u)) solid var(--edge);
+    border-radius: calc(20 * var(--u));
+    box-shadow: calc(8 * var(--u)) calc(8 * var(--u)) 0 rgba(0, 0, 0, 0.3);
+}
+
+/* 속지 두 장 — 한 장은 반듯하게, 한 장은 살짝 비뚤게 겹칩니다 */
+.pad-sheet {
+    left: calc(40 * var(--u));
+    top: calc(53.36 * var(--u));
+    width: calc(840 * var(--u));
+    height: calc(1080 * var(--u));
+
+    background: var(--paper);
+    border: calc(3 * var(--u)) solid var(--edge);
+    border-radius: calc(20 * var(--u));
+}
+
+.pad-sheet-tilt {
+    transform: rotate(-2.27deg);
+}
+
+/* 넘어간 뒤에 드러나는 '다음 장' — 윗변은 고정핀에 가려지므로 테두리가 없습니다 */
+.pad-under {
+    left: calc(40 * var(--u));
+    top: calc(100 * var(--u));
+    width: calc(840 * var(--u));
+    height: calc(1020.86 * var(--u));
+
+    background: var(--paper);
+    border: calc(3 * var(--u)) solid var(--edge);
+    border-top: none;
+    border-radius: 0 0 calc(20 * var(--u)) calc(20 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   ✍️ 지금 보고 있는 장 — 이 요소가 통째로 넘어갑니다
+------------------------------------------------------------ */
+.pad-page {
+    left: calc(40 * var(--u));
+    top: calc(100 * var(--u));
+    width: calc(840 * var(--u));
+    height: calc(1020.86 * var(--u));
+
+    background: var(--paper);
+    border: calc(3 * var(--u)) solid var(--edge);
+    border-top: none;
+    border-radius: 0 0 calc(20 * var(--u)) calc(20 * var(--u));
+
+    /* 이 장은 움직이지 않습니다. 위를 덮은 .pad-tear 가 뜯겨 나가면서
+       드러나는 '다음 장' 입니다. */
+}
+
+/* 장 안의 요소들은 장을 기준으로 놓입니다 (원본 좌표에서 x-40, y-100) */
+.pad-page > * {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------
+   📌 고정핀 — 넘어가지 않고 늘 제자리입니다
+------------------------------------------------------------ */
+.pad-clip {
+    position: absolute;
+    left: calc(40 * var(--u));
+    top: 0;
+    width: calc(840 * var(--u));
+    height: calc(100 * var(--u));
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* 구멍 뚫린 띠 + 점선 — 피그마에서 그대로 받은 SVG 입니다 */
+.pad-clip-bar {
+    position: absolute;
+    left: 0;
+    top: calc(40 * var(--u));
+    width: calc(840 * var(--u));
+    height: calc(60 * var(--u));
+}
+
+/* 가운데 노란 집게 */
+.pad-clip-body {
+    position: absolute;
+    left: calc(220 * var(--u));
+    top: 0;
+    width: calc(400 * var(--u));
+    height: calc(80 * var(--u));
+
+    background: var(--clip);
+    border: calc(3 * var(--u)) solid var(--clip-dark);
+    border-radius: calc(12 * var(--u));
+}
+
+.pad-clip-body::after {
+    content: '';
+    position: absolute;
+    left: calc(37 * var(--u));
+    top: calc(18 * var(--u));
+    width: calc(320 * var(--u));
+    height: calc(38 * var(--u));
+
+    background: var(--clip-dark);
+    border-radius: calc(20 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   제목 — 도장 찍힌 '로그인'
+------------------------------------------------------------ */
+.pad-title {
+    /* 원본 좌표 (316.89, 152.25) 에서 장의 왼쪽 위(40, 100) 를 뺀 값 */
+    left: calc(276.89 * var(--u));
+    top: calc(52.25 * var(--u));
+    width: calc(286.22 * var(--u));
+    height: calc(111.92 * var(--u));
+}
+
+.pad-title-stamp {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.pad-title-text {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: calc(66 * var(--u));
+    font-weight: 800;
+    letter-spacing: calc(6.6 * var(--u));
+    text-indent: calc(6.6 * var(--u)); /* 자간이 끝에 붙어 생기는 쏠림 보정 */
+    color: var(--faint);
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   아이디 / 비밀번호 표
+------------------------------------------------------------ */
+.pad-form {
+    left: calc(120.81 * var(--u));
+    top: calc(196.29 * var(--u));
+    width: calc(598.37 * var(--u));
+    height: calc(158 * var(--u));
+}
+
+.pad-row {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: calc(80 * var(--u));
+    display: flex;
+}
+
+.pad-row-id { top: 0; }
+.pad-row-pw { top: calc(78 * var(--u)); }  /* 테두리 2u 가 겹치도록 */
+
+.pad-label {
+    flex: 0 0 calc(200 * var(--u));
+    border: calc(2 * var(--u)) solid var(--ink);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: calc(36 * var(--u));
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+}
+
+.pad-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin-left: calc(-2 * var(--u));   /* 라벨 칸과 테두리를 한 줄로 */
+    padding: 0 calc(20 * var(--u));
+
+    border: calc(2 * var(--u)) solid var(--ink);
+    background: #fff;
+
+    font-family: inherit;
+    font-size: calc(28 * var(--u));
+    color: var(--ink);
+}
+
+.pad-input:focus {
+    outline: none;
+    background: #FFFDF2;
+}
+
+.pad-input::placeholder {
+    color: #cbbfb8;
+}
+
+/* 네 귀퉁이만 둥글게 — 디자인과 같은 표 모양이 됩니다 */
+.pad-row-id .pad-label { border-radius: calc(6 * var(--u)) 0 0 0; }
+.pad-row-id .pad-input { border-radius: 0 calc(6 * var(--u)) 0 0; }
+.pad-row-pw .pad-label { border-radius: 0 0 0 calc(6 * var(--u)); }
+.pad-row-pw .pad-input { border-radius: 0 0 calc(6 * var(--u)) 0; background: #ECE3DA; }
+
+/* 잘못 적었을 때 */
+.pad-row.is-error .pad-label,
+.pad-row.is-error .pad-input {
+    border-color: #D9534F;
+}
+
+.pad-error {
+    position: absolute;
+    left: calc(120.81 * var(--u));
+    top: calc(356 * var(--u));
+    margin: 0;
+
+    font-size: max(12px, calc(20 * var(--u)));
+    color: #D9534F;
+    min-height: calc(24 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   로그인 상태유지
+------------------------------------------------------------ */
+.pad-keep {
+    left: calc(120.81 * var(--u));
+    top: calc(379.29 * var(--u));
+    height: calc(30 * var(--u));
+
+    display: flex;
+    align-items: center;
+    gap: calc(10 * var(--u));
+    cursor: pointer;
+}
+
+.pad-keep input {
+    width: calc(30 * var(--u));
+    height: calc(30 * var(--u));
+    margin: 0;
+    accent-color: var(--faint);
+    cursor: pointer;
+}
+
+.pad-keep span {
+    font-size: max(12px, calc(20 * var(--u)));
+    color: var(--faint);
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   버튼 두 개 (로그인 / 비회원 조회)
+------------------------------------------------------------ */
+.pad-btn {
+    left: calc(120.81 * var(--u));
+    width: calc(598.37 * var(--u));
+    height: calc(80 * var(--u));
+
+    border: calc(2 * var(--u)) solid var(--ink);
+    border-radius: calc(6 * var(--u));
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: inherit;
+    font-size: max(15px, calc(34 * var(--u)));
+    color: #fff;
+    white-space: nowrap;
+
+    transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.pad-btn:hover { filter: brightness(0.95); }
+.pad-btn:active { transform: translateY(calc(2 * var(--u))); }
+
+.pad-btn-login {
+    top: calc(440.94 * var(--u));
+    background: var(--pink);
+    font-weight: 800;
+}
+
+.pad-btn-guest {
+    top: calc(813.24 * var(--u));
+    background: var(--blue);
+    font-weight: 500;
+}
+
+/* ------------------------------------------------------------
+   '또는' 구분선
+------------------------------------------------------------ */
+.pad-split {
+    left: calc(120.81 * var(--u));
+    top: calc(551.04 * var(--u));
+    width: calc(598.37 * var(--u));
+    height: calc(24 * var(--u));
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pad-split img {
+    position: absolute;
+    top: calc(10.5 * var(--u));
+    width: calc(262.43 * var(--u));
+    height: calc(3 * var(--u));
+}
+
+.pad-split img:first-of-type { left: 0; }
+.pad-split img:last-of-type { right: 0; }
+
+.pad-split span {
+    font-size: max(12px, calc(20 * var(--u)));
+    color: var(--faint);
+    background: var(--paper);
+    padding: 0 calc(12 * var(--u));
+    position: relative;
+}
+
+/* ------------------------------------------------------------
+   회원가입 / 아이디·비밀번호 찾기 카드
+------------------------------------------------------------ */
+.pad-card {
+    top: calc(593.71 * var(--u));
+    width: calc(288 * var(--u));
+    height: calc(180 * var(--u));
+
+    background: #fff;
+    border: calc(8 * var(--u)) solid var(--faint);
+    border-radius: calc(16 * var(--u));
+    cursor: pointer;
+    overflow: hidden;
+
+    font-family: inherit;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pad-card:hover {
+    transform: translateY(calc(-3 * var(--u)));
+    box-shadow: 0 calc(6 * var(--u)) calc(12 * var(--u)) rgba(0, 0, 0, 0.12);
+}
+
+.pad-card-signup { left: calc(120.81 * var(--u)); }
+.pad-card-find { left: calc(430.19 * var(--u)); }
+
+.pad-card-ko {
+    position: absolute;
+    left: calc(18.47 * var(--u));
+    margin: 0;
+    font-weight: 700;
+    color: rgba(210, 179, 154, 0.8);
+    white-space: nowrap;
+}
+
+.pad-card-signup .pad-card-ko {
+    top: calc(8.36 * var(--u));
+    font-size: max(20px, calc(47 * var(--u)));
+}
+
+.pad-card-find .pad-card-ko {
+    top: calc(12.86 * var(--u));
+    font-size: max(12px, calc(20 * var(--u)));
+    line-height: 1.2;
+}
+
+.pad-card-en {
+    position: absolute;
+    left: calc(18.47 * var(--u));
+    top: calc(63.89 * var(--u));
+    margin: 0;
+    font-size: max(11px, calc(20 * var(--u)));
+    color: #ccc;
+    white-space: nowrap;
+}
+
+/* 카드 오른쪽 아래에 희미하게 찍힌 도장 (피그마 SVG 네 조각) */
+.pad-stamp {
+    position: absolute;
+    pointer-events: none;
+}
+
+.pad-stamp img {
+    position: absolute;
+    opacity: 0.2;
+}
+
+.pad-stamp-signup {
+    left: calc(146.86 * var(--u));   /* 267.67 - 120.81 (카드 기준) */
+    top: calc(40.3 * var(--u));      /* 634.01 - 593.71 */
+    width: calc(134.17 * var(--u));
+    height: calc(131.68 * var(--u));
+}
+
+.pad-stamp-signup .s-b { left: 0; top: 0; width: calc(134.17 * var(--u)); height: calc(131.68 * var(--u)); }
+.pad-stamp-signup .s-a { left: calc(25 * var(--u)); top: calc(28.38 * var(--u)); width: calc(84.12 * var(--u)); height: calc(74.94 * var(--u)); }
+.pad-stamp-signup .s-c { left: calc(38.68 * var(--u)); top: calc(91.97 * var(--u)); width: calc(55.6 * var(--u)); height: calc(14.68 * var(--u)); }
+.pad-stamp-signup .s-d { left: calc(41.04 * var(--u)); top: calc(68.69 * var(--u)); width: calc(52.57 * var(--u)); height: calc(6.52 * var(--u)); }
+
+.pad-stamp-find {
+    left: calc(140.05 * var(--u));   /* 570.24 - 430.19 */
+    top: calc(35.91 * var(--u));     /* 629.62 - 593.71 */
+    width: calc(140.29 * var(--u));
+    height: calc(136.06 * var(--u));
+}
+
+.pad-stamp-find .f-a { left: 0; top: 0; width: calc(140.29 * var(--u)); height: calc(136.06 * var(--u)); }
+.pad-stamp-find .f-b { left: calc(36.78 * var(--u)); top: calc(94.94 * var(--u)); width: calc(65.57 * var(--u)); height: calc(16.56 * var(--u)); }
+.pad-stamp-find .f-c { left: calc(36.21 * var(--u)); top: calc(22.72 * var(--u)); width: calc(65.94 * var(--u)); height: calc(20.21 * var(--u)); }
+.pad-stamp-find .f-d { left: calc(42.91 * var(--u)); top: calc(27.81 * var(--u)); width: calc(54.36 * var(--u)); height: calc(74.94 * var(--u)); }
+
+/* ------------------------------------------------------------
+   맨 아래 안내문
+------------------------------------------------------------ */
+.pad-note {
+    left: 0;
+    top: calc(915.89 * var(--u));
+    width: 100%;
+    margin: 0;
+
+    font-size: max(11px, calc(20 * var(--u)));
+    line-height: 1.2;
+    color: var(--faint);
+    text-align: center;
+}
+
+/* 데모 계정 안내 — 디자인에는 없지만, 둘러보실 분을 위해 적어 둡니다 */
+.pad-demo {
+    left: 0;
+    top: calc(968 * var(--u));
+    width: 100%;
+    margin: 0;
+
+    font-size: max(11px, calc(18 * var(--u)));
+    line-height: 1.4;
+    color: #b6a79f;
+    text-align: center;
+}
+
+.pad-demo b { color: #8a7b6f; }
+
+.pad-demo-fill {
+    margin-left: calc(8 * var(--u));
+    padding: calc(2 * var(--u)) calc(12 * var(--u));
+
+    border: calc(2 * var(--u)) solid var(--faint);
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: max(10px, calc(16 * var(--u)));
+    color: #8a7b6f;
+}
+
+.pad-demo-fill:hover { background: #FFF6E4; }
+
+/* ------------------------------------------------------------
+   닫기 — 디자인에는 없어서 패드 바깥 오른쪽 위에 둡니다
+------------------------------------------------------------ */
+.pad-close {
+    position: absolute;
+    right: calc(-6 * var(--u));
+    top: calc(-14 * var(--u));
+    z-index: 4;
+
+    width: calc(56 * var(--u));
+    height: calc(56 * var(--u));
+    min-width: 36px;
+    min-height: 36px;
+
+    border: calc(3 * var(--u)) solid var(--clip-dark);
+    border-radius: 50%;
+    background: #fff;
+    color: var(--clip-dark);
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: max(18px, calc(34 * var(--u)));
+    line-height: 1;
+
+    transition: background-color 0.2s ease;
+}
+
+.pad-close:hover { background: #f2efec; }
+.pad-close:focus { outline: none; }
+
+.pad-close:focus-visible {
+    outline: 3px solid #50BD83;
+    outline-offset: 2px;
+}
+
+/* ============================================================
+   📄 장 넘김 — 왼쪽에서 찢겨 오른쪽으로 날아갑니다
+   (참고: LottieFiles "Calendar Page Flip")
+
+   고정핀(.pad-clip)은 제자리에 두고, 맨 위를 덮고 있던 빈 장(.pad-tear)이
+   뜯겨 나가면서 그 아래 로그인 장(.pad-page)이 드러납니다.
+   달력에서 어제 장을 뜯어내면 오늘 장이 나오는 것과 같습니다.
+
+   ⚠️ 축은 '왼쪽 위 모서리'입니다. 여기서부터 찢어지기 시작해야
+      왼→오른쪽으로 벗겨지는 모양이 나옵니다.
+      rotate3d(1, 1, 0, …) 은 왼쪽 위 ↘ 오른쪽 아래 대각선을 축으로 종이를
+      들어 올려, 참고 영상 2번째 장면의 대각선 접힘을 만듭니다.
+============================================================ */
+
+/* 맨 위를 덮고 있는 빈 장 — 이 장이 뜯겨 나갑니다 */
+.pad-tear {
+    position: absolute;
+    left: calc(40 * var(--u));
+    top: calc(100 * var(--u));
+    width: calc(840 * var(--u));
+    height: calc(1020.86 * var(--u));
+    z-index: 2;                  /* 로그인 장(1)보다 위, 고정핀(3)보다 아래 */
+
+    background: var(--paper);
+    border: calc(3 * var(--u)) solid var(--edge);
+    border-top: none;
+    border-radius: 0 0 calc(20 * var(--u)) calc(20 * var(--u));
+    box-sizing: border-box;
+
+    transform-origin: 0 0;       /* 왼쪽 위 모서리에서 찢어집니다 */
+    backface-visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+}
+
+.login-overlay.active .pad-tear {
+    animation: padTearOff 1s cubic-bezier(0.45, 0.05, 0.3, 1) forwards;
+}
+
+@keyframes padTearOff {
+    0%   { opacity: 1; transform: translateX(0) rotate(0deg) rotate3d(1, 1, 0, 0deg); }
+
+    /* 왼쪽 위부터 대각선으로 들리기 시작 — '찢어지는' 순간 */
+    22%  { opacity: 1; transform: translateX(0) rotate(0deg) rotate3d(1, 1, 0, -20deg); }
+
+    /* 떨어져 나와 오른쪽으로 밀려나기 시작 */
+    45%  { opacity: 1; transform: translateX(16%) rotate(6deg) rotate3d(1, 1, 0, -26deg); }
+
+    /* 한 장으로 펴지면서 오른쪽으로 */
+    70%  { opacity: 1; transform: translateX(72%) rotate(15deg) rotate3d(1, 1, 0, -8deg); }
+
+    100% { opacity: 0; transform: translateX(150%) rotate(30deg) rotate3d(1, 1, 0, 0deg); }
+}
+
+/* 뜯기는 장에 지는 그림자 — 한 장으로 떠 있는 느낌을 냅니다 */
+.login-overlay.active .pad-tear {
+    box-shadow: calc(-6 * var(--u)) calc(6 * var(--u)) calc(18 * var(--u)) rgba(0, 0, 0, 0.18);
+}
+
+/* 드러나는 장에 스치는 회색 그림자 (참고 영상 2~3번째 장면의 회색 쐐기) */
+.pad-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(118deg,
+            rgba(0, 0, 0, 0.26) 0%,
+            rgba(0, 0, 0, 0.1) 38%,
+            rgba(0, 0, 0, 0) 62%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.login-overlay.active .pad-page::before {
+    animation: padTearShade 1s ease-out forwards;
+}
+
+@keyframes padTearShade {
+    0%   { opacity: 0; }
+    25%  { opacity: 0.9; }
+    70%  { opacity: 0.35; }
+    100% { opacity: 0; }
+}
+
+/* 종이가 뜯길 때 집게가 아주 살짝 흔들립니다 */
+.login-overlay.active .pad-clip-body {
+    animation: padClipShake 1s ease-out;
+}
+
+@keyframes padClipShake {
+    0%, 18% { transform: translateX(-50%) rotate(0deg); }
+    28%     { transform: translateX(-50%) rotate(-0.8deg); }
+    40%     { transform: translateX(-50%) rotate(0.5deg); }
+    55%     { transform: translateX(-50%) rotate(0deg); }
+}
+
+/* ⚠️ 집게는 모니터에서 translateX 를 쓰지 않습니다(left 로 자리를 잡음).
+   위 keyframes 가 translateX(-50%) 를 넣으므로, 그 자리에서는 흔들기만
+   하도록 축을 맞춰 줍니다. */
+@media (min-width: 641px) {
+    @keyframes padClipShake {
+        0%, 18% { transform: rotate(0deg); }
+        28%     { transform: rotate(-0.8deg); }
+        40%     { transform: rotate(0.5deg); }
+        55%     { transform: rotate(0deg); }
+    }
+}
+
+/* 움직임을 불편해하는 분께는 거리와 각도를 줄여 얌전히 뜯습니다.
+   ⚠️ 아예 끄면 안 됩니다. '장을 뜯는다'는 것이 이 화면의 핵심 연출이라
+      꺼 버리면 요청한 움직임을 아무도 못 보게 됩니다. */
+@media (prefers-reduced-motion: reduce) {
+    .login-overlay.active .pad-tear {
+        animation: padTearOffCalm 0.6s ease-out forwards;
+    }
+
+    .login-overlay.active .pad-clip-body { animation: none; }
+}
+
+@keyframes padTearOffCalm {
+    0%   { opacity: 1; transform: translateX(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateX(60%) rotate(8deg); }
+}
+
+/* ============================================================
+   📱 좁은 화면 — 여기서는 원본 비율을 버립니다
+
+   ⚠️ 원본(944 폭)의 작은 글씨는 20px, 즉 폭의 2.1% 입니다.
+      390px 폰에서 그대로 줄이면 8px 이 되어 읽을 수 없습니다.
+      그래서 폰에서는 절대 배치를 풀고 위에서 아래로 흐르게 두고,
+      글자 크기는 화면에 맞는 실제 px 로 다시 잡습니다.
+      종이·고정핀·도장 같은 '생김새'는 그대로 둡니다.
+============================================================ */
+@media (max-width: 640px) {
+    .login-pad {
+        --u: 1px;
+        width: min(100vw - 24px, 430px);
+        height: auto;
+        perspective: 1400px;
+    }
+
+    /* 겹친 종이들은 높이를 고정하지 않고 장을 따라 늘어나게 합니다 */
+    .pad-base {
+        left: 0;
+        right: 14px;
+        top: 14px;
+        bottom: 0;
+        width: auto;
+        height: auto;
+        border-width: 2px;
+        border-radius: 14px;
+        box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .pad-sheet {
+        left: 14px;
+        right: 28px;
+        top: 26px;
+        bottom: 10px;
+        width: auto;
+        height: auto;
+        border-width: 2px;
+        border-radius: 14px;
+    }
+
+    .pad-sheet-tilt { transform: rotate(-1.6deg); }
+
+    .pad-under {
+        left: 14px;
+        right: 28px;
+        top: 58px;
+        bottom: 16px;
+        width: auto;
+        height: auto;
+        border-width: 2px;
+        border-radius: 0 0 14px 14px;
+    }
+
+    /* 📄 넘어가는 장 — 이제 내용만큼 늘어납니다 */
+    .pad-page {
+        position: relative;
+        left: auto;
+        top: auto;
+        width: auto;
+        height: auto;
+        margin: 58px 28px 16px 14px;
+        padding: 22px 16px 24px;
+
+        border-width: 2px;
+        border-radius: 0 0 14px 14px;
+
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .pad-page > * {
+        position: static;
+        left: auto;
+        top: auto;
+        width: auto;
+    }
+
+    /* 뜯기는 장은 로그인 장과 똑같은 자리를 덮어야 합니다.
+       (로그인 장이 흐름 배치로 바뀌어 높이가 내용에 따라 달라지므로
+        위아래를 inset 으로 맞춥니다) */
+    .pad-tear {
+        left: 14px;
+        right: 28px;
+        top: 58px;
+        bottom: 16px;
+        width: auto;
+        height: auto;
+        border-width: 2px;
+        border-radius: 0 0 14px 14px;
+    }
+
+    /* 고정핀 */
+    .pad-clip {
+        left: 14px;
+        right: 28px;
+        width: auto;
+        height: 60px;
+    }
+
+    .pad-clip-bar { top: 24px; width: 100%; height: 36px; }
+
+    .pad-clip-body {
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(210px, 56%);
+        height: 44px;
+        border-width: 2px;
+        border-radius: 8px;
+    }
+
+    .pad-clip-body::after {
+        left: 18px;
+        right: 18px;
+        top: 11px;
+        width: auto;
+        height: 22px;
+        border-radius: 12px;
+    }
+
+    /* 제목
+       ⚠️ position: relative 를 반드시 돌려줘야 합니다. 위에서 장의 자식들을
+          static 으로 풀어 버려서, 안쪽 도장·글자(absolute)가 제목 상자가 아닌
+          장 전체를 기준으로 삼아 엉뚱한 곳으로 날아갑니다. */
+    .pad-title {
+        position: relative;
+        align-self: center;
+        width: min(230px, 80%);
+        height: 90px;
+        margin-bottom: 16px;
+        flex: 0 0 auto;
+    }
+
+    .pad-title-text {
+        font-size: 36px;
+        letter-spacing: 4px;
+        text-indent: 4px;
+    }
+
+    /* 표 */
+    .pad-form { height: auto; }
+
+    .pad-row { position: relative; height: 48px; top: auto; }
+    .pad-row-pw { margin-top: -2px; }
+
+    .pad-label { flex: 0 0 96px; border-width: 2px; font-size: 17px; }
+    .pad-input { border-width: 2px; font-size: 15px; padding: 0 12px; }
+
+    .pad-error {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: 8px 0 0;
+        font-size: 13px;
+        min-height: 0;
+    }
+
+    .pad-keep {
+        height: auto;
+        margin: 12px 0 0;
+        gap: 8px;
+    }
+
+    .pad-keep input { width: 18px; height: 18px; }
+    .pad-keep span { font-size: 13px; }
+
+    .pad-btn {
+        height: 50px;
+        margin-top: 14px;
+        border-width: 2px;
+        border-radius: 6px;
+        font-size: 17px;
+    }
+
+    .pad-split {
+        height: auto;
+        margin: 18px 0 0;
+        gap: 10px;
+    }
+
+    .pad-split img {
+        position: static;
+        flex: 1 1 auto;
+        /* ⚠️ min-width: 0 이 없으면 flex 항목이 '원래 너비(262px)' 아래로
+              줄지 않아서, 선 두 개가 패드 밖까지 삐져나갑니다. */
+        min-width: 0;
+        width: auto;
+        height: 2px;
+        object-fit: fill;
+    }
+
+    .pad-split span {
+        flex: 0 0 auto;
+        white-space: nowrap;   /* '또는' 이 두 줄로 쪼개지지 않도록 */
+        font-size: 13px;
+        padding: 0;
+        background: none;
+    }
+
+    /* 카드 — 위아래로 쌓습니다 */
+    .pad-card {
+        position: relative;
+        height: 86px;
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-width: 4px;
+        border-radius: 12px;
+    }
+
+    .pad-card-ko,
+    .pad-card-en {
+        position: static;
+        margin: 0;
+    }
+
+    .pad-card-signup .pad-card-ko { font-size: 24px; line-height: 1.2; }
+    .pad-card-find .pad-card-ko { font-size: 15px; line-height: 1.25; }
+    .pad-card-en { font-size: 12px; margin-top: 2px; }
+
+    /* 도장은 오른쪽에 작게 */
+    .pad-stamp {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        left: auto;
+        width: 62px;
+        height: 62px;
+        transform: translateY(-50%);
+    }
+
+    .pad-stamp img { width: auto; height: auto; }
+
+    .pad-stamp-signup .s-b { left: 0; top: 0; width: 62px; height: 61px; }
+    .pad-stamp-signup .s-a { left: 11.6px; top: 13.2px; width: 38.9px; height: 34.7px; }
+    .pad-stamp-signup .s-c { left: 17.9px; top: 42.7px; width: 25.7px; height: 6.8px; }
+    .pad-stamp-signup .s-d { left: 19px; top: 31.9px; width: 24.3px; height: 3px; }
+
+    .pad-stamp-find .f-a { left: 0; top: 0; width: 62px; height: 60.1px; }
+    .pad-stamp-find .f-b { left: 16.3px; top: 42px; width: 29px; height: 7.3px; }
+    .pad-stamp-find .f-c { left: 16px; top: 10px; width: 29.2px; height: 8.9px; }
+    .pad-stamp-find .f-d { left: 19px; top: 12.3px; width: 24px; height: 33.1px; }
+
+    .pad-note {
+        margin-top: 16px;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    .pad-demo {
+        margin-top: 8px;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .pad-demo-fill {
+        margin-left: 6px;
+        padding: 1px 8px;
+        border-width: 1px;
+        font-size: 10px;
+    }
+
+    .pad-close {
+        right: -2px;
+        top: -8px;
+        width: 36px;
+        height: 36px;
+        border-width: 2px;
+        font-size: 20px;
+    }
+}

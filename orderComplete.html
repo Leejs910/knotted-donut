@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="./css/base/scrollbar.css">
     <link rel="stylesheet" href="./css/layout/nav.css">
 
+    <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/modal-screen.css">
+    <link rel="stylesheet" href="./css/components/login-modal.css">
+
     <!-- 섹션: 그 페이지에 있는 것만 -->
     <link rel="stylesheet" href="./css/sections/order-complete.css">
 
@@ -43,8 +47,8 @@
         <ul class="nav-links">
             <li><a href="./onlineShop.html">SHOP</a></li>
             <li><a href="./menu.html">MENU</a></li>
-            <li><a href="#">BRAND</a></li>
-            <li><a href="#">SUPPORT</a></li>
+            <li><a href="./brand.html">BRAND</a></li>
+            <li><a href="./support.html">SUPPORT</a></li>
         </ul>
 
         <div class="nav-actions">
@@ -67,8 +71,8 @@
         <ul class="mobile-menu-list">
             <li><a href="./onlineShop.html">Shop</a></li>
             <li><a href="./menu.html">Menu</a></li>
-            <li><a href="#">Brand</a></li>
-            <li><a href="#">Support</a></li>
+            <li><a href="./brand.html">Brand</a></li>
+            <li><a href="./support.html">Support</a></li>
         </ul>
 
         <!-- 🌈 바닥에 걸치는 무지개 장식 (CSS 로 그립니다 — img/rainbow.svg 는 1.18MB 라 안 씁니다) -->
@@ -174,13 +178,15 @@
 
     <footer class="site-footer">
 
-        <div class="footer-bg-trees"></div>
-        <div class="footer-store-building">
+        <div class="footer-bg">
+            <!-- 📱 폰에서만 보이는 무지개 행성. 곰돌이 걸음에 맞춰 천천히 돕니다 -->
+            <img src="./img/earthRainbow.svg" class="footer-planet" alt="" aria-hidden="true">
         </div>
 
-        <canvas id="footer-canvas"></canvas>
+        <!-- 글자가 배경·곰돌이 위에서 읽히도록 덮는 옅은 막 (색은 footer.css 의 --veil) -->
+        <div class="footer-overlay" aria-hidden="true"></div>
 
-        <div class="footer-overlay"></div>
+        <canvas id="footer-canvas"></canvas>
 
         <div class="footer-ui">
 
