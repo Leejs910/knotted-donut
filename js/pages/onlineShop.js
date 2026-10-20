@@ -11,6 +11,8 @@ import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
+import { initNavDropdown } from '../modules/navDropdown.js';
+import { initTabFromUrl } from '../modules/tabFromUrl.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
 import { initAuthGuard } from '../modules/authGuard.js';
@@ -26,6 +28,7 @@ initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
+initNavDropdown();
 initLoginModal();
 initAuthNav();
 initAuthGuard();
@@ -36,6 +39,9 @@ initBannerOverlay({ trigger: '.puzzle', overlay: '.puzzle-overlay' });
 
 // 상품 그리드
 initShopGrid({ data: cardData });
+
+// 네비 하위 메뉴에서 분류를 골라 왔다면 그 탭을 열어 줍니다 (?cat=...)
+initTabFromUrl('shopTabs');
 
 // 푸터
 initFooterBear();

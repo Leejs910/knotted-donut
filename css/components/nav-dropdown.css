@@ -1,0 +1,172 @@
+/* ============================================================
+   🔽 네비게이션 하위 메뉴
+   마크업은 js/modules/navDropdown.js 가 만들어 넣습니다.
+
+   모니터 — 네비에 마우스를 올리면 노란 판이 아래로 내려옵니다.
+   폰     — 메뉴 칸마다 화살표가 붙고 아래로 펼쳐집니다.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   🖥️ 내려오는 판
+------------------------------------------------------------ */
+.nav-drop {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: -1;            /* 네비 막대 뒤에서 미끄러져 나옵니다 */
+
+    background-color: #FFF09F;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+
+    /* 닫혀 있을 때 — 위로 접혀 숨습니다.
+       ⚠️ display: none 이 아니라 높이를 0 으로 둡니다. 그래야 펼쳐질 때
+          미끄러져 내려오는 움직임을 줄 수 있습니다. */
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        max-height 0.32s ease,
+        opacity 0.22s ease,
+        visibility 0s linear 0.32s;
+}
+
+.navbar.nav-drop-open .nav-drop {
+    max-height: 320px;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        max-height 0.32s ease,
+        opacity 0.22s ease,
+        visibility 0s linear 0s;
+}
+
+.nav-drop-inner {
+    /* ⚠️ 좌우 여백을 두지 않습니다. 칸의 자리는 js 가 .nav-links 를 재서
+          넣어 주는데, 여기에 또 여백을 주면 그만큼 통째로 밀려납니다.
+          (실제로 50px 씩 어긋났습니다) */
+    padding: 22px 0 30px;
+}
+
+/* ⚠️ 줄 맞춤의 핵심 — .nav-links 와 똑같은 모양으로 둡니다.
+      같은 flex, 같은 gap, 같은 가운데 정렬이라 각 칸이 위쪽 네비 글자
+      바로 밑에 놓입니다. 숫자를 따로 맞추지 않아도 저절로 따라옵니다. */
+/* ⚠️ 자리와 폭은 js/modules/navDropdown.js 가 .nav-links 를 재서 넣어 줍니다.
+      여기서는 간격만 네비와 같은 64px 로 맞춰 둡니다. */
+.nav-drop-cols {
+    display: flex;
+    justify-content: flex-start;
+    gap: 64px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-drop-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.nav-drop-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: #7a6a52;
+    white-space: nowrap;
+
+    transition: color 0.18s ease;
+}
+
+.nav-drop-link:hover,
+.nav-drop-link:focus-visible {
+    color: #1d1d1d;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* 네비가 숨거나(스크롤 내림) 폰 메뉴가 열려 있으면 판도 같이 사라집니다 */
+.navbar.nav-hidden .nav-drop,
+.navbar.menu-open .nav-drop {
+    display: none;
+}
+
+/* ------------------------------------------------------------
+   📱 폰 — 화살표와 펼쳐지는 칸
+   (판은 모니터 전용이라 숨깁니다)
+------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .nav-drop {
+        display: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    /* 글자와 화살표가 양 끝으로 갈라지도록 */
+    .mobile-menu-list > li > a {
+        justify-content: space-between;
+    }
+
+    /* ▾ 화살표 — 자주 묻는 질문(.faq-arrow)과 같은 모양의 꺾쇠입니다 */
+    .mobile-sub-toggle {
+        flex-shrink: 0;
+        width: 34px;
+        height: 34px;
+        margin: -8px -6px -8px 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+
+        position: relative;
+    }
+
+    .mobile-sub-toggle::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 9px;
+        height: 9px;
+        border-right: 2.5px solid #1d1d1d;
+        border-bottom: 2.5px solid #1d1d1d;
+        translate: -50% -70%;
+        rotate: 45deg;
+
+        transition: rotate 0.25s ease, translate 0.25s ease;
+    }
+
+    /* 펼쳐지면 화살표가 위를 봅니다 */
+    .mobile-menu-list li.is-open .mobile-sub-toggle::after {
+        rotate: -135deg;
+        translate: -50% -20%;
+    }
+
+    .mobile-sub {
+        list-style: none;
+        margin: 0;
+        padding: 0 0 8px;
+
+        /* 부모 칸보다 살짝 어둡게 — 안쪽이라는 것이 보이도록 */
+        background-color: rgba(0, 0, 0, 0.06);
+    }
+
+    .mobile-sub[hidden] {
+        display: none;
+    }
+
+    .mobile-sub li {
+        border: none;
+        background: transparent;
+    }
+
+    .mobile-sub a {
+        padding: 14px 24px 14px 44px;
+        font-size: 15px;
+        font-weight: 400;
+        color: #3a3a3a;
+    }
+}

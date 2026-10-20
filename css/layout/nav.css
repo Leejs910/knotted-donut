@@ -292,18 +292,20 @@
         z-index: 1; /* 무지개(0)보다 위 */
     }
 
-    /* 칸마다 위아래로 선이 보이도록, 첫 항목에만 윗선을 더해 줍니다 */
-    .mobile-menu-list li { border-bottom: 2px solid #000000; }
-    .mobile-menu-list li:first-child { border-top: 2px solid #000000; }
+    /* 칸마다 위아래로 선이 보이도록, 첫 항목에만 윗선을 더해 줍니다.
+       ⚠️ '>' 로 직계 자식만 잡습니다. 하위 메뉴(.mobile-sub)의 항목까지
+          잡으면 그쪽에도 검은 줄과 아래 색이 그대로 입혀집니다. */
+    .mobile-menu-list > li { border-bottom: 2px solid #000000; }
+    .mobile-menu-list > li:first-child { border-top: 2px solid #000000; }
 
     /* 🎨 칸마다 다른 색. 사이트 팔레트를 그대로 씁니다.
        ⚠️ 두 번째(Menu)만 노랑인데, 메뉴 전체 바탕(#FFF09F)과 같은 색을 쓰면
           칸이 안 보이므로 한 톤 진한 노랑을 씁니다. */
-    .mobile-menu-list li:nth-child(1) { background-color: #FFC9E1; } /* 분홍 */
-    .mobile-menu-list li:nth-child(2) { background-color: #FBE98E; } /* 노랑 */
-    .mobile-menu-list li:nth-child(3) { background-color: #50BD83; } /* 초록 */
-    .mobile-menu-list li:nth-child(4) { background-color: #A8DCEF; } /* 하늘 */
-    .mobile-menu-list a {
+    .mobile-menu-list > li:nth-child(1) { background-color: #FFC9E1; } /* 분홍 */
+    .mobile-menu-list > li:nth-child(2) { background-color: #FBE98E; } /* 노랑 */
+    .mobile-menu-list > li:nth-child(3) { background-color: #50BD83; } /* 초록 */
+    .mobile-menu-list > li:nth-child(4) { background-color: #A8DCEF; } /* 하늘 */
+    .mobile-menu-list > li > a {
         display: flex;
         align-items: center;
         padding: 26px 24px;
