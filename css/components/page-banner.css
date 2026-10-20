@@ -82,12 +82,23 @@
     z-index: 3; /* 어둡게 까는 층(1, 2)보다 위 */
     margin: 0 0 0 -6px; /* 글자의 시각적 여백을 상쇄해 로고와 왼쪽 끝을 맞춤 */
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
-    font-weight: 900;
+    /* 시안 서체(신촌랩소디). @font-face 는 css/base/reset.css 에 있습니다.
+       ⚠️ 영문 대문자·숫자·기호만 담은 서브셋이라 한글 제목은 뒤쪽 서체로
+          넘어갑니다. 지금 제목은 다섯 개 다 영문입니다
+          (CART · CHECKOUT · MENU · ONLINE SHOP · SUPPORT).
+       ⚠️ 이 서체는 굵기가 하나뿐이라 900 으로 적으면 브라우저가 억지로
+          굵게 만듭니다. @font-face 에 적은 800 으로 맞춰 둡니다. */
+    font-family: 'SinchonRhapsody', 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    font-weight: 800;
 
     font-size: clamp(24px, 5.5vw, 106px);
     line-height: 1;
-    letter-spacing: -0.01em;
+
+    /* 자간 -5px. 다만 글자가 작아지는 폰에서 -5 는 글자끼리 겹쳐서,
+       글자 크기에 비례하도록 두고 -5px 을 넘지 않게 막았습니다.
+       (106px 일 때 정확히 -5px, 24px 일 때 -1.2px) */
+    letter-spacing: max(-5px, -0.05em);
+
     color: #fff;
     white-space: nowrap;
 

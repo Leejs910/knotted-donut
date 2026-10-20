@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="./css/base/animations.css">
     <link rel="stylesheet" href="./css/base/scrollbar.css">
     <link rel="stylesheet" href="./css/layout/nav.css">
+    <link rel="stylesheet" href="./css/components/page-fade.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
     <link rel="stylesheet" href="./css/components/modal-screen.css">
@@ -34,6 +35,10 @@
 </head>
 
 <body>
+    <!-- 📄 페이지가 바뀔 때 덮였다 걷히는 흰 막.
+         처음부터 그려져 있어야 깜빡임이 없어 마크업에 둡니다. -->
+    <div class="page-fade" aria-hidden="true"></div>
+
     <nav id="mainNav" class="navbar">
 
         <a href="./cart.html" class="mobile-cart">

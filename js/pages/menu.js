@@ -6,6 +6,7 @@
 import { bestMenuData, newMenuData, drinkData } from '../data/donutData.js';
 
 // --- 모든 페이지 공통 ---
+import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
@@ -21,6 +22,7 @@ import { initClouds } from '../modules/clouds.js';
 import { initMenuGrid } from '../modules/menuGrid.js';
 
 // 공통
+initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();

@@ -7,6 +7,7 @@
 import { newMenuData, bestMenuData, cardData, instaData } from '../data/donutData.js';
 
 // --- 모든 페이지 공통 ---
+import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
@@ -25,6 +26,7 @@ import { initConveyor } from '../modules/conveyor.js';
 import { initInstaSection } from '../modules/instaSwiper.js';
 
 // 공통
+initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();

@@ -7,6 +7,7 @@
 import { cardData } from '../data/donutData.js';
 
 // --- 모든 페이지 공통 ---
+import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
@@ -21,6 +22,7 @@ import { initBannerOverlay } from '../modules/bannerOverlay.js';
 import { initShopGrid } from '../modules/shopGrid.js';
 
 // 공통
+initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
