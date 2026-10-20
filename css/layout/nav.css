@@ -439,3 +439,20 @@
         transform: translate(-50%,-50%);
     }
 }
+
+
+/* 👤 폰 메뉴의 '마이페이지' — 로그인했을 때만 보입니다 (js/modules/authNav.js).
+   ⚠️ 로그인 링크가 margin-left: auto 로 오른쪽에 붙어 있어서, 그냥 하나를 더
+      넣으면 두 글자가 딱 붙어 '로그아웃마이페이지' 로 읽힙니다.
+      마이페이지가 보일 때는 그쪽이 오른쪽 묶음의 시작이 되고,
+      로그인 링크는 사이 간격만 갖도록 바꿉니다. */
+.mobile-login-header .mobile-mypage {
+    margin-left: auto;
+    color: #222;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.mobile-login-header .mobile-mypage:not([hidden]) ~ .login-link {
+    margin-left: 14px;
+}

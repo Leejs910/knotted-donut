@@ -2,7 +2,9 @@
 //
 // 바꾸는 곳
 //   · 모니터 네비의 Login 버튼  →  "Logout" (옆의 Cart 와 나란히)
-//   · 폰 메뉴 머리말            →  로그인하면 안내문은 감추고 '로그아웃' 만 남깁니다
+//   · Mypage 버튼               →  로그인했을 때만 보입니다
+//   · 폰 메뉴 머리말            →  로그인하면 안내문은 감추고
+//                                  '마이페이지 / 로그아웃' 을 남깁니다
 //
 // 상태는 js/modules/auth.js 가 들고 있고, 바뀔 때마다 여기로 알려 줍니다.
 // 필요 CSS: css/layout/nav.css (.is-logged-in)
@@ -16,6 +18,10 @@ export function initAuthNav() {
 
     const mobileText = document.querySelector('.mobile-login-header p');
     const mobileLink = document.querySelector('.mobile-login-header .login-link');
+
+    // 로그인했을 때만 보이는 것들
+    const myBtn = document.querySelector('.pc-btn-mypage');
+    const myMobile = document.querySelector('.mobile-mypage');
 
     if (!pcBtn && !mobileLink) return;
 
@@ -31,6 +37,10 @@ export function initAuthNav() {
 
     function paint(user) {
         const on = Boolean(user);
+
+        // 마이페이지는 로그인한 사람에게만 보입니다
+        if (myBtn) myBtn.hidden = !on;
+        if (myMobile) myMobile.hidden = !on;
 
         if (pcBtn) {
             // 이름 대신 할 일을 적습니다. 옆의 Cart 와 같은 모양으로 나란히 섭니다.

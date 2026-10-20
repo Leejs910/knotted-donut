@@ -1,0 +1,452 @@
+/* ============================================================
+   마이페이지 (배너 + 탭 + 주문조회 / 포인트 / 회원탈퇴)
+
+   바깥 크기 틀(폭 1080px, 좌우·위아래 여백)은
+   css/sections/support.css 의 .support / .support-inner 와 같은 값입니다.
+   탭 모양은 css/components/category-tabs.css 를 그대로 씁니다.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   🏙️ 배너 — 하늘색 바탕에 brand 와 같은 도시 그림
+------------------------------------------------------------ */
+.mypage-banner {
+    /* 그림이 뜨기 전에도, 그림 위쪽 하늘이 모자랄 때도 하늘색이 보이게 */
+    background-color: #BDE1EF;
+}
+
+.mypage-banner-art {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+/* ⚠️ 배너는 납작한데 그림은 1920 x 1000 이라 비율이 전혀 다릅니다.
+      slice(채워 넣기) + xMidYMax(아래 맞춤) 로 두어, 잘리더라도
+      도시와 캐릭터가 있는 아래쪽이 남습니다. (SVG 쪽 설정은
+      js/pages/mypage.js 가 fit 으로 넘깁니다) */
+.mypage-banner-art > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ☁️ 구름이 한 번 왼쪽으로 흘러가 사라집니다.
+   움직이는 규칙 자체는 css/sections/brand-outro.css 의
+   @keyframes brand-city-clouds 를 함께 씁니다. */
+.mypage-banner-art.is-drifting #cloudGroup {
+    animation: brand-city-clouds var(--city-cloud-time, 180s) linear 1 both;
+}
+
+/* ------------------------------------------------------------
+   본문 틀
+------------------------------------------------------------ */
+.mypage {
+    position: relative;
+    background: #fff;
+    padding: 100px 0 210px;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+}
+
+.mypage-inner {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.mypage-hello {
+    margin: 0 0 28px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #3E2723;
+}
+
+.mypage-hello b {
+    color: #E0719E;
+}
+
+/* 탭 — 모양은 공용 컴포넌트, 여기서는 자리만 */
+.mypage .shop-tabs {
+    margin: 0 auto 56px;
+}
+
+/* 배지가 리본이 아니라 얼굴이라 원을 좀 더 채웁니다 (support 와 같은 이유) */
+.mypage .shop-tabs-badge img {
+    width: 88%;
+    height: 88%;
+}
+
+.mypage-panel[hidden] {
+    display: none;
+}
+
+/* ------------------------------------------------------------
+   📦 주문조회
+------------------------------------------------------------ */
+.mypage-order {
+    border: 3px solid #3E2723;
+    border-radius: 20px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.mypage-order + .mypage-order {
+    margin-top: 20px;
+}
+
+.mypage-order-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+
+    padding: 14px 20px;
+    background: #FFF7E3;
+    border-bottom: 2px solid #EADFC6;
+}
+
+.mypage-order-no {
+    font-size: 15px;
+    font-weight: 800;
+    color: #3E2723;
+}
+
+.mypage-order-date {
+    font-size: 13px;
+    color: #8a7b75;
+}
+
+.mypage-order-method {
+    margin-left: auto;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #FFC9E1;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b2f4a;
+}
+
+.mypage-order-body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+}
+
+.mypage-order-thumb {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    border: 2px solid #EADFC6;
+    background: #FFFDF7;
+    object-fit: contain;
+}
+
+.mypage-order-names {
+    flex: 1 1 auto;
+    min-width: 0;         /* 긴 상품명이 칸을 밀어내지 않도록 */
+    font-size: 15px;
+    line-height: 1.6;
+    color: #3E2723;
+}
+
+.mypage-order-more {
+    display: block;
+    font-size: 13px;
+    color: #8a7b75;
+}
+
+.mypage-order-pay {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.mypage-order-total {
+    font-size: 20px;
+    font-weight: 800;
+    color: #3E2723;
+}
+
+.mypage-order-earn {
+    font-size: 12px;
+    color: #C9A94A;
+}
+
+/* ------------------------------------------------------------
+   ⭐ 포인트
+------------------------------------------------------------ */
+.mypage-point-card {
+    padding: 36px 28px;
+    border: 3px solid #3E2723;
+    border-radius: 24px;
+    background: #FFF4D6;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.mypage-point-label {
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #6b5720;
+}
+
+.mypage-point-value {
+    margin: 0;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #3E2723;
+}
+
+.mypage-point-value span {
+    margin-left: 4px;
+    font-size: 0.5em;
+}
+
+.mypage-point-note {
+    margin: 22px 0 0;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #8a7b75;
+}
+
+.mypage-point-log {
+    margin-top: 28px;
+}
+
+.mypage-point-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 4px;
+    border-bottom: 1px solid #EFE7DC;
+    font-size: 14px;
+}
+
+.mypage-point-row:last-child {
+    border-bottom: none;
+}
+
+.mypage-point-when {
+    flex: 0 0 auto;
+    width: 108px;
+    color: #8a7b75;
+    font-size: 13px;
+}
+
+.mypage-point-what {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #3E2723;
+}
+
+.mypage-point-delta {
+    flex: 0 0 auto;
+    font-weight: 700;
+}
+
+.mypage-point-delta.is-plus { color: #2E9E6B; }
+.mypage-point-delta.is-minus { color: #D9534F; }
+
+/* ------------------------------------------------------------
+   👋 회원탈퇴 (탭 안쪽)
+------------------------------------------------------------ */
+.mypage-leave {
+    padding: 44px 28px;
+    border: 3px dashed #D9CBB8;
+    border-radius: 24px;
+    text-align: center;
+}
+
+.mypage-leave-title {
+    margin: 0 0 12px;
+    font-size: 19px;
+    font-weight: 800;
+    color: #3E2723;
+}
+
+.mypage-leave-desc {
+    margin: 0 0 26px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #8a7b75;
+}
+
+.mypage-leave-btn {
+    padding: 13px 32px;
+    border: 2px solid #3E2723;
+    border-radius: 999px;
+    background: #fff;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: #3E2723;
+
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mypage-leave-btn:hover {
+    background: #3E2723;
+    color: #fff;
+}
+
+/* ------------------------------------------------------------
+   🗂️ 아무것도 없을 때
+------------------------------------------------------------ */
+.mypage-empty {
+    padding: 80px 0;
+    text-align: center;
+}
+
+.mypage-empty p {
+    margin: 0 0 20px;
+    font-size: 15px;
+    color: #8a7b75;
+}
+
+.mypage-empty-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: #3E2723;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* ------------------------------------------------------------
+   🚪 회원탈퇴 확인 상자
+   뒷배경(.modal-screen)은 상품 상세·로그인과 같은 것을 씁니다.
+------------------------------------------------------------ */
+.leave-box {
+    width: min(620px, 100%);
+    padding: 40px 36px 32px;
+
+    background: #fff;
+    border-radius: 26px;
+    box-shadow: 0 18px 40px rgba(62, 39, 35, 0.18);
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+
+    /* 로그인 상자와 같은 등장 효과 */
+    transform: scale(0.92) translateY(10px);
+    opacity: 0;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.leave-overlay.active .leave-box {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.leave-title {
+    margin: 0 0 24px;
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    color: #1d1d1d;
+}
+
+.leave-body p {
+    margin: 0 0 16px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #3E2723;
+}
+
+.leave-body p:last-of-type {
+    margin-bottom: 0;
+}
+
+.leave-error {
+    margin-top: 18px !important;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #FDECEC;
+    color: #D9534F !important;
+    font-size: 14px;
+}
+
+.leave-error[hidden] {
+    display: none;
+}
+
+.leave-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.leave-btn {
+    min-width: 108px;
+    padding: 13px 26px;
+    border-radius: 999px;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+
+    transition: filter 0.2s ease, background-color 0.2s ease;
+}
+
+.leave-btn:hover {
+    filter: brightness(0.94);
+}
+
+.leave-btn-ghost {
+    border: 2px solid #D9CBB8;
+    background: #fff;
+    color: #3E2723;
+}
+
+.leave-btn-solid {
+    border: 2px solid #1d1d1d;
+    background: #1d1d1d;
+    color: #fff;
+}
+
+.leave-btn:focus-visible {
+    outline: 3px solid #FFC9E1;
+    outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------
+   📱 좁은 화면
+------------------------------------------------------------ */
+@media (max-width: 767px) {
+    .mypage {
+        padding: 64px 0 140px;
+    }
+
+    .mypage-order-body {
+        flex-wrap: wrap;
+    }
+
+    .mypage-order-pay {
+        width: 100%;
+        text-align: left;
+    }
+
+    .mypage-point-when {
+        width: 84px;
+    }
+
+    .leave-box {
+        padding: 32px 22px 26px;
+        border-radius: 20px;
+    }
+
+    .leave-title {
+        font-size: 20px;
+    }
+
+    .leave-body p {
+        font-size: 14px;
+    }
+}

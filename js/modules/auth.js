@@ -154,6 +154,32 @@ export function registeredCount() {
     return registered.length;
 }
 
+/**
+ * 회원 탈퇴 — 명부에서 계정을 지우고 로그아웃합니다.
+ * 이 계정이 남긴 장바구니·주문·포인트는 memberStore.clearMemberData 가 지웁니다.
+ * ⚠️ 데모 계정(demoUsers)은 파일에 적혀 있어 지울 수 없습니다. 둘러보는 분이
+ *    데모 계정을 지워 버리면 다음 사람이 로그인할 수 없게 되니 막아 둡니다.
+ * @returns { ok, reason? }
+ */
+export function removeAccount(email) {
+    const mail = String(email || '').trim().toLowerCase();
+    if (!mail) return { ok: false, reason: '어느 계정인지 알 수 없습니다.' };
+
+    if (demoUsers.some((u) => u.email.toLowerCase() === mail)) {
+        return { ok: false, reason: '둘러보기용 데모 계정은 탈퇴할 수 없습니다.' };
+    }
+
+    const before = registered.length;
+    registered = registered.filter((u) => u.email.toLowerCase() !== mail);
+    if (registered.length === before) {
+        return { ok: false, reason: '가입된 계정이 아닙니다.' };
+    }
+
+    writeUsers(registered);
+    logout();
+    return { ok: true };
+}
+
 export function logout() {
     current = null;
     writeStore(null);

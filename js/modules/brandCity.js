@@ -11,16 +11,24 @@
 // 밀어낼 거리는 그림마다 다르므로 #cloudGroup 의 실제 크기를 재서 정합니다.
 // 왼쪽 끝(x)에 폭을 더하면 '오른쪽 끝이 화면 왼쪽 밖으로 나가는' 거리가 됩니다.
 //
-// 필요 요소: #brandCity
-// 필요 CSS: css/sections/brand-outro.css
+// 두 곳에서 같은 그림을 씁니다 — brand.html 맨 아래와 mypage.html 배너.
+// 그래서 '어느 칸에 펼칠지' 와 '어떻게 채울지' 를 밖에서 받습니다.
+//
+// 필요 요소: 넘겨 준 holder (기본 #brandCity)
+// 필요 CSS: css/sections/brand-outro.css / css/sections/mypage.css
 // 필요 에셋: img/brand/cityscape.svg (안에 id="cloudGroup" 이 있어야 합니다)
 
 import { playOnceOnView } from './playOnceOnView.js';
 
 const SVG_URL = './img/brand/cityscape.svg';
 
-export async function initBrandCity() {
-    const holder = document.getElementById('brandCity');
+export async function initBrandCity({
+    // 그림을 펼칠 칸
+    holder = document.getElementById('brandCity'),
+    // 배너처럼 납작한 칸에서는 그림을 채워 넣고 아래쪽(도시)을 남깁니다.
+    // 본문처럼 비율대로 놓을 때는 meet 로 둡니다.
+    fit = null,
+} = {}) {
     if (!holder) return;
 
     let svgText;
@@ -42,6 +50,7 @@ export async function initBrandCity() {
     // 크기는 CSS 가 정합니다 (가로 100%, 세로는 비율대로)
     svg.removeAttribute('width');
     svg.removeAttribute('height');
+    if (fit) svg.setAttribute('preserveAspectRatio', fit);
 
     const clouds = svg.querySelector('#cloudGroup');
     if (!clouds) {

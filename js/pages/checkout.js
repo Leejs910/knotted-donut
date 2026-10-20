@@ -5,6 +5,7 @@
 // ============================================================
 
 import { getCheckoutItems, removeOrdered } from '../modules/cartStore.js';
+import { addOrder, settlePoints } from '../modules/memberStore.js';
 
 // --- 모든 페이지 공통 ---
 import { initPageFade } from '../modules/pageFade.js';
@@ -60,6 +61,10 @@ const truck = initTruckScene({
                     `${pad(now.getHours())}:${pad(now.getMinutes())}`,
             };
             sessionStorage.setItem('knotted:lastOrder', JSON.stringify(order));
+
+            // 마이페이지 주문조회에서 다시 볼 수 있게 남겨 둡니다
+            addOrder(order);
+            settlePoints({ used: order.usedPoint, earned: order.earnPoint });
         } catch (e) {
             // 저장에 실패해도 완료 페이지는 기본값으로 열립니다.
         }

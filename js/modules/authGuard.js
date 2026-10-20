@@ -22,7 +22,7 @@ import { openLoginModal } from './loginModal.js';
 const HOME = './index.html';
 
 // 로그인해야 들어갈 수 있는 페이지
-const MEMBER_PAGES = ['cart.html', 'checkout.html'];
+const MEMBER_PAGES = ['cart.html', 'checkout.html', 'mypage.html'];
 
 // '첫 화면으로 보냈으니 로그인 창을 띄워 달라'는 쪽지.
 // 페이지를 넘어가야 해서 sessionStorage 를 씁니다 (탭을 닫으면 사라집니다).
@@ -55,9 +55,9 @@ export function initAuthGuard() {
         /* 저장소를 못 쓰는 환경에서는 그냥 지나갑니다 */
     }
 
-    // ── 2. Cart 링크 가로채기 ──────────────────────────────────
-    // 모니터 네비의 Cart 와 폰 머리말의 장바구니 아이콘을 함께 잡습니다.
-    document.querySelectorAll('a[href$="cart.html"], .mobile-cart').forEach((link) => {
+    // ── 2. Cart · Mypage 링크 가로채기 ─────────────────────────
+    // 모니터 네비의 Cart / Mypage 와 폰 머리말의 장바구니 아이콘을 함께 잡습니다.
+    document.querySelectorAll('a[href$="cart.html"], .mobile-cart, a[href$="mypage.html"]').forEach((link) => {
         link.addEventListener('click', (e) => {
             if (isLoggedIn()) return;
             e.preventDefault();

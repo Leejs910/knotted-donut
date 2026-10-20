@@ -7,8 +7,9 @@
 //    그래서 카드번호 같은 결제 수단 정보는 받지 않고, 수단 선택만 합니다.
 
 import { orderRules } from '../data/donutData.js';
+import { getPoints } from './memberStore.js';
 
-const { SHIPPING_FEE, FREE_SHIPPING_OVER, POINT_RATE, OWNED_POINT } = orderRules;
+const { SHIPPING_FEE, FREE_SHIPPING_OVER, POINT_RATE } = orderRules;
 
 const won = (n) => Math.round(n).toLocaleString('ko-KR') + '원';
 const num = (n) => Math.round(n).toLocaleString('ko-KR');
@@ -27,6 +28,11 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
 
     // 품절 상품은 주문할 수 없으니 제외합니다.
     const items = data.filter((it) => !it.soldOut);
+
+    // ⚠️ 보유 포인트는 더 이상 고정값이 아닙니다 — 계정마다 쌓이고 줄어듭니다.
+    //    (js/modules/memberStore.js) 모듈을 읽어 들이는 시점이 아니라
+    //    화면을 그리는 시점에 물어봐야 로그인한 사람의 잔액이 나옵니다.
+    const OWNED_POINT = getPoints();
 
     let usedPoint = 0;
 
