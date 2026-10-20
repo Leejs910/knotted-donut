@@ -14,7 +14,14 @@ const { SHIPPING_FEE, FREE_SHIPPING_OVER, POINT_RATE } = orderRules;
 const won = (n) => Math.round(n).toLocaleString('ko-KR') + '원';
 const num = (n) => Math.round(n).toLocaleString('ko-KR');
 
-export function initCheckoutOrder({ data = [], onPay = null } = {}) {
+export function initCheckoutOrder({
+    data = [],
+    onPay = null,
+    // 수량을 고치거나 상품을 뺐을 때 — 새로고침해도 남도록 되돌려 저장합니다
+    onItemsChange = () => {},
+    // 주문할 것이 하나도 안 남았을 때 (어디로 보낼지는 페이지가 정합니다)
+    onEmpty = () => {},
+} = {}) {
     const itemsEl = document.getElementById('checkoutItems');
     const summaryEl = document.getElementById('checkoutSummary');
     if (!itemsEl || !summaryEl) return null;
@@ -27,7 +34,8 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
     const resultEl = document.getElementById('checkoutResult');
 
     // 품절 상품은 주문할 수 없으니 제외합니다.
-    const items = data.filter((it) => !it.soldOut);
+    // ⚠️ const 가 아닙니다 — 이 화면에서 수량을 고치고 빼낼 수 있습니다.
+    let items = data.filter((it) => !it.soldOut);
 
     // ⚠️ 보유 포인트는 더 이상 고정값이 아닙니다 — 계정마다 쌓이고 줄어듭니다.
     //    (js/modules/memberStore.js) 모듈을 읽어 들이는 시점이 아니라
@@ -67,12 +75,12 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
             return;
         }
 
-        itemsEl.innerHTML = items.map((item) => {
+        itemsEl.innerHTML = items.map((item, i) => {
             const was = item.originalPrice
                 ? `<span class="co-item-was">${won(item.originalPrice)}</span>` : '';
 
             return `
-            <li class="co-item">
+            <li class="co-item" data-index="${i}">
                 <div class="co-item-thumb">
                     <img src="${item.imgUrl}" alt="${item.title}" loading="lazy">
                 </div>
@@ -80,10 +88,21 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
                     <p class="co-item-name">${item.title}</p>
                     <p class="co-item-price">
                         <span class="co-item-now">${won(item.price)}</span>${was}
-                        <span class="co-item-qty">· ${item.qty}개</span>
                     </p>
+
+                    <div class="co-item-qty-box">
+                        <button type="button" class="co-qty-btn" data-step="-1"
+                            aria-label="${item.title} 수량 줄이기">&minus;</button>
+                        <span class="co-qty-value">${item.qty}</span>
+                        <button type="button" class="co-qty-btn" data-step="1"
+                            aria-label="${item.title} 수량 늘리기">+</button>
+                    </div>
                 </div>
+
                 <span class="co-item-total">${won(item.price * item.qty)}</span>
+
+                <button type="button" class="co-item-remove" data-remove="1"
+                    aria-label="${item.title} 주문에서 빼기"></button>
             </li>`;
         }).join('');
     }
@@ -129,6 +148,39 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
         </div>
         <p class="co-sum-point">${num(t.earnPoint)} 포인트 적립예정</p>`;
     }
+
+    // ----- 수량 조절 · 주문에서 빼기 -----
+    // ⚠️ 단추는 목록을 다시 그릴 때마다 새로 만들어집니다. 하나하나 붙이면
+    //    다시 그린 순간 떨어지므로, 바깥 목록에서 한 번만 받습니다.
+    itemsEl.addEventListener('click', (e) => {
+        const li = e.target.closest('.co-item');
+        if (!li) return;
+
+        const index = Number(li.dataset.index);
+        const item = items[index];
+        if (!item) return;
+
+        if (e.target.closest('[data-remove]')) {
+            items = items.filter((it) => it !== item);
+        } else {
+            const stepBtn = e.target.closest('.co-qty-btn');
+            if (!stepBtn) return;
+
+            item.qty += Number(stepBtn.dataset.step);
+
+            // 0개가 되면 주문에서 빠집니다 (빼기 단추를 누른 것과 같습니다)
+            if (item.qty <= 0) items = items.filter((it) => it !== item);
+        }
+
+        // 포인트를 상품값보다 많이 쓰고 있을 수 있으니 다시 맞춥니다
+        applyPoint(usedPoint);
+
+        onItemsChange(items);
+        render();
+
+        // 하나도 안 남았으면 이 화면에 있을 이유가 없습니다
+        if (!items.length) onEmpty();
+    });
 
     function render() {
         renderItems();
@@ -244,6 +296,9 @@ export function initCheckoutOrder({ data = [], onPay = null } = {}) {
     }
 
     render();
+
+    // 주소로 바로 들어왔는데 주문할 것이 없을 때도 같은 곳으로 보냅니다
+    if (!items.length) onEmpty();
 
     return { render, getTotals };
 }

@@ -4,7 +4,7 @@
 //  새 페이지를 만들 때는 이 파일을 복사한 뒤, 필요 없는 줄을 지우세요.
 // ============================================================
 
-import { getCheckoutItems, removeOrdered } from '../modules/cartStore.js';
+import { getCheckoutItems, removeOrdered, setCheckoutItems } from '../modules/cartStore.js';
 import { addOrder, settlePoints } from '../modules/memberStore.js';
 
 // --- 모든 페이지 공통 ---
@@ -86,6 +86,14 @@ initCheckoutOrder({
         paidInfo = info;
         if (truck) truck.play();
     },
+
+    // 수량을 고치거나 상품을 빼면 되돌려 저장합니다 (새로고침해도 그대로)
+    onItemsChange: setCheckoutItems,
+
+    // 주문할 것이 하나도 안 남으면 장바구니로 돌려보냅니다.
+    // (보통 쇼핑몰이 이렇게 합니다 — 결제 화면에 빈 채로 머물 이유가 없고,
+    //  장바구니에는 고르지 않고 남겨 둔 상품이 아직 있을 수 있습니다)
+    onEmpty: () => { location.replace('./cart.html'); },
 });
 
 // 아는 것은 미리 채워 둡니다 (계정 이름·이메일 + 지난번 배송지).
