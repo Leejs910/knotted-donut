@@ -12,6 +12,7 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
+import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
 // --- 이 페이지에만 있는 섹션 ---
@@ -25,6 +26,7 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
+initAuthGuard();
 
 // 퍼즐 배너
 initPuzzleBanner();
