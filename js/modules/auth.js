@@ -149,6 +149,63 @@ export function signup({ email = '', password = '', password2 = '', name = '', a
     return { ok: true, user: current };
 }
 
+/** 이 계정이 '파일에 적혀 있는 데모 계정' 인지 */
+export function isDemoAccount(email) {
+    const mail = String(email || '').trim().toLowerCase();
+    return demoUsers.some((u) => u.email.toLowerCase() === mail);
+}
+
+/**
+ * 내 정보 고치기 — 이름과 비밀번호를 바꿉니다.
+ * 이메일(=아이디)은 바꾸지 않습니다. 장바구니·주문·포인트가 전부
+ * 이메일을 칸 이름으로 쓰고 있어서, 바꾸면 그 기록을 모두 잃습니다.
+ *
+ * password 를 비워 두면 비밀번호는 그대로 두고 이름만 바꿉니다.
+ * @returns { ok, field?, message? }
+ */
+export function updateAccount({ name = '', password = '', password2 = '', currentPassword = '' } = {}) {
+    if (!current) {
+        return { ok: false, message: '로그인한 뒤에 고칠 수 있습니다.' };
+    }
+    if (isDemoAccount(current.email)) {
+        return { ok: false, message: '둘러보기용 데모 계정은 정보를 고칠 수 없습니다.' };
+    }
+
+    const nick = name.trim();
+    if (!nick) {
+        return { ok: false, field: 'name', message: '이름을 입력해 주세요.' };
+    }
+
+    const me = registered.find((u) => u.email.toLowerCase() === current.email.toLowerCase());
+    if (!me) {
+        return { ok: false, message: '가입된 계정이 아닙니다.' };
+    }
+
+    // ⚠️ 비밀번호를 바꿀 때는 지금 비밀번호를 먼저 확인합니다.
+    //    (남이 열어 둔 화면에서 비밀번호만 갈아 버리는 일을 막습니다)
+    if (password) {
+        if (currentPassword !== me.password) {
+            return { ok: false, field: 'currentPassword', message: '지금 비밀번호가 맞지 않습니다.' };
+        }
+        if (password.length < MIN_PASSWORD) {
+            return { ok: false, field: 'password', message: `비밀번호는 ${MIN_PASSWORD}자 이상이어야 합니다.` };
+        }
+        if (password !== password2) {
+            return { ok: false, field: 'password2', message: '새 비밀번호가 서로 다릅니다.' };
+        }
+        me.password = password;
+    }
+
+    me.name = nick;
+    writeUsers(registered);
+
+    current = { ...current, name: nick };
+    writeStore(current);
+    notify();
+
+    return { ok: true, user: current };
+}
+
 /** 이 브라우저에서 가입한 사람 수 (데모 계정은 뺍니다) */
 export function registeredCount() {
     return registered.length;

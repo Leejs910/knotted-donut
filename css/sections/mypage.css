@@ -251,6 +251,145 @@
 .mypage-point-delta.is-minus { color: #D9534F; }
 
 /* ------------------------------------------------------------
+   ✍️ 정보수정
+------------------------------------------------------------ */
+.mypage-edit {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.mypage-edit-notice {
+    margin: 0 0 24px;
+    padding: 14px 16px;
+    border: 1px solid #E8D08A;
+    border-radius: 12px;
+    background: #FFF4D6;
+
+    font-size: 13px;
+    line-height: 1.7;
+    color: #6b5720;
+}
+
+.mypage-edit-notice[hidden] {
+    display: none;
+}
+
+.mypage-field + .mypage-field {
+    margin-top: 16px;
+}
+
+.mypage-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3E2723;
+}
+
+.mypage-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+
+    border: 2px solid #ded5d2;
+    border-radius: 12px;
+    background: #fff;
+
+    font-family: inherit;
+    font-size: 15px;
+    color: #2a2625;
+
+    transition: border-color 0.2s ease;
+}
+
+.mypage-input:focus {
+    outline: none;
+    border-color: #3E2723;
+}
+
+/* 못 고치는 칸 — 아이디, 그리고 데모 계정일 때의 모든 칸 */
+.mypage-input:read-only,
+.mypage-input:disabled {
+    background: #F6F3EF;
+    color: #8a7b75;
+    cursor: not-allowed;
+}
+
+.mypage-help {
+    margin: 6px 2px 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #8a7b75;
+}
+
+.mypage-divider {
+    margin: 30px 0 22px;
+    border: none;
+    border-top: 1px solid #EFE7DC;
+}
+
+.mypage-sub {
+    margin: 0 0 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #3E2723;
+}
+
+.mypage-sub span {
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #8a7b75;
+}
+
+.mypage-edit-result {
+    margin: 20px 0 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.mypage-edit-result[hidden] {
+    display: none;
+}
+
+.mypage-edit-result.is-ok {
+    background: #E8F6EE;
+    color: #2E7D52;
+}
+
+.mypage-edit-result.is-error {
+    background: #FDECEC;
+    color: #D9534F;
+}
+
+.mypage-edit-btn {
+    width: 100%;
+    height: 52px;
+    margin-top: 24px;
+    border: none;
+    border-radius: 12px;
+    background: #3E2723;
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+
+    transition: filter 0.2s ease;
+}
+
+.mypage-edit-btn:hover:not(:disabled) {
+    filter: brightness(0.92);
+}
+
+.mypage-edit-btn:disabled {
+    background: #D9CBB8;
+    cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------
    👋 회원탈퇴 (탭 안쪽)
 ------------------------------------------------------------ */
 .mypage-leave {

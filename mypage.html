@@ -123,6 +123,8 @@
                         aria-selected="true" aria-controls="panelOrders">주문조회</button>
                     <button type="button" class="shop-tab" data-category="points" role="tab"
                         aria-selected="false" aria-controls="panelPoints">포인트</button>
+                    <button type="button" class="shop-tab" data-category="edit" role="tab"
+                        aria-selected="false" aria-controls="panelEdit">정보수정</button>
                     <button type="button" class="shop-tab" data-category="leave" role="tab"
                         aria-selected="false" aria-controls="panelLeave">회원탈퇴</button>
 
@@ -139,6 +141,53 @@
                 <!-- ⭐ 포인트 -->
                 <section class="mypage-panel" id="panelPoints" role="tabpanel" aria-label="포인트" hidden>
                     <div class="mypage-points" id="mypagePoints"></div>
+                </section>
+
+                <!-- ✍️ 정보수정 -->
+                <section class="mypage-panel" id="panelEdit" role="tabpanel" aria-label="정보수정" hidden>
+                    <form class="mypage-edit" id="mypageEditForm" novalidate>
+                        <!-- 데모 계정일 때 js/modules/myPage.js 가 켭니다 -->
+                        <p class="mypage-edit-notice" id="mypageEditNotice" hidden></p>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editEmail">이메일 (아이디)</label>
+                            <input class="mypage-input" type="email" id="editEmail" readonly>
+                            <p class="mypage-help">아이디는 바꿀 수 없습니다.
+                                장바구니·주문·포인트가 모두 이 주소에 묶여 있어서입니다.</p>
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editName">이름</label>
+                            <input class="mypage-input" type="text" id="editName"
+                                autocomplete="name" placeholder="이름">
+                        </div>
+
+                        <hr class="mypage-divider">
+
+                        <p class="mypage-sub">비밀번호 변경 <span>바꾸지 않으시려면 비워 두세요.</span></p>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editCurrentPw">지금 비밀번호</label>
+                            <input class="mypage-input" type="password" id="editCurrentPw"
+                                autocomplete="current-password" placeholder="지금 쓰고 계신 비밀번호">
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editNewPw">새 비밀번호</label>
+                            <input class="mypage-input" type="password" id="editNewPw"
+                                autocomplete="new-password" placeholder="8자 이상">
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editNewPw2">새 비밀번호 확인</label>
+                            <input class="mypage-input" type="password" id="editNewPw2"
+                                autocomplete="new-password" placeholder="한 번 더">
+                        </div>
+
+                        <p class="mypage-edit-result" id="mypageEditResult" hidden></p>
+
+                        <button type="submit" class="mypage-edit-btn" id="mypageEditSubmit">저장하기</button>
+                    </form>
                 </section>
 
                 <!-- 👋 회원탈퇴 -->

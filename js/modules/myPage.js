@@ -3,6 +3,7 @@
 // 하는 일
 //   · 탭을 누르면 해당 칸만 보여 줍니다 (탭 동작은 categoryTabs.js 가 담당)
 //   · 지난 주문과 포인트를 memberStore 에서 읽어 그립니다
+//   · '정보수정' 에서 이름과 비밀번호를 바꿉니다 (데모 계정은 막아 둡니다)
 //   · '회원 탈퇴' 를 누르면 확인 상자를 띄우고, 확인하면 계정과 기록을 지웁니다
 //
 // 필요 요소: #mypageTabs, #mypageOrders, #mypagePoints, #mypageHello,
@@ -10,7 +11,7 @@
 // 필요 CSS: css/sections/mypage.css, css/components/category-tabs.css,
 //           css/components/modal-screen.css
 
-import { getUser, removeAccount } from './auth.js';
+import { getUser, removeAccount, updateAccount, isDemoAccount } from './auth.js';
 import { getOrders, getPoints, clearMemberData, WELCOME_POINT } from './memberStore.js';
 import { initCategoryTabs } from './categoryTabs.js';
 
@@ -122,6 +123,76 @@ function renderPoints(el, orders) {
 }
 
 /* ------------------------------------------------------------
+   ✍️ 정보수정
+------------------------------------------------------------ */
+function initEdit() {
+    const form = document.getElementById('mypageEditForm');
+    if (!form) return;
+
+    const user = getUser();
+    if (!user) return;
+
+    const emailEl = document.getElementById('editEmail');
+    const nameEl = document.getElementById('editName');
+    const curEl = document.getElementById('editCurrentPw');
+    const pwEl = document.getElementById('editNewPw');
+    const pw2El = document.getElementById('editNewPw2');
+    const noticeEl = document.getElementById('mypageEditNotice');
+    const resultEl = document.getElementById('mypageEditResult');
+    const submitEl = document.getElementById('mypageEditSubmit');
+
+    emailEl.value = user.email;
+    nameEl.value = user.name;
+
+    // 데모 계정은 둘러보는 분들이 함께 쓰는 계정이라 고칠 수 없습니다.
+    // (한 분이 비밀번호를 바꿔 버리면 다음 분이 로그인할 수 없습니다)
+    const demo = isDemoAccount(user.email);
+    if (demo) {
+        noticeEl.textContent =
+            '둘러보기용 데모 계정이라 정보를 고칠 수 없습니다. '
+            + '직접 가입하신 계정에서는 이름과 비밀번호를 바꾸실 수 있어요.';
+        noticeEl.hidden = false;
+
+        [nameEl, curEl, pwEl, pw2El].forEach((el) => { el.disabled = true; });
+        submitEl.disabled = true;
+    }
+
+    function say(message, ok) {
+        resultEl.textContent = message;
+        resultEl.className = 'mypage-edit-result ' + (ok ? 'is-ok' : 'is-error');
+        resultEl.hidden = false;
+    }
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (demo) return;
+
+        const result = updateAccount({
+            name: nameEl.value,
+            currentPassword: curEl.value,
+            password: pwEl.value,
+            password2: pw2El.value,
+        });
+
+        if (!result.ok) {
+            say(result.message, false);
+            // 틀린 칸으로 바로 데려다 줍니다
+            ({ name: nameEl, currentPassword: curEl, password: pwEl, password2: pw2El })
+                [result.field]?.focus();
+            return;
+        }
+
+        // 비밀번호 칸은 비워 둡니다 — 화면에 남겨 둘 이유가 없습니다
+        [curEl, pwEl, pw2El].forEach((el) => { el.value = ''; });
+
+        const helloEl = document.getElementById('mypageHello');
+        if (helloEl) helloEl.innerHTML = `<b>${esc(result.user.name)}</b> 님, 안녕하세요.`;
+
+        say('저장했습니다.', true);
+    });
+}
+
+/* ------------------------------------------------------------
    🚪 회원탈퇴 확인 상자
 ------------------------------------------------------------ */
 function initLeaveModal() {
@@ -208,6 +279,7 @@ export function initMyPage() {
     const panels = {
         orders: document.getElementById('panelOrders'),
         points: document.getElementById('panelPoints'),
+        edit: document.getElementById('panelEdit'),
         leave: document.getElementById('panelLeave'),
     };
 
@@ -224,5 +296,6 @@ export function initMyPage() {
         },
     });
 
+    initEdit();
     initLeaveModal();
 }
