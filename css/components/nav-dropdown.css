@@ -88,6 +88,47 @@
     text-underline-offset: 4px;
 }
 
+/* ------------------------------------------------------------
+   🟡 판이 내려올 때는 네비 막대도 같이 노란색이 됩니다.
+
+   ⚠️ 왜 필요한가: 맨 위에서는 네비가 투명이고 글자가 흰색입니다.
+      그 상태로 노란 판만 내려오면 흰 글자가 노란 바탕에 겹쳐 거의
+      안 보입니다. 막대까지 같이 칠해야 한 덩어리로 읽힙니다.
+
+   색은 .nav-solid(스크롤을 올렸을 때)와 같은 값입니다. 그래서 이미
+   노란 상태에서 마우스를 올려도 달라지는 것이 없습니다.
+   (배경색 전환은 .navbar 에 이미 걸려 있습니다 — 0.4s)
+------------------------------------------------------------ */
+.navbar.nav-drop-open {
+    background-color: #FFF09F;
+
+    /* ⚠️ 그림자는 지웁니다. 바로 아래에 판이 붙어 있어서, 막대에 그림자를
+          그리면 둘 사이에 어두운 줄이 생겨 한 덩어리로 안 보입니다.
+          (스크롤을 올렸을 때 .nav-solid 가 주는 그림자도 여기서 끕니다)
+          바깥 그림자는 판 아래쪽에만 둡니다. */
+    box-shadow: none;
+}
+
+.navbar.nav-drop-open .nav-links a,
+.navbar.nav-drop-open .logo a {
+    color: #333333;
+}
+
+.navbar.nav-drop-open .nav-actions .btn-outline {
+    border-color: #1d1d1d;
+    color: #1d1d1d;
+}
+
+.navbar.nav-drop-open .logo .logo_white { display: none; }
+.navbar.nav-drop-open .logo .logo_black { display: block; }
+
+/* 흰 글씨 ↔ 검은 글씨가 뚝 바뀌지 않도록 */
+.navbar .nav-links a,
+.navbar .logo a,
+.navbar .nav-actions .btn-outline {
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
 /* 네비가 숨거나(스크롤 내림) 폰 메뉴가 열려 있으면 판도 같이 사라집니다 */
 .navbar.nav-hidden .nav-drop,
 .navbar.menu-open .nav-drop {
