@@ -6,15 +6,20 @@
    아래쪽에 남산이 보이는 도시 그림이 깔립니다.
    ============================================================ */
 
+/* ⚠️ 높이를 숫자로 잡지 않습니다.
+      도시 그림을 흐름 안에 두면 구간 높이가 그림 높이 그대로 따라오므로,
+      어떤 화면 너비에서도 그림이 잘리지 않으면서 군더더기 여백도 없습니다.
+      (예전에는 1091 * --u 로 잡아 두어 그림 위에 빈 하늘이 남았습니다) */
 .brand-outro {
     position: relative;
-    height: calc(1091 * var(--u));
-    min-height: 300px;
     overflow: hidden;
+
+    /* 도시 위로 남기는 하늘 — 숨 쉴 틈만큼만 (그림 자체에도 하늘이 있습니다) */
+    padding-top: calc(40 * var(--u));
 
     background: linear-gradient(180deg,
             rgba(189, 225, 239, 0.58) 0,
-            #BDE1EF 49.7%,
+            #BDE1EF 60%,
             #BDE1EF 100%);
 }
 
@@ -22,9 +27,7 @@
    (1920px 화면에서는 시안의 1920 x 1000 과 정확히 같아집니다)
    js/modules/brandCity.js 가 img/brand/cityscape.svg 를 여기에 펼쳐 넣습니다. */
 .brand-city {
-    position: absolute;
-    left: 0;
-    bottom: 0;
+    position: relative;     /* 흐름 안에 두어 구간 높이를 이 그림이 정합니다 */
     width: 100%;
     display: block;
 
@@ -51,43 +54,8 @@
     animation: brand-city-clouds var(--city-cloud-time) linear 1 both;
 }
 
-/* ✍️ 손글씨 인사 — 도시 그림의 하늘 부분에 겹칩니다 */
-.brand-happiness {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    translate: -50% 0;
-    width: calc(728 * var(--u));
-    height: auto;
-    display: block;
-
-    /* 흰 글자가 연한 하늘색 위에 놓이므로 아주 옅은 그림자로 가장자리를 세웁니다 */
-    filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(62, 39, 35, 0.12));
-
-    opacity: 0;
-    translate: -50% 24px;
-    transition: opacity 0.8s ease, translate 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.brand-outro.is-in .brand-happiness {
-    opacity: 1;
-    translate: -50% 0;
-}
-
 @media (max-width: 767px) {
     .brand-outro {
-        /* 도시 그림(폭 100%)이 얇아지는 만큼 구간도 같이 낮춥니다 */
-        height: calc(100vw * 0.52 + 150px);
-    }
-
-    .brand-happiness {
-        width: min(74%, 360px);
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .brand-happiness {
-        translate: -50% 8px;
-        transition-duration: 1.1s;
+        padding-top: 16px;
     }
 }
