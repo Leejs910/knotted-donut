@@ -19,6 +19,7 @@ import { initFooterBear } from '../modules/footerBear.js';
 import { initCheckoutBanner } from '../modules/checkoutBanner.js';
 import { initBannerOverlay } from '../modules/bannerOverlay.js';
 import { initCheckoutOrder } from '../modules/checkoutOrder.js';
+import { initCheckoutPrefill } from '../modules/checkoutPrefill.js';
 import { initTruckScene } from '../modules/truckScene.js';
 
 // 공통
@@ -61,6 +62,9 @@ const truck = initTruckScene({
             // 저장에 실패해도 완료 페이지는 기본값으로 열립니다.
         }
 
+        // 이번에 적은 배송지를 다음 주문 때 다시 채워 주려고 적어 둡니다
+        prefill?.remember();
+
         // 주문한 것만 장바구니에서 뺍니다 (고르지 않고 남겨 둔 것은 그대로)
         removeOrdered(getCheckoutItems());
 
@@ -76,6 +80,11 @@ initCheckoutOrder({
         if (truck) truck.play();
     },
 });
+
+// 아는 것은 미리 채워 둡니다 (계정 이름·이메일 + 지난번 배송지).
+// ⚠️ 반드시 initCheckoutOrder 뒤에 와야 합니다. '주문자 정보와 동일' 을
+//    따라가게 하는 장치가 그 안에서 붙기 때문입니다.
+const prefill = initCheckoutPrefill();
 
 // 푸터
 initFooterBear();
