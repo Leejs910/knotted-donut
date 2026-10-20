@@ -12,7 +12,7 @@
 //   openShopItemModal(상품데이터); // { title, imgUrl, imgUrl2, price }
 //   openShopItemModal(상품데이터, { onClose: () => ... }); // 닫힐 때 할 일이 있으면
 
-import { addToCart } from './cartStore.js';
+import { addToCart, clearCheckout } from './cartStore.js';
 import { isLoggedIn } from './auth.js';
 import { openLoginModal } from './loginModal.js';
 
@@ -157,6 +157,8 @@ function ensureModal() {
         if (!currentItem || !requireLogin()) return;
         addToCart(currentItem, qty);
         closeShopItemModal();
+        // 장바구니에서 골라 둔 목록이 남아 있으면 그게 보이므로 지워 둡니다
+        clearCheckout();
         location.href = './checkout.html';
     });
 

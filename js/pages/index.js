@@ -12,7 +12,6 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
-import { initCartSeed } from '../modules/cartStore.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
 // --- 이 페이지에만 있는 섹션 ---
@@ -30,7 +29,6 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
-initCartSeed();
 
 // 히어로
 initShootingStars();

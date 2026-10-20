@@ -11,7 +11,6 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
-import { initCartSeed } from '../modules/cartStore.js';
 import { initFooterBear } from '../modules/footerBear.js';
 import { initBannerOverlay } from '../modules/bannerOverlay.js';
 
@@ -26,7 +25,6 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
-initCartSeed();
 
 // 구름이 흐르는 배너
 initSupportBanner();

@@ -4,7 +4,7 @@
 //  새 페이지를 만들 때는 이 파일을 복사한 뒤, 필요 없는 줄을 지우세요.
 // ============================================================
 
-import { getCartItems, clearCart } from '../modules/cartStore.js';
+import { getCheckoutItems, removeOrdered } from '../modules/cartStore.js';
 
 // --- 모든 페이지 공통 ---
 import { initSmoothScroll } from '../modules/smoothScroll.js';
@@ -12,7 +12,6 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
-import { initCartSeed } from '../modules/cartStore.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
 // --- 이 페이지에만 있는 섹션 ---
@@ -27,7 +26,6 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
-initCartSeed();
 
 // 배너 (토끼가 책상 밑에서 한 번 올라옵니다)
 initCheckoutBanner();
@@ -61,8 +59,8 @@ const truck = initTruckScene({
             // 저장에 실패해도 완료 페이지는 기본값으로 열립니다.
         }
 
-        // 결제가 끝났으니 장바구니를 비웁니다
-        clearCart();
+        // 주문한 것만 장바구니에서 뺍니다 (고르지 않고 남겨 둔 것은 그대로)
+        removeOrdered(getCheckoutItems());
 
         location.href = './orderComplete.html';
     },
@@ -70,7 +68,7 @@ const truck = initTruckScene({
 
 // 주문 상품 / 금액 / 폼
 initCheckoutOrder({
-    data: getCartItems(),
+    data: getCheckoutItems(),
     onPay: (info) => {
         paidInfo = info;
         if (truck) truck.play();

@@ -16,7 +16,10 @@ import { cardData, orderRules } from '../data/donutData.js';
 import { onAuthChange } from './auth.js';
 
 const CART_KEY = 'noteddount:cart';
-const SEEDED_KEY = 'noteddount:cart-seeded';
+
+// 장바구니에서 '주문하기' 로 넘길 때, 체크한 것만 따로 적어 둡니다.
+// (장바구니에 5개가 있어도 2개만 고르고 주문할 수 있어야 하니까요)
+const CHECKOUT_KEY = 'noteddount:checkout';
 
 // ⚠️ 시크릿 창이나 저장소를 막아 둔 환경에서는 읽기·쓰기가 예외를 던집니다.
 //    그래도 화면은 정상으로 보여야 하므로 전부 try 로 감쌉니다.
@@ -92,32 +95,48 @@ export function clearCart() {
     write([]);
 }
 
+/* ------------------------------------------------------------
+   🧾 주문하기로 넘기는 목록
+   장바구니에서 체크한 것만 결제 화면으로 넘깁니다.
+   비워 두면 결제 화면은 장바구니 전체를 보여 줍니다.
+------------------------------------------------------------ */
+export function setCheckoutItems(items) {
+    try {
+        // 화면에서만 쓰는 값(id, checked)은 빼고 적습니다
+        localStorage.setItem(CHECKOUT_KEY,
+            JSON.stringify(items.map(({ id, checked, ...keep }) => keep)));
+    } catch {
+        /* 저장을 못 하면 결제 화면이 장바구니 전체를 보여 줍니다 */
+    }
+}
+
+/** 결제 화면이 보여 줄 목록 — 고른 게 없으면 장바구니 전체 */
+export function getCheckoutItems() {
+    try {
+        const raw = localStorage.getItem(CHECKOUT_KEY);
+        const list = raw ? JSON.parse(raw) : null;
+        if (Array.isArray(list) && list.length) return list;
+    } catch {
+        /* 읽지 못하면 아래로 내려갑니다 */
+    }
+    return getCartItems();
+}
+
+export function clearCheckout() {
+    try {
+        localStorage.removeItem(CHECKOUT_KEY);
+    } catch {
+        /* 지우지 못해도 다음 주문에서 덮어써집니다 */
+    }
+}
+
 /**
- * 처음 로그인했을 때 장바구니에 상점 상품 하나를 무작위로 넣어 둡니다.
- * 빈 장바구니만 보여 주면 이어지는 화면(결제)을 볼 수 없어서입니다.
- *
- * ⚠️ 한 번만 합니다. 이후에는 비워 두든 담든 사용자가 한 대로 둡니다.
+ * 주문이 끝난 것들만 장바구니에서 뺍니다.
+ * ⚠️ 통째로 비우면 안 됩니다. 5개 중 2개만 골라 주문했을 때
+ *    고르지 않은 3개까지 사라져 버립니다.
  */
-export function initCartSeed() {
-    onAuthChange((user) => {
-        if (!user) return;
-
-        let seeded = false;
-        try {
-            seeded = localStorage.getItem(SEEDED_KEY) === '1';
-        } catch {
-            seeded = true;   // 저장소를 못 쓰면 매번 넣지 않도록 건너뜁니다
-        }
-        if (seeded || read()) return;
-
-        const pick = cardData[Math.floor(Math.random() * cardData.length)];
-        if (!pick) return;
-
-        write([toLine(pick, 1)]);
-        try {
-            localStorage.setItem(SEEDED_KEY, '1');
-        } catch {
-            /* 다음에 또 넣더라도 화면은 정상입니다 */
-        }
-    });
+export function removeOrdered(items) {
+    const titles = new Set(items.map((it) => it.title));
+    write(getCartItems().filter((it) => !titles.has(it.title)));
+    clearCheckout();
 }
