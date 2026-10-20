@@ -4,13 +4,27 @@
 //   · brandData.js 의 목록대로 액자를 만들어 #brandPanels 에 넣습니다
 //   · 화면에 들어온 액자에 .is-in 을 붙입니다 (모양은 CSS 가 가집니다)
 //   · 손글씨 인사(.brand-happiness)에도 같은 방식으로 .is-in 을 붙입니다
-//   · 액자 구석의 ✕ 를 누르면 그 액자만 10초 동안 감춥니다
+//   · 액자 구석의 ✕ 를 누르면 그 액자만 10초 동안 옅어졌다 돌아옵니다
 //
 // 필요 요소: #brandPanels
 // 필요 CSS: css/sections/brand-story.css, css/sections/brand-outro.css
 
 // ✕ 를 눌렀을 때 액자가 숨어 있는 시간(ms)
 const HIDE_MS = 10000;
+
+// 등장 애니메이션 이름 — 이게 끝나야 .is-settled 를 답니다
+const IN_ANIM = 'brand-panel-in';
+
+/**
+ * '자리 잡음' 표시를 답니다.
+ * ⚠️ 이게 왜 필요한가: 등장 애니메이션이 fill-mode: both 라 끝난 뒤에도
+ *    opacity: 1 을 계속 붙잡고 있습니다. 그대로면 ✕ 를 눌러도 opacity 가
+ *    먹지 않아 페이드가 안 됩니다. .is-settled 가 애니메이션을 비켜 세워
+ *    그때부터 전환이 통합니다.
+ */
+function settle(panel) {
+    panel.classList.add('is-settled');
+}
 
 const TONE_CLASS = {
     yellow: 'brand-panel--yellow',
@@ -83,7 +97,11 @@ export function initBrandStory({ panels = [] } = {}) {
         // 연달아 눌릴 일은 없지만, 키보드로 올 수 있어 한 번 더 막아 둡니다.
         if (!panel || panel.classList.contains('is-hidden')) return;
 
-        panel.classList.add('is-hidden');
+        // 아직 등장 중에 눌렀더라도 페이드가 되도록 여기서도 한 번 세워 둡니다.
+        // 한 프레임 쉬어야 '보이던 상태 → 투명' 으로 전환이 잡힙니다.
+        settle(panel);
+        requestAnimationFrame(() => panel.classList.add('is-hidden'));
+
         setTimeout(() => panel.classList.remove('is-hidden'), HIDE_MS);
     });
 
@@ -101,6 +119,11 @@ export function initBrandStory({ panels = [] } = {}) {
         targets.forEach((el) => el.classList.add('is-in'));
         return;
     }
+
+    // 등장이 끝나면 곧바로 '자리 잡음' 으로 넘깁니다
+    holder.addEventListener('animationend', (e) => {
+        if (e.animationName === IN_ANIM) settle(e.target);
+    });
 
     const io = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {

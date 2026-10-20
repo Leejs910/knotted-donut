@@ -395,6 +395,7 @@
     --wave-duration: 10s;
     --clove-spin: 14s;      /* 클로버가 한 바퀴 도는 시간 */
     --smile-sway: 6s;       /* 스마일이 좌 → 우로 한 번 왕복하는 시간 */
+    --clover-spin: 26s;     /* 네잎 장식이 한 바퀴 도는 시간 */
 
     /* 🎚️ 마우스를 올렸을 때 커지는 정도. 친구들 그림과 액자가 같은 값을 씁니다.
        (css/sections/brand-story.css 의 .brand-panel 도 이 값을 봅니다) */
@@ -424,7 +425,7 @@
     animation: spin var(--clove-spin) linear infinite;
 }
 
-.brand-cloud-a,
+/* ☁️ 구름은 둥둥 떠다닙니다 */
 .brand-cloud-b,
 .brand-cloud-c {
     animation: brand-bob var(--float-fast) ease-in-out infinite;
@@ -432,6 +433,13 @@
 
 .brand-cloud-b { animation-delay: -1.6s; }
 .brand-cloud-c { animation-delay: -3.1s; }
+
+/* 🍀 네잎 모양 장식은 둥둥이 아니라 제자리에서 천천히 돕니다.
+   (@keyframes spin 은 css/base/animations.css 의 공용입니다) */
+.brand-cloud-a {
+    transform-origin: center;
+    animation: spin var(--clover-spin) linear infinite;
+}
 
 /* 🎬 들어올 때 한 번: 리본이 펼쳐지고 글자가 톡 올라옵니다.
    (js/modules/brandHero.js 가 .is-ready 를 붙여 줍니다) */

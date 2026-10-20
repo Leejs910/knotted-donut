@@ -162,29 +162,38 @@
 /* ☁️ 본문 장식도 히어로의 구름(.brand-cloud-b)처럼 천천히 둥실거립니다.
    @keyframes brand-bob 은 css/sections/brand-hero.css 에 있습니다.
    시간과 시작 시점을 조금씩 달리 줘서 한꺼번에 같이 움직이지 않게 했습니다. */
+/* ☁️ 구름과 점무늬는 둥둥 떠다닙니다 */
 .brand-deco-cloud-1,
 .brand-deco-cloud-2,
 .brand-deco-cloud-3,
 .brand-deco-star,
-.brand-deco-clover-rose,
-.brand-deco-clover-pink,
-.brand-deco-clover-pink-sm,
-.brand-deco-clover-yellow,
 .brand-deco-dots {
     animation: brand-bob var(--float-fast) ease-in-out infinite;
 }
 
-.brand-deco-cloud-1        { animation-duration: 9s;  animation-delay: -0.4s; }
-.brand-deco-cloud-2        { animation-duration: 11s; animation-delay: -3.2s; }
-.brand-deco-cloud-3        { animation-duration: 8s;  animation-delay: -5.1s; }
-.brand-deco-star           { animation-duration: 6s;  animation-delay: -1.3s; }
-.brand-deco-clover-rose    { animation-duration: 7.5s; animation-delay: -2.6s; }
-.brand-deco-clover-pink    { animation-duration: 6.5s; animation-delay: -4.4s; }
-.brand-deco-clover-pink-sm { animation-duration: 5s;  animation-delay: -1.9s; }
-.brand-deco-clover-yellow  { animation-duration: 8.5s; animation-delay: -6.2s; }
+.brand-deco-cloud-1 { animation-duration: 9s;  animation-delay: -0.4s; }
+.brand-deco-cloud-2 { animation-duration: 11s; animation-delay: -3.2s; }
+.brand-deco-cloud-3 { animation-duration: 8s;  animation-delay: -5.1s; }
+.brand-deco-star    { animation-duration: 6s;  animation-delay: -1.3s; }
 
 /* 점무늬는 화면을 크게 덮는 바탕이라 아주 느리게만 움직입니다 */
-.brand-deco-dots           { animation-duration: 18s; animation-delay: -7s; }
+.brand-deco-dots    { animation-duration: 18s; animation-delay: -7s; }
+
+/* 🍀 네잎 모양 장식은 둥둥이 아니라 제자리에서 천천히 돕니다.
+   (히어로의 .brand-cloud-a 와 같은 규칙 — 도는 시간은 --clover-spin) */
+.brand-deco-clover-rose,
+.brand-deco-clover-pink,
+.brand-deco-clover-pink-sm,
+.brand-deco-clover-yellow {
+    transform-origin: center;
+    animation: spin var(--clover-spin) linear infinite;
+}
+
+/* 다 같이 돌면 어색해서 방향과 빠르기를 조금씩 달리합니다 */
+.brand-deco-clover-rose    { animation-duration: 31s; }
+.brand-deco-clover-pink    { animation-duration: 26s; animation-direction: reverse; }
+.brand-deco-clover-pink-sm { animation-duration: 19s; }
+.brand-deco-clover-yellow  { animation-duration: 36s; animation-direction: reverse; }
 
 /* 별은 둥실거리면서 아주 천천히 돌기도 합니다 */
 .brand-deco-star {
@@ -445,14 +454,6 @@
 .brand-panel-close::before { rotate: 45deg; }
 .brand-panel-close::after  { rotate: -45deg; }
 
-/* 👻 단추를 누르면 잠깐 사라집니다 (js/modules/brandStory.js 가 10초 뒤에 되돌립니다)
-   ⚠️ opacity 가 아니라 visibility 입니다. 등장 애니메이션이 fill-mode: both 로
-      opacity: 1 을 붙잡고 있어서 opacity 로는 숨길 수 없습니다.
-      visibility 는 자리를 그대로 두므로 아래 액자들이 밀려 올라오지도 않습니다. */
-.brand-panel.is-hidden {
-    visibility: hidden;
-}
-
 /* 🏷️ 테두리에 걸치는 알약 제목 */
 .brand-panel-badge {
     position: absolute;
@@ -524,11 +525,51 @@
 
 .brand-panel {
     opacity: 0;
-    --panel-in: 0.9s;
+    --panel-in: 0.9s;     /* 등장에 걸리는 시간 */
+    --panel-fade: 0.45s;  /* ✕ 로 사라지고 돌아올 때 옅어지는 시간 */
 }
 
 .brand-panel.is-in {
     animation: brand-panel-in var(--panel-in) ease both;
+}
+
+/* 👻 단추를 누르면 스르륵 사라졌다가 10초 뒤에 스르륵 돌아옵니다.
+   (10초 세는 일은 js/modules/brandStory.js 가 합니다)
+
+   ⚠️ 이 덩어리는 반드시 위의 .brand-panel.is-in 보다 '아래' 에 있어야 합니다.
+      선택자 무게가 같아서(0,2,0) 나중에 적은 쪽이 이기는데, 위에 두면
+      .is-in 의 animation 이 이겨 버려 .is-settled 의 animation: none 이
+      먹지 않습니다. 그러면 opacity 가 1 에 묶여 페이드가 안 됩니다.
+
+   ⚠️ 등장 애니메이션이 fill-mode: both 로 opacity: 1 을 붙잡고 있어서,
+      그대로 두면 opacity 를 아무리 적어도 먹지 않습니다. 그래서 등장이
+      끝나면 .is-settled 를 달아 애니메이션을 비켜 세우고, 그때부터
+      opacity 를 전환으로 다룹니다.
+
+   ⚠️ visibility 를 같이 쓰는 이유: opacity 만 0 이면 보이지 않을 뿐
+      클릭도 되고 화면낭독기도 읽습니다. 다만 visibility 는 중간값이 없어서
+      '다 옅어진 뒤에' 바뀌도록 사라질 때만 전환을 늦춥니다. */
+.brand-panel.is-settled {
+    animation: none;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--panel-fade) ease,
+        visibility 0s linear 0s;          /* 돌아올 때는 곧바로 보이게 */
+}
+
+.brand-panel.is-settled.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--panel-fade) ease,
+        visibility 0s linear var(--panel-fade);   /* 다 옅어진 뒤에 감춤 */
+}
+
+/* 아직 등장이 끝나기 전에 ✕ 를 눌렀다면(.is-settled 가 없을 때) 전환은
+   못 하더라도 사라지기는 해야 합니다. */
+.brand-panel.is-hidden {
+    visibility: hidden;
 }
 
 /* 🖱️ 마우스를 올리면 살짝 커집니다 — 위 친구들 그림과 같은 값(--hover-pop).
