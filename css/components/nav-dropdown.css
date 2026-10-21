@@ -62,7 +62,8 @@
     /* ⚠️ 좌우 여백을 두지 않습니다. 칸의 자리는 js 가 .nav-links 를 재서
           넣어 주는데, 여기에 또 여백을 주면 그만큼 통째로 밀려납니다.
           (실제로 50px 씩 어긋났습니다) */
-    padding: 11px 0 18px;
+    /* 🎚️ 위쪽은 바짝 붙이고(네비 바로 아래), 아래쪽만 조금 남깁니다 */
+    padding: 4px 0 16px;
 }
 
 /* ⚠️ 줄 맞춤의 핵심 — .nav-links 와 똑같은 모양으로 둡니다.
@@ -83,7 +84,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
+    gap: 13px;          /* 🎚️ 줄과 줄 사이 — 넓힐수록 숨통이 트입니다 */
     min-width: 0;
 }
 
