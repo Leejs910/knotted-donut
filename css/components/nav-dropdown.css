@@ -9,6 +9,16 @@
 /* ------------------------------------------------------------
    🖥️ 내려오는 판
 ------------------------------------------------------------ */
+/* 🎚️ 두 박자로 움직입니다 — 막대와 판이 같은 값을 보도록 네비에 둡니다
+     ① --bar-time  : 막대가 노래지는 시간
+     ② --drop-time : 그 뒤에 판이 내려오는 시간
+   닫힐 때는 반대입니다 — 판이 곧바로 접히고, 막대는 네비 기본값(0.4s)으로
+   천천히 투명해집니다. */
+.navbar {
+    --bar-time: 0.22s;
+    --drop-time: 0.3s;
+}
+
 .nav-drop {
     position: absolute;
     top: 100%;
@@ -27,27 +37,29 @@
     opacity: 0;
     visibility: hidden;
 
+    /* 닫힐 때: 판이 곧바로 접힙니다 (기다림 없음) */
     transition:
-        max-height 0.32s ease,
-        opacity 0.22s ease,
-        visibility 0s linear 0.32s;
+        max-height var(--drop-time) ease,
+        opacity calc(var(--drop-time) * 0.7) ease,
+        visibility 0s linear var(--drop-time);
 }
 
+/* 열릴 때: 막대가 다 노래진 뒤에 판이 내려옵니다 */
 .navbar.nav-drop-open .nav-drop {
     max-height: 320px;
     opacity: 1;
     visibility: visible;
     transition:
-        max-height 0.32s ease,
-        opacity 0.22s ease,
-        visibility 0s linear 0s;
+        max-height var(--drop-time) ease var(--bar-time),
+        opacity calc(var(--drop-time) * 0.7) ease var(--bar-time),
+        visibility 0s linear var(--bar-time);
 }
 
 .nav-drop-inner {
     /* ⚠️ 좌우 여백을 두지 않습니다. 칸의 자리는 js 가 .nav-links 를 재서
           넣어 주는데, 여기에 또 여백을 주면 그만큼 통째로 밀려납니다.
           (실제로 50px 씩 어긋났습니다) */
-    padding: 22px 0 30px;
+    padding: 11px 0 18px;
 }
 
 /* ⚠️ 줄 맞춤의 핵심 — .nav-links 와 똑같은 모양으로 둡니다.
@@ -68,13 +80,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 7px;
     min-width: 0;
 }
 
 .nav-drop-link {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
+    line-height: 1.2;
     color: #7a6a52;
     white-space: nowrap;
 
@@ -100,6 +113,9 @@
    (배경색 전환은 .navbar 에 이미 걸려 있습니다 — 0.4s)
 ------------------------------------------------------------ */
 .navbar.nav-drop-open {
+    /* ⚠️ 막대가 '먼저' 노래져야 하므로, 네비 기본값(0.4s)보다 짧게 둡니다.
+          판은 이 시간만큼 기다렸다 내려옵니다 (.nav-drop 의 --bar-time) */
+    transition-duration: var(--bar-time);
     background-color: #FFF09F;
 
     /* ⚠️ 그림자는 지웁니다. 바로 아래에 판이 붙어 있어서, 막대에 그림자를
