@@ -46,7 +46,8 @@ export const orderRules = {
     SHIPPING_FEE: 3000,       // 기본 배송비
     FREE_SHIPPING_OVER: 50000, // 이 금액을 넘으면 배송비 무료
     POINT_RATE: 0.03,         // 적립률 3% (할인 후 상품금액 기준)
-    OWNED_POINT: 3000,        // 보유 포인트 (로그인 기능이 없어 고정값)
+    // 보유 포인트는 여기 두지 않습니다 — 계정마다 달라서
+    // js/modules/memberStore.js 가 들고 있습니다 (환영 포인트 3,000P).
 };
 
 // 4. 장바구니(cart.html) 담긴 상품

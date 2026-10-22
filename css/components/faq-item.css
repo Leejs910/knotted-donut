@@ -1,0 +1,168 @@
+/* ============================================================
+   자주 묻는 질문 한 줄 (질문 + 펼쳐지는 답)
+   그리기·펼치기 동작은 js/modules/faqList.js 가 담당합니다.
+   ============================================================ */
+
+.faq-item {
+    border-bottom: 1px solid #e8e2e0;
+}
+
+.faq-item:first-child {
+    border-top: 2px solid #3E2723;
+}
+
+.faq-q-row {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+/* 질문 줄 전체가 버튼입니다 */
+.faq-q {
+    width: 100%;
+    padding: 26px 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #2a2625;
+
+    transition: color 0.2s ease;
+}
+
+.faq-q:hover {
+    color: #50BD83;
+}
+
+/* 키보드로 왔을 때만 테두리를 보여 줍니다.
+   (마우스로 눌렀을 때도 나오면 깜빡 하고 네모가 생겨 거슬립니다) */
+.faq-q:focus {
+    outline: none;
+}
+
+.faq-q:focus-visible {
+    outline: 3px solid #50BD83;
+    outline-offset: -3px;
+    border-radius: 12px;
+}
+
+/* 앞머리 Q. / A. */
+.faq-mark {
+    font-size: 16px;
+    font-weight: 800;
+    color: #50BD83;
+}
+
+.faq-a .faq-mark {
+    color: #b9aba6;
+}
+
+.faq-q-text {
+    min-width: 0; /* 긴 질문이 줄바꿈되도록 */
+}
+
+/* 오른쪽 꺾쇠 — 펼치면 뒤집힙니다 */
+.faq-arrow {
+    width: 12px;
+    height: 12px;
+    border-right: 2px solid #8a7b75;
+    border-bottom: 2px solid #8a7b75;
+    transform: rotate(45deg) translate(-3px, -3px);
+    transition: transform 0.25s ease;
+}
+
+.faq-item.is-open .faq-arrow {
+    transform: rotate(225deg) translate(-3px, -3px);
+}
+
+/* ------------------------------------------------------------
+   답 — 0fr → 1fr 로 펼칩니다.
+
+   ⚠️ max-height 로 여닫으면 내용 길이를 미리 모르기 때문에 넉넉한 값을
+      넣게 되고, 짧은 답일수록 닫힐 때 한참 비어 있다가 툭 닫힙니다.
+      grid 행 크기는 실제 내용 높이까지만 늘어나 길이에 상관없이 매끄럽습니다.
+------------------------------------------------------------ */
+.faq-a {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.faq-item.is-open .faq-a {
+    grid-template-rows: 1fr;
+}
+
+.faq-a-inner {
+    overflow: hidden;           /* 접혀 있는 동안 글자가 비어져 나오지 않게 */
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+}
+
+.faq-a-text {
+    margin: 0;
+    padding: 0 8px 26px 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #5c524e;
+    word-break: keep-all;        /* 한글이 단어 중간에서 끊기지 않게 */
+}
+
+/* 접혀 있을 때는 위쪽 여백도 0 이어야 틈이 안 보입니다 */
+.faq-a-inner > * {
+    padding-top: 0;
+}
+
+.faq-item.is-open .faq-a-inner {
+    padding-left: 8px;
+}
+
+/* ------------------------------------------------------------
+   📱 좁은 화면
+------------------------------------------------------------ */
+@media (max-width: 767px) {
+    .faq-q {
+        padding: 20px 4px;
+        gap: 10px;
+        font-size: 15px;
+    }
+
+    .faq-mark {
+        font-size: 15px;
+    }
+
+    .faq-a-inner {
+        gap: 10px;
+    }
+
+    .faq-a-text {
+        padding-bottom: 20px;
+        font-size: 14px;
+    }
+}
+
+/* ------------------------------------------------------------
+   🎨 고른 카테고리에 따라 Q. 색이 바뀝니다
+   (탭의 리본 색과 같은 팔레트 — data-active 는 categoryTabs.js 가 붙입니다)
+------------------------------------------------------------ */
+.support[data-active='product'] .faq-q:hover,
+.support[data-active='product'] .faq-mark { color: #E3B505; }
+
+.support[data-active='reserve'] .faq-q:hover,
+.support[data-active='reserve'] .faq-mark { color: #E58AB0; }
+
+.support[data-active='etc'] .faq-q:hover,
+.support[data-active='etc'] .faq-mark { color: #50BD83; }
+
+/* 답의 A. 는 어느 분류에서나 흐린 회색입니다 */
+.support[data-active] .faq-a .faq-mark { color: #b9aba6; }

@@ -4,12 +4,15 @@
 // ============================================================
 
 // --- 모든 페이지 공통 ---
+import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
+import { initNavDropdown } from '../modules/navDropdown.js';
+import { initLoginModal } from '../modules/loginModal.js';
+import { initAuthNav } from '../modules/authNav.js';
+import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
-import { initBuildingSpawner } from '../modules/buildingSpawner.js';
-import { initFooterOverlay } from '../modules/footerOverlay.js';
 
 // --- 이 페이지에만 있는 섹션 ---
 import { initTruckBanner } from '../modules/truckBanner.js';
@@ -18,9 +21,14 @@ import { initOrderReceipt } from '../modules/orderReceipt.js';
 import { playOnceOnView } from '../modules/playOnceOnView.js';
 
 // 공통
+initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
+initNavDropdown();
+initLoginModal();
+initAuthNav();
+initAuthGuard();
 
 // 달리는 트럭 배너
 initTruckBanner();
@@ -58,5 +66,3 @@ if (stampEl) {
 
 // 푸터
 initFooterBear();
-initBuildingSpawner();
-initFooterOverlay();

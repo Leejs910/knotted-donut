@@ -31,6 +31,18 @@ html{
     font-style: normal;
 }
 
+/* brand.html 배경에 크게 깔리는 EVERYDAY / FRESH / CREAM DONUT 용.
+   ⚠️ 원본(1.78MB)이 아니라 쓰는 글자만 남긴 15KB 짜리입니다.
+      다시 만들려면 tools/subset_font.py 의 머리말을 보세요.
+      영문 대문자·숫자·기호만 들어 있어 한글은 나오지 않습니다. */
+@font-face {
+    font-family: 'SinchonRhapsody';
+    src: url('../../font/SinchonRhapsody-ExtraBold-subset.ttf') format('truetype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
 
 
 body { font-family: sans-serif; background: #f8fafc; }

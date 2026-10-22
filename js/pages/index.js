@@ -7,12 +7,15 @@
 import { newMenuData, bestMenuData, cardData, instaData } from '../data/donutData.js';
 
 // --- 모든 페이지 공통 ---
+import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
+import { initNavDropdown } from '../modules/navDropdown.js';
+import { initLoginModal } from '../modules/loginModal.js';
+import { initAuthNav } from '../modules/authNav.js';
+import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
-import { initBuildingSpawner } from '../modules/buildingSpawner.js';
-import { initFooterOverlay } from '../modules/footerOverlay.js';
 
 // --- 이 페이지에만 있는 섹션 ---
 import { initShootingStars } from '../modules/shootingStar.js';
@@ -24,9 +27,14 @@ import { initConveyor } from '../modules/conveyor.js';
 import { initInstaSection } from '../modules/instaSwiper.js';
 
 // 공통
+initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
+initNavDropdown();
+initLoginModal();
+initAuthNav();
+initAuthGuard();
 
 // 히어로
 initShootingStars();
@@ -45,5 +53,3 @@ initInstaSection({ data: instaData });
 
 // 푸터
 initFooterBear();
-initBuildingSpawner();
-initFooterOverlay();

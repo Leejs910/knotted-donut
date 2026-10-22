@@ -1,0 +1,121 @@
+/* ============================================================
+   고객센터 본문 (탭 + 자주 묻는 질문 목록)
+
+   바깥 크기 틀(폭 1080px, 좌우 여백, 위아래 여백)은
+   css/sections/cart.css 의 .cart / .cart-inner 와 같은 값을 씁니다.
+   ============================================================ */
+
+.support {
+    position: relative;
+    background: #fff;
+    padding: 100px 0 210px;
+
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+}
+
+.support-inner {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* 카테고리 탭 — 모양과 동작은 css/components/category-tabs.css 재사용.
+   여기서는 자리(가운데 정렬 + 아래 여백)만 정합니다. */
+.support .shop-tabs {
+    margin: 0 auto 56px;
+}
+
+/* 배지 그림이 리본이 아니라 캐릭터 얼굴이라, 원을 좀 더 채웁니다.
+   (기본값 70% 는 리본 모양에 맞춘 값이라 얼굴이 작아 보입니다) */
+.support .shop-tabs-badge img {
+    width: 92%;
+    height: 92%;
+}
+
+/* 목록 위에 붙는 안내 줄 */
+.support-lead {
+    margin: 0 0 20px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #6d5f5a;
+}
+
+/* 고른 분류에 질문이 없을 때 */
+.faq-empty {
+    padding: 80px 0;
+    text-align: center;
+    font-size: 15px;
+    color: #8a7b75;
+}
+
+.faq-empty[hidden] {
+    display: none;
+}
+
+/* ------------------------------------------------------------
+   📞 목록 아래 연락처 안내
+------------------------------------------------------------ */
+.support-contact {
+    margin-top: 72px;
+    padding: 32px;
+    border: 3px solid #3E2723;
+    border-radius: 24px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.support-contact-title {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #3E2723;
+}
+
+.support-contact-desc {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #6d5f5a;
+}
+
+.support-contact-tel {
+    font-size: clamp(24px, 2.4vw, 34px);
+    font-weight: 800;
+    color: #3E2723;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   📱 좁은 화면
+------------------------------------------------------------ */
+@media (max-width: 1024px) {
+    .support {
+        padding: 60px 0 140px;
+    }
+}
+
+@media (max-width: 767px) {
+    .support {
+        padding: 40px 0 90px;
+    }
+
+    .support-inner {
+        padding: 0 16px;
+    }
+
+    .support .shop-tabs {
+        margin-bottom: 36px;
+    }
+
+    .support-contact {
+        margin-top: 48px;
+        padding: 24px 18px;
+        border-width: 2px;
+    }
+}

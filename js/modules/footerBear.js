@@ -76,8 +76,17 @@ export function initFooterBear({ spriteUrl = './img/spriteBear.png' } = {}) {
 
         // 곰돌이의 고정 위치 (항상 화면 정중앙, 바닥 기준)
         const fixedX = viewW / 2;
-        const isMobile = window.innerWidth <= 768;
-        const yOffset = isMobile ? 400 : 250;
+        // ⚠️ 768 이 아니라 767 이 경계입니다. footer.css 의 폰 전용 규칙이
+        //    @media (max-width: 767px) 라서, 768 에서 둘이 어긋나면 곰돌이만
+        //    폰 자세로 올라가고 무지개 행성은 안 나옵니다.
+        const isMobile = window.innerWidth < 768;
+
+        // ⚠️ 폰 값(690)은 css/layout/footer.css 의 --planet-peak 과 한 쌍입니다.
+        //    무지개 행성의 호 꼭대기에 발바닥이 닿아야 해서요.
+        //    바닥에서 발바닥까지 = scaleRatio * (yOffset - 297)
+        //                        = max(화면폭/768, 0.5) * 393
+        //    이 값을 바꾸면 --planet-peak 도 같이 바꿔야 합니다.
+        const yOffset = isMobile ? 690 : 250;
         const fixedY = viewH - (yOffset * scaleRatio);
 
         ctx.save();

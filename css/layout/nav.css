@@ -68,9 +68,13 @@
   transform: translateY(-100%); /* 네비게이션 높이만큼 위로 끌어올림 */
 }
 /* 2. 스크롤 올릴 때: 배경색이 채워진 상태 */
+/* ⚠️ 그림자를 두지 않습니다. 바로 아래에 하위 메뉴 판이 붙는데, 막대에
+      그림자가 있으면 그 그림자가 판 위쪽에 떨어져 같은 노란색인데도
+      윗부분만 어두워 보입니다 — 두 색이 안 맞는 것처럼 읽힙니다.
+      아래와의 경계는 판 자체의 그림자가 맡습니다. */
 .navbar.nav-solid {
   background-color: #FFF09F; /* 공차처럼 흰색 배경으로 변경 (원하는 색 지정) */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 구분을 위한 그림자 추가 */
+  box-shadow: none;
 }
 /* (선택) 배경이 노란색이 될 때 글자색 어둡게 변경 */
 .navbar.nav-solid .nav-links a,
@@ -273,7 +277,15 @@
         align-items: flex-end;
     }
     .mobile-login-header p { margin: 0; color: #555; font-size: 14px; }
-    .mobile-login-header .login-link { color: #222; font-weight: 700; text-decoration: none; }
+
+    /* ⚠️ 로그인하면 안내문이 사라지는데, 그때도 링크는 오른쪽에 그대로
+          있어야 합니다. space-between 만 믿으면 혼자 남아 왼쪽으로 갑니다. */
+    .mobile-login-header .login-link {
+        margin-left: auto;
+        color: #222;
+        font-weight: 700;
+        text-decoration: none;
+    }
 
     /* 모바일 리스트 */
     .mobile-menu-list {
@@ -284,18 +296,20 @@
         z-index: 1; /* 무지개(0)보다 위 */
     }
 
-    /* 칸마다 위아래로 선이 보이도록, 첫 항목에만 윗선을 더해 줍니다 */
-    .mobile-menu-list li { border-bottom: 2px solid #000000; }
-    .mobile-menu-list li:first-child { border-top: 2px solid #000000; }
+    /* 칸마다 위아래로 선이 보이도록, 첫 항목에만 윗선을 더해 줍니다.
+       ⚠️ '>' 로 직계 자식만 잡습니다. 하위 메뉴(.mobile-sub)의 항목까지
+          잡으면 그쪽에도 검은 줄과 아래 색이 그대로 입혀집니다. */
+    .mobile-menu-list > li { border-bottom: 2px solid #000000; }
+    .mobile-menu-list > li:first-child { border-top: 2px solid #000000; }
 
     /* 🎨 칸마다 다른 색. 사이트 팔레트를 그대로 씁니다.
        ⚠️ 두 번째(Menu)만 노랑인데, 메뉴 전체 바탕(#FFF09F)과 같은 색을 쓰면
           칸이 안 보이므로 한 톤 진한 노랑을 씁니다. */
-    .mobile-menu-list li:nth-child(1) { background-color: #FFC9E1; } /* 분홍 */
-    .mobile-menu-list li:nth-child(2) { background-color: #FBE98E; } /* 노랑 */
-    .mobile-menu-list li:nth-child(3) { background-color: #50BD83; } /* 초록 */
-    .mobile-menu-list li:nth-child(4) { background-color: #A8DCEF; } /* 하늘 */
-    .mobile-menu-list a {
+    .mobile-menu-list > li:nth-child(1) { background-color: #FFC9E1; } /* 분홍 */
+    .mobile-menu-list > li:nth-child(2) { background-color: #FBE98E; } /* 노랑 */
+    .mobile-menu-list > li:nth-child(3) { background-color: #50BD83; } /* 초록 */
+    .mobile-menu-list > li:nth-child(4) { background-color: #A8DCEF; } /* 하늘 */
+    .mobile-menu-list > li > a {
         display: flex;
         align-items: center;
         padding: 26px 24px;
@@ -430,4 +444,21 @@
         top: 50%;
         transform: translate(-50%,-50%);
     }
+}
+
+
+/* 👤 폰 메뉴의 '마이페이지' — 로그인했을 때만 보입니다 (js/modules/authNav.js).
+   ⚠️ 로그인 링크가 margin-left: auto 로 오른쪽에 붙어 있어서, 그냥 하나를 더
+      넣으면 두 글자가 딱 붙어 '로그아웃마이페이지' 로 읽힙니다.
+      마이페이지가 보일 때는 그쪽이 오른쪽 묶음의 시작이 되고,
+      로그인 링크는 사이 간격만 갖도록 바꿉니다. */
+.mobile-login-header .mobile-mypage {
+    margin-left: auto;
+    color: #222;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.mobile-login-header .mobile-mypage:not([hidden]) ~ .login-link {
+    margin-left: 14px;
 }

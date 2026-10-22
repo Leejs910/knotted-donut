@@ -1,0 +1,61 @@
+/* ============================================================
+   브랜드 소개 — 맨 아래 인사 구간
+   (피그마 brand1 / node 562:118 의 3509 ~ 4600px 구간)
+
+   하늘색이 꽉 찬 배경 위에 'HAPPINES ON ITS WAYS' 글자가 뜨고,
+   아래쪽에 남산이 보이는 도시 그림이 깔립니다.
+   ============================================================ */
+
+/* ⚠️ 높이를 숫자로 잡지 않습니다.
+      도시 그림을 흐름 안에 두면 구간 높이가 그림 높이 그대로 따라오므로,
+      어떤 화면 너비에서도 그림이 잘리지 않으면서 군더더기 여백도 없습니다.
+      (예전에는 1091 * --u 로 잡아 두어 그림 위에 빈 하늘이 남았습니다) */
+.brand-outro {
+    position: relative;
+    overflow: hidden;
+
+    /* 도시 위로 남기는 하늘 — 숨 쉴 틈만큼만 (그림 자체에도 하늘이 있습니다) */
+    padding-top: calc(40 * var(--u));
+
+    background: linear-gradient(180deg,
+            rgba(189, 225, 239, 0.58) 0,
+            #BDE1EF 60%,
+            #BDE1EF 100%);
+}
+
+/* 🏙️ 도시 그림 — 폭을 화면에 맞춰 두어 남산과 캐릭터가 잘리지 않습니다.
+   (1920px 화면에서는 시안의 1920 x 1000 과 정확히 같아집니다)
+   js/modules/brandCity.js 가 img/brand/cityscape.svg 를 여기에 펼쳐 넣습니다. */
+.brand-city {
+    position: relative;     /* 흐름 안에 두어 구간 높이를 이 그림이 정합니다 */
+    width: 100%;
+    display: block;
+
+    /* 🎚️ 구름이 왼쪽 밖으로 빠져나가는 데 걸리는 시간. 아주 느립니다. */
+    --city-cloud-time: 180s;
+}
+
+.brand-city svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ☁️ 구름 뭉치가 오른쪽에서 왼쪽으로 한 번 흘러가고 그대로 사라집니다.
+   ⚠️ 일부러 반복하지 않습니다(한 번 + forwards). 그래서 한 번 나간 구름은
+      새로고침하기 전까지 다시 돌아오지 않습니다.
+      밀어낼 거리(--cloud-shift)는 그림마다 달라서 JS 가 재서 넣어 줍니다. */
+@keyframes brand-city-clouds {
+    from { translate: 0 0; }
+    to   { translate: calc(-1 * var(--cloud-shift)) 0; }
+}
+
+.brand-city.is-drifting #cloudGroup {
+    animation: brand-city-clouds var(--city-cloud-time) linear 1 both;
+}
+
+@media (max-width: 767px) {
+    .brand-outro {
+        padding-top: 16px;
+    }
+}

@@ -7,6 +7,10 @@
 //
 // 데이터 한 건의 모양:
 //   { title, imgUrl, price, originalPrice, qty, freeShipping, soldOut }
+//
+// 옵션
+//   onChange(items) : 수량·삭제가 바뀔 때마다 (되돌려 저장하라고)
+//   onOrder(picked) : '주문하기' 를 눌렀을 때, 체크한 것만 넘겨 줍니다
 
 // 배송비·적립률은 checkout.html 과 같은 값을 써야 두 화면 금액이 맞습니다.
 import { orderRules } from '../data/donutData.js';
@@ -15,7 +19,7 @@ const { SHIPPING_FEE, FREE_SHIPPING_OVER, POINT_RATE } = orderRules;
 
 const won = (n) => Math.round(n).toLocaleString('ko-KR') + '원';
 
-export function initCartList({ data = [] } = {}) {
+export function initCartList({ data = [], onChange = () => {}, onOrder = null } = {}) {
     const listEl = document.getElementById('cartItemList');
     const summaryEl = document.getElementById('cartSummary');
     if (!listEl || !summaryEl) return null;
@@ -164,6 +168,9 @@ export function initCartList({ data = [] } = {}) {
 
     // ----- 그리기 -----
     function render() {
+        // 수량·삭제가 바뀔 때마다 밖에 알려 줍니다 (저장은 부르는 쪽이 맡습니다)
+        onChange(items);
+
         // 담긴 상품이 하나도 없으면 빈 장바구니 화면으로 바꿉니다.
         const isEmpty = items.length === 0;
         if (layoutEl) layoutEl.hidden = isEmpty;
@@ -239,6 +246,21 @@ export function initCartList({ data = [] } = {}) {
                 if (!it.soldOut) it.checked = selectAllEl.checked;
             });
             render();
+        });
+    }
+
+    // ----- 주문하기 -----
+    // ⚠️ 이 단추는 금액 칸 안에 매번 새로 그려집니다. 단추에 직접 달면
+    //    다시 그릴 때마다 떨어지므로, 바깥 칸에서 받습니다.
+    if (onOrder) {
+        summaryEl.addEventListener('click', (e) => {
+            if (!e.target.closest('.cart-order-btn')) return;
+
+            const picked = items.filter((it) => it.checked && !it.soldOut);
+            if (!picked.length) return;
+
+            // 화면에서만 쓰는 값은 빼고 넘깁니다
+            onOrder(picked.map(({ id, checked, ...keep }) => keep));
         });
     }
 

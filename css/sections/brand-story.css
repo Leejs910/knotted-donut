@@ -1,0 +1,663 @@
+/* ============================================================
+   브랜드 소개 — 가운데 이야기 구간
+   (피그마 brand1 / node 562:118 의 1071 ~ 3509px 구간)
+
+   액자(=.brand-panel) 다섯 개가 세로로 서고, 그 뒤로 큰 글자와
+   구름·클로버·점무늬가 깔립니다.
+
+   📐 길이 단위
+     · 액자 자체는 보통의 반응형(최대 1260px)으로 두고,
+     · 뒤에 깔리는 장식만 --u (css/sections/brand-hero.css 참고) 로
+       시안 비율을 지킵니다.
+     · 장식의 세로 위치는 % 입니다. 좁은 화면에서 액자가 길어져도
+       장식이 위쪽에만 몰리지 않고 구간 전체에 고르게 퍼집니다.
+   ============================================================ */
+
+.brand-story {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    /* 위: 시안 1071 → 첫 액자 바깥선 1123.27 까지의 사이
+       아래: ⚠️ 액자의 outline(갈색선)은 자리를 차지하지 않아서, 여백이 0 이면
+             이 구간의 overflow: hidden 에 마지막 액자 밑선이 잘립니다.
+             선 두께보다 넉넉히 둡니다. */
+    padding: clamp(24px, 2.7vw, 52px) 0 max(8px, calc(14 * var(--u)));
+
+    /* 아래로 갈수록 하늘색이 번집니다 (시안 562:277 의 윗부분) */
+    background: linear-gradient(180deg,
+            rgba(189, 225, 239, 0) 69.8%,
+            rgba(189, 225, 239, 0.58) 100%);
+}
+
+/* ------------------------------------------------------------
+   🎨 뒤에 깔리는 장식
+------------------------------------------------------------ */
+.brand-deco {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+}
+
+.brand-deco-dots {
+    right: 0;
+    top: 32.1%;
+    width: calc(763 * var(--u));
+    height: calc(762 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   ✈️ 지나가는 비행기
+   시안에는 '비행운'이 그려진 그림 한 장이 있었는데, 그 자리를 비행기가
+   직접 지나가며 꼬리를 남기는 쪽으로 바꿨습니다.
+   가는 길과 거리는 그 그림과 같습니다 — 왼쪽 위에서 오른쪽 아래(남동)로
+   가로 1117 · 세로 942 만큼. 그래서 기울기는 atan(942/1117) ≒ 40도 입니다.
+------------------------------------------------------------ */
+.brand-plane {
+    position: absolute;
+    z-index: -1;
+    left: calc(-80 * var(--u));
+    top: 54%;
+    /* 폰에서는 --u 가 작아 비행기가 32px 까지 줄어듭니다. 바닥값을 둡니다. */
+    width: max(56px, calc(92 * var(--u)));
+    height: max(56px, calc(92 * var(--u)));
+    pointer-events: none;
+
+    /* 🎚️ 아주 느리게. 한 번 지나가는 데 걸리는 시간입니다. */
+    --plane-duration: 70s;
+    animation: brand-plane-fly var(--plane-duration) linear infinite;
+    will-change: transform, opacity;
+}
+
+.brand-plane-body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* ⚠️ 그림 자체가 이미 남동쪽(45도)을 봅니다. 가는 길은 40도라서
+      그 차이인 -5도만 돌려 줍니다. 꼬리는 따로 돌립니다 — 둘을 한꺼번에
+      돌리면 꼬리가 가는 길과 어긋납니다. */
+.brand-plane-body img {
+    width: 100%;
+    height: auto;
+    display: block;
+    rotate: -5deg;
+}
+
+/* 꼬리 — 비행기 뒤(북서쪽)로 길게 늘어지며 옅어집니다.
+   오른쪽 끝을 비행기 꼬리에 붙여 두고, 가는 길과 같은 40도로 돌립니다. */
+.brand-plane-trail {
+    position: absolute;
+    top: 22%;
+    right: 78%;
+    width: calc(560 * var(--u));
+    height: calc(3 * var(--u));
+    transform-origin: right center;
+    rotate: 40deg;
+    border-radius: 999px;
+    /* ⚠️ 흰색으로 두면 흰 바탕 위에서 아무것도 안 보입니다.
+          아주 옅은 하늘색이라야 흰 구간에서도, 아래 하늘색 구간에서도
+          비행운처럼 읽힙니다. */
+    background: linear-gradient(to left,
+            rgba(141, 184, 205, 0.55) 0%,
+            rgba(141, 184, 205, 0) 100%);
+}
+
+/* 멀리서 나타나 가로질러 가다 옅어집니다. 뒤쪽 20% 는 쉬는 구간이라,
+   계속 날아다니는 대신 가끔 한 대 지나가는 느낌이 됩니다. */
+@keyframes brand-plane-fly {
+    0%   { translate: 0 0;                                         opacity: 0; }
+    6%   {                                                          opacity: 1; }
+    66%  {                                                          opacity: 1; }
+    80%  { translate: calc(1117 * var(--u)) calc(942 * var(--u));   opacity: 0; }
+    100% { translate: calc(1117 * var(--u)) calc(942 * var(--u));   opacity: 0; }
+}
+
+.brand-deco-cloud {
+    width: calc(680 * var(--u));
+    height: calc(373 * var(--u));
+}
+
+.brand-deco-cloud-1 { left: -7%;    top: 28.0%; }
+.brand-deco-cloud-2 { left: 62.4%;  top: 34.4%; }
+.brand-deco-cloud-3 { left: -12.7%; top: 47.0%; }
+
+.brand-deco-star {
+    left: 7.5%;
+    top: 38.3%;
+    width: calc(191 * var(--u));
+    height: calc(168 * var(--u));
+}
+
+.brand-deco-clover-rose {
+    left: 13.6%;
+    top: 46.4%;
+    width: calc(284 * var(--u));
+    height: calc(284 * var(--u));
+}
+
+.brand-deco-clover-pink {
+    left: 79.1%;
+    top: 9.9%;
+    width: calc(250 * var(--u));
+    height: calc(250 * var(--u));
+}
+
+.brand-deco-clover-pink-sm {
+    left: 87.1%;
+    top: 32.5%;
+    width: calc(88 * var(--u));
+    height: calc(88 * var(--u));
+}
+
+.brand-deco-clover-yellow {
+    left: 82.4%;
+    top: 49.4%;
+    width: calc(204 * var(--u));
+    height: calc(204 * var(--u));
+}
+
+/* ☁️ 본문 장식도 히어로의 구름(.brand-cloud-b)처럼 천천히 둥실거립니다.
+   @keyframes brand-bob 은 css/sections/brand-hero.css 에 있습니다.
+   시간과 시작 시점을 조금씩 달리 줘서 한꺼번에 같이 움직이지 않게 했습니다. */
+/* ☁️ 구름과 점무늬는 둥둥 떠다닙니다 */
+.brand-deco-cloud-1,
+.brand-deco-cloud-2,
+.brand-deco-cloud-3,
+.brand-deco-star,
+.brand-deco-dots {
+    animation: brand-bob var(--float-fast) ease-in-out infinite;
+}
+
+.brand-deco-cloud-1 { animation-duration: 9s;  animation-delay: -0.4s; }
+.brand-deco-cloud-2 { animation-duration: 11s; animation-delay: -3.2s; }
+.brand-deco-cloud-3 { animation-duration: 8s;  animation-delay: -5.1s; }
+.brand-deco-star    { animation-duration: 6s;  animation-delay: -1.3s; }
+
+/* 점무늬는 화면을 크게 덮는 바탕이라 아주 느리게만 움직입니다 */
+.brand-deco-dots    { animation-duration: 18s; animation-delay: -7s; }
+
+/* 🍀 네잎 모양 장식은 둥둥이 아니라 제자리에서 천천히 돕니다.
+   (히어로의 .brand-cloud-a 와 같은 규칙 — 도는 시간은 --clover-spin) */
+.brand-deco-clover-rose,
+.brand-deco-clover-pink,
+.brand-deco-clover-pink-sm,
+.brand-deco-clover-yellow {
+    transform-origin: center;
+    animation: spin var(--clover-spin) linear infinite;
+}
+
+/* 다 같이 돌면 어색해서 방향과 빠르기를 조금씩 달리합니다 */
+.brand-deco-clover-rose    { animation-duration: 31s; }
+.brand-deco-clover-pink    { animation-duration: 26s; animation-direction: reverse; }
+.brand-deco-clover-pink-sm { animation-duration: 19s; }
+.brand-deco-clover-yellow  { animation-duration: 36s; animation-direction: reverse; }
+
+/* 별은 둥실거리면서 아주 천천히 돌기도 합니다 */
+.brand-deco-star {
+    animation-name: brand-bob, spin;
+    animation-duration: 6s, 48s;
+    animation-timing-function: ease-in-out, linear;
+    animation-iteration-count: infinite, infinite;
+    animation-delay: -1.3s, 0s;
+}
+
+/* 💬 배경에 크게 깔리는 글자 */
+.brand-word {
+    position: absolute;
+    z-index: -1;
+    margin: 0;
+    pointer-events: none;
+    user-select: none;
+
+    /* 시안과 같은 서체입니다 (@font-face 는 css/base/reset.css).
+       영문 대문자·숫자·기호만 담은 서브셋이라 한글은 뒤쪽 서체로 넘어갑니다. */
+    font-family: 'SinchonRhapsody', 'Pretendard Variable', system-ui, sans-serif;
+    font-weight: 800;
+
+    /* 글자 안쪽 1px 선.
+       ⚠️ CSS 에는 '안쪽 선'이 따로 없습니다. -webkit-text-stroke 는 글자
+          윤곽선을 가운데에 두고 그리므로, 2px 을 주면 안쪽 1px · 바깥 1px 이
+          됩니다. paint-order 를 fill → stroke 로 두어 선이 칠 위에 얹히게
+          하면, 보이는 결과가 '안쪽 1px 선'과 같아집니다.
+          (바깥으로 1px 번지지만 글자가 150px 이 넘어 눈에 띄지 않습니다) */
+    -webkit-text-stroke: 2px var(--word-stroke);
+    paint-order: fill stroke;
+    /* 전부 시안 값 그대로입니다 */
+    font-size: calc(218 * var(--u));
+    line-height: calc(260 * var(--u));
+    letter-spacing: calc(-0.48 * var(--u));
+    white-space: nowrap;
+}
+
+.brand-word-everyday {
+    right: 3.8%;
+    top: 15.8%;
+    text-align: right;
+    color: #FFE1EA;
+    --word-stroke: #FBC9DC;   /* 분홍 글자보다 한 단계 진한 선 */
+}
+
+.brand-word-everyday .is-cream {
+    color: #FFFADF;
+    --word-stroke: #F6E6AE;   /* 크림색 글자용 선 */
+    -webkit-text-stroke: 2px var(--word-stroke);
+}
+
+.brand-word-cream {
+    left: 5%;
+    top: 51.9%;
+    color: #fff;
+    --word-stroke: #E3F0F6;   /* 흰 글자가 하늘색 위에서 사라지지 않도록 */
+    font-size: calc(140 * var(--u));
+    line-height: calc(168 * var(--u));
+    letter-spacing: calc(-4.2 * var(--u));
+}
+
+/* ------------------------------------------------------------
+   ☁️ 액자 사이를 흘러가는 구름
+   ⚠️ 층 순서가 이 연출의 전부입니다.
+        배경 글자·장식  z-index -1
+        구름            z-index  0   ← 장식 위, 액자 아래
+        액자            z-index  1
+      구름에 z-index 를 주지 않으면(=auto) 흐름 속의 액자보다 위로 올라와
+      글을 가립니다. 반대로 -1 을 주면 배경 장식과 섞여 버립니다.
+------------------------------------------------------------ */
+.brand-panels {
+    position: relative;
+}
+
+.brand-panel-clouds {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;       /* 구름이 액자 묶음 밖으로 새지 않게 */
+}
+
+.brand-panel-cloud {
+    position: absolute;
+    left: 100%;             /* 오른쪽 바깥에서 출발합니다 */
+    display: block;
+    height: auto;
+
+    /* ⚠️ 구름 그림은 '흰색 70%' 라서 흰 바탕 위에서는 아무것도 안 보입니다.
+          옅은 하늘색 그림자를 깔아 가장자리를 세워 줍니다. */
+    opacity: 0.92;
+    filter: drop-shadow(0 calc(5 * var(--u)) calc(12 * var(--u)) rgba(123, 171, 192, 0.4));
+
+    animation: brand-cloud-cross var(--cross) linear infinite;
+    animation-delay: var(--cross-at);
+    will-change: transform;
+}
+
+/* 제 몸 하나만큼 더 가서 완전히 사라집니다 (translate 의 % 는 제 크기 기준) */
+@keyframes brand-cloud-cross {
+    from { translate: 0 0; }
+    to   { translate: calc(-100vw - 100%) 0; }
+}
+
+.brand-panel-cloud-1 { top:  4%; width: calc(430 * var(--u)); --cross: 52s; --cross-at:   0s; }
+.brand-panel-cloud-2 { top: 27%; width: calc(300 * var(--u)); --cross: 68s; --cross-at: -22s; }
+.brand-panel-cloud-3 { top: 55%; width: calc(520 * var(--u)); --cross: 44s; --cross-at: -31s; }
+.brand-panel-cloud-4 { top: 78%; width: calc(250 * var(--u)); --cross: 76s; --cross-at: -12s; }
+
+/* ------------------------------------------------------------
+   🖼️ 액자
+   시안: 흰 바탕 1200 x 280, 바깥으로 30px 색 테두리, 그 바깥에 4px 갈색선.
+   테두리 두께를 변수로 둔 이유는 알약 제목이 이 값만큼 위로 올라가야
+   테두리 한가운데에 걸치기 때문입니다.
+------------------------------------------------------------ */
+/* 숫자는 모두 시안 값 × --u 입니다. 1920px 화면이면 시안과 똑같아지고,
+   화면이 좁아지면 액자와 뒤 장식이 같은 비율로 함께 줄어듭니다.
+   다만 글씨·테두리가 읽을 수 없을 만큼 작아지지는 않도록 max() 로 바닥을 둡니다. */
+.brand-panel {
+    --bw: max(10px, calc(30 * var(--u)));   /* 색 테두리 두께 (시안 30) */
+    --ow: max(2px, calc(4 * var(--u)));     /* 바깥 갈색선 (시안 4) */
+    --br: max(12px, calc(26 * var(--u)));   /* 모서리 (시안 26) */
+
+    position: relative;
+    z-index: 1;             /* 흘러가는 구름(0)보다 위 */
+    width: min(calc(1260 * var(--u)), 100% - 32px);
+    margin: 0 auto;
+
+    background: #fff;
+    border: var(--bw) solid var(--tone, var(--knot-yellow));
+    border-radius: var(--br);
+    outline: var(--ow) solid var(--knot-brown);
+
+    display: flex;
+    align-items: stretch;
+    /* ⚠️ box-sizing 이 border-box 라, 시안의 '흰 바탕 280' 에 테두리 두께를
+          더해 줘야 안쪽이 280 이 됩니다. 안 더하면 액자가 60px 납작해집니다. */
+    min-height: calc(max(150px, calc(280 * var(--u))) + 2 * var(--bw));
+}
+
+.brand-panel--yellow { --tone: var(--knot-yellow); }
+.brand-panel--blue   { --tone: var(--knot-sky); }
+.brand-panel--pink   { --tone: var(--knot-pink); }
+.brand-panel--green  { --tone: #C3E491; }
+
+/* 액자 사이 간격 — 시안의 세로 간격(218 / 83 / 83 / 222)을 그대로 옮겼습니다 */
+.brand-panel + .brand-panel {
+    margin-top: max(24px, calc(83 * var(--u)));
+}
+
+.brand-panel.is-spaced {
+    margin-top: max(48px, calc(218 * var(--u)));
+}
+
+/* 사진 자리 — 액자 안쪽 왼쪽(또는 오른쪽) 끝에 색판을 깔고 그 위에 올립니다 */
+.brand-panel-media {
+    flex: 0 0 25.5%;          /* 시안 306 / 1200 */
+    align-self: stretch;
+    background: var(--plate, var(--knot-yellow));
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-panel-media--yellow { --plate: var(--knot-yellow); }
+.brand-panel-media--rose   { --plate: #FFE1EA; }
+.brand-panel-media--blue   { --plate: var(--knot-sky); }
+
+.brand-panel-media img {
+    display: block;
+    width: 91.5%;             /* 시안 280 / 306 */
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* ⚠️ 이 문단을 flex 칸으로 만들면 안 됩니다. 안에 있는 <br> 이 칸 하나로
+      잡혀 줄 간격이 두 배로 벌어집니다. 세로 가운데 맞춤은 액자(flex)에서
+      align-self 로 해결합니다. */
+.brand-panel-text {
+    flex: 1 1 auto;
+    align-self: center;
+    min-width: 0;             /* flex 칸이 글자 길이에 떠밀리지 않도록 */
+    margin: 0;
+    padding: max(14px, calc(20 * var(--u))) max(14px, calc(40 * var(--u)));
+
+    font-size: max(14px, calc(26 * var(--u)));
+    line-height: 1.462;
+    color: #858585;
+}
+
+.brand-panel--center .brand-panel-text {
+    text-align: center;
+}
+
+/* 사진이 오른쪽인 칸 */
+.brand-panel--media-right {
+    flex-direction: row-reverse;
+}
+
+/* ✕ 액자 오른쪽 위 구석의 닫기 단추
+   모양은 menu.html 의 .grid-nav-btn 과 같은 규칙입니다 — 동그라미에
+   갈색 테두리, 옅은 그림자, 올리면 살짝 뜸.
+   색만 액자마다 다르게 --tone 을 그대로 씁니다.
+
+   ⚠️ top/right 의 0 은 '테두리 안쪽(흰 바탕)의 구석'입니다. 거기에
+      translate 로 자기 몸 절반을 밀어, 색 테두리와 흰 바탕의 모서리에
+      딱 걸터앉게 했습니다. */
+.brand-panel-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    translate: 50% -50%;
+    z-index: 3;
+
+    width: max(30px, calc(44 * var(--u)));
+    height: max(30px, calc(44 * var(--u)));
+    padding: 0;
+
+    border: max(2px, calc(3 * var(--u))) solid var(--knot-brown);
+    border-radius: 50%;
+    background-color: var(--tone);
+    color: var(--knot-brown);        /* ✕ 획 색 (currentColor 로 씁니다) */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: scale 0.25s ease, filter 0.25s ease;
+}
+
+.brand-panel-close:hover {
+    scale: 1.12;
+    filter: brightness(0.96);
+}
+
+.brand-panel-close:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+}
+
+/* ✕ 는 글자가 아니라 획 두 개로 그립니다 — 서체에 따라 모양이 달라지지
+   않고, 액자가 커질 때 두께도 같이 따라옵니다. */
+.brand-panel-close::before,
+.brand-panel-close::after {
+    content: '';
+    position: absolute;
+    width: 46%;
+    height: max(2px, calc(3 * var(--u)));
+    border-radius: 999px;
+    background-color: currentColor;
+}
+
+.brand-panel-close::before { rotate: 45deg; }
+.brand-panel-close::after  { rotate: -45deg; }
+
+/* 🏷️ 테두리에 걸치는 알약 제목 */
+.brand-panel-badge {
+    position: absolute;
+    top: calc(-1 * var(--bw));
+    left: 50%;
+    translate: -50% -50%;
+    z-index: 2;
+
+    width: min(calc(520 * var(--u)), calc(100% - 40px));
+    padding: max(4px, calc(8 * var(--u))) calc(20 * var(--u));
+    box-sizing: border-box;
+
+    margin: 0;
+    background: var(--knot-pink);
+    border: 3px solid #fff;
+    border-radius: 999px;
+    outline: 3px solid var(--knot-brown);
+
+    font-size: max(12px, calc(26 * var(--u)));
+    line-height: 1.462;
+    text-align: center;
+    color: #fff;
+    white-space: nowrap;
+}
+
+/* ------------------------------------------------------------
+   ✍️ 손글씨 인사 — 액자 묶음 바로 아래
+   (예전에는 아래 도시 구간 위쪽에 겹쳐 두었는데, 그러느라 도시 위에
+    빈 하늘이 길게 남았습니다. 액자 쪽으로 내려와 그 여백이 없어졌습니다)
+------------------------------------------------------------ */
+.brand-happiness {
+    display: block;
+    width: calc(728 * var(--u));
+    min-width: 240px;
+    max-width: calc(100% - 32px);
+    height: auto;
+    margin: calc(90 * var(--u)) auto 0;
+
+    /* 흰 글자가 연한 하늘색 위에 놓이므로 아주 옅은 그림자로 가장자리를 세웁니다 */
+    filter: drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(62, 39, 35, 0.12));
+
+    opacity: 0;
+    translate: 0 24px;
+    transition: opacity 0.8s ease, translate 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.brand-happiness.is-in {
+    opacity: 1;
+    translate: 0 0;
+}
+
+/* ------------------------------------------------------------
+   🎬 스크롤해 내려오면 액자가 살짝 떠오릅니다
+   (js/modules/brandStory.js 가 .is-in 을 붙입니다)
+------------------------------------------------------------ */
+/* 🎚️ menu.html 의 .shop-tabs-badge.animate-bounce (@keyframes badgeBounce) 와
+      같은 박자로 통통 튀며 올라옵니다: 커졌다 → 작아졌다 → 조금 커졌다 → 제자리.
+
+      ⚠️ 뱃지의 1.25 배를 그대로 쓰면 1260px 짜리 액자가 화면 밖으로
+         삐져나갑니다. 박자는 그대로 두고 크기만 줄였습니다.
+         더 크게 튀게 하려면 아래 1.08 / 0.96 / 1.03 세 숫자만 키우세요. */
+@keyframes brand-panel-in {
+    0%   { opacity: 0; translate: 0 56px; scale: 0.90; }
+    30%  { opacity: 1; translate: 0 0;    scale: 1.08; }
+    55%  { opacity: 1; translate: 0 0;    scale: 0.96; }
+    75%  { opacity: 1; translate: 0 0;    scale: 1.03; }
+    100% { opacity: 1; translate: 0 0;    scale: 1; }
+}
+
+.brand-panel {
+    opacity: 0;
+    --panel-in: 0.9s;     /* 등장에 걸리는 시간 */
+    --panel-fade: 0.45s;  /* ✕ 로 사라지고 돌아올 때 옅어지는 시간 */
+}
+
+.brand-panel.is-in {
+    animation: brand-panel-in var(--panel-in) ease both;
+}
+
+/* 👻 단추를 누르면 스르륵 사라졌다가 10초 뒤에 스르륵 돌아옵니다.
+   (10초 세는 일은 js/modules/brandStory.js 가 합니다)
+
+   ⚠️ 이 덩어리는 반드시 위의 .brand-panel.is-in 보다 '아래' 에 있어야 합니다.
+      선택자 무게가 같아서(0,2,0) 나중에 적은 쪽이 이기는데, 위에 두면
+      .is-in 의 animation 이 이겨 버려 .is-settled 의 animation: none 이
+      먹지 않습니다. 그러면 opacity 가 1 에 묶여 페이드가 안 됩니다.
+
+   ⚠️ 등장 애니메이션이 fill-mode: both 로 opacity: 1 을 붙잡고 있어서,
+      그대로 두면 opacity 를 아무리 적어도 먹지 않습니다. 그래서 등장이
+      끝나면 .is-settled 를 달아 애니메이션을 비켜 세우고, 그때부터
+      opacity 를 전환으로 다룹니다.
+
+   ⚠️ visibility 를 같이 쓰는 이유: opacity 만 0 이면 보이지 않을 뿐
+      클릭도 되고 화면낭독기도 읽습니다. 다만 visibility 는 중간값이 없어서
+      '다 옅어진 뒤에' 바뀌도록 사라질 때만 전환을 늦춥니다. */
+.brand-panel.is-settled {
+    animation: none;
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--panel-fade) ease,
+        visibility 0s linear 0s;          /* 돌아올 때는 곧바로 보이게 */
+}
+
+.brand-panel.is-settled.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--panel-fade) ease,
+        visibility 0s linear var(--panel-fade);   /* 다 옅어진 뒤에 감춤 */
+}
+
+/* 아직 등장이 끝나기 전에 ✕ 를 눌렀다면(.is-settled 가 없을 때) 전환은
+   못 하더라도 사라지기는 해야 합니다. */
+.brand-panel.is-hidden {
+    visibility: hidden;
+}
+
+/* 🖱️ 마우스를 올리면 살짝 커집니다 — 위 친구들 그림과 같은 값(--hover-pop).
+   ⚠️ 등장 애니메이션이 both 로 끝 모습(scale: 1)을 붙잡고 있어서,
+      여기서 scale 을 다시 쓰면 애니메이션이 이겨 아무 일도 안 일어납니다.
+      transform 은 따로 곱해지므로 둘이 같이 살아 있습니다. */
+@media (hover: hover) and (pointer: fine) {
+    .brand-panel {
+        transition: transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+
+    .brand-panel:hover {
+        transform: scale(var(--hover-pop));
+    }
+}
+
+/* ------------------------------------------------------------
+   📱 좁은 화면
+------------------------------------------------------------ */
+@media (max-width: 767px) {
+    .brand-panel {
+        width: calc(100% - 32px);
+        flex-direction: column;
+    }
+
+    .brand-panel--media-right {
+        flex-direction: column;
+    }
+
+    .brand-panel-media {
+        flex: 0 0 auto;
+        padding: 14px 0;
+    }
+
+    .brand-panel-media img {
+        width: auto;
+        height: 120px;
+    }
+
+    .brand-panel-text {
+        font-size: 14px;
+        line-height: 1.7;
+        text-align: center;
+    }
+
+    /* 넓은 화면에서는 시안처럼 줄이 나뉘지만, 좁은 화면에서는
+       한 문단으로 이어 붙여야 어색한 자리에서 끊기지 않습니다 */
+    .brand-panel-text br {
+        display: none;
+    }
+
+    /* ⚠️ 두 가지를 같이 챙겨야 합니다.
+          1) 줄 사이에 <br> 이 끼어 있어 + (바로 다음 형제) 로는 안 잡힙니다 → ~
+          2) content: ' ' 만 두면 공백이 지워져 '카페로합리적인' 처럼 붙습니다
+             → white-space: pre 를 함께 줘야 띄어쓰기가 살아납니다 */
+    .brand-panel-text .brand-line ~ .brand-line::before {
+        content: ' ';
+        white-space: pre;
+    }
+
+    /* 알약 제목은 --u 로 줄이면(520 × 0.36 ≒ 185px) 글씨가 두 줄로 넘칩니다.
+       좁은 화면에서는 액자 폭에 맞춰 늘립니다. */
+    /* 오른쪽 위 ✕ 단추와 겹치지 않도록 양옆을 조금 더 비워 둡니다 */
+    .brand-panel-badge {
+        width: min(calc(100% - 56px), 420px);
+        font-size: 12px;
+        padding: 6px 14px;
+        border-width: 2px;
+        outline-width: 2px;
+    }
+
+    /* 배경 큰 글자는 좁은 화면에서 --u 보정 때문에 상대적으로 커집니다.
+       뒤에 깔리는 글자이므로 다시 줄여 둡니다. */
+    .brand-word {
+        font-size: calc(131 * var(--u));
+        line-height: calc(156 * var(--u));
+    }
+
+    .brand-word-cream {
+        font-size: calc(96 * var(--u));
+        line-height: calc(115 * var(--u));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* ⚠️ 여기서 --panel-in 을 다시 적지 않습니다. 이 설정이 켜진 환경에서는
+          그 값이 이겨 버려서, 위에서 속도를 고쳐도 화면이 달라지지 않습니다. */
+    .brand-panel.is-in {
+        animation-timing-function: ease-out;
+    }
+}

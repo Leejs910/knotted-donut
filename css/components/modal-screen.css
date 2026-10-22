@@ -1,0 +1,59 @@
+/* ============================================================
+   🪟 모달 뒷배경 (공용)
+
+   원래 css/components/shop-item-modal.css 안에 있던 규칙입니다.
+   로그인 모달도 똑같은 배경을 쓰게 되어 공용 컴포넌트로 뺐습니다.
+   쓰는 곳: .shop-modal-overlay(상품 상세), .login-overlay(로그인)
+
+   ⚠️ 이름이 .modal-overlay 가 아닙니다. 그 이름은 이미 도넛 상세 모달
+      (css/components/donut-modal.css)이 검은 반투명 배경으로 쓰고 있어서,
+      같이 불러오면 그쪽 규칙에 덮여 흰 배경이 검게 나옵니다.
+
+   ⚠️ 배경을 완전히 불투명한 검정으로 덮지 않습니다. 흰 바탕에 아주 옅은
+      X자 무늬가 천천히 흘러서, 사이트의 결을 그대로 이어 갑니다.
+   ============================================================ */
+
+.modal-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+
+    /* 내용이 화면보다 길어지면 잘리지 않고 스크롤되게 */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    background-color: #fff;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+/* 흰 배경 위에 흐릿한 X자 무늬 — .shop-grid 의 X 패턴과 같은 인라인 SVG
+   기법을 재사용하되, 흰 배경에서도 보이도록 연한 브라운 선으로 그리고
+   똑같이 왼쪽 위 → 오른쪽 아래로 천천히 흐르게 합니다. */
+.modal-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg stroke='%233E2723' stroke-opacity='0.08' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='12' y1='12' x2='28' y2='28'/%3E%3Cline x1='28' y1='12' x2='12' y2='28'/%3E%3Cline x1='52' y1='52' x2='68' y2='68'/%3E%3Cline x1='68' y1='52' x2='52' y2='68'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 80px 80px;
+    animation: modalPatternDrift 26s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes modalPatternDrift {
+    from { background-position: 0 0; }
+    to   { background-position: 80px 80px; }
+}
+
+.modal-screen.active {
+    opacity: 1;
+    pointer-events: auto;
+}

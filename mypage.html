@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 공통: 모든 페이지에 넣습니다 -->
+    <link rel="stylesheet" href="./css/base/reset.css">
+    <link rel="stylesheet" href="./css/base/animations.css">
+    <link rel="stylesheet" href="./css/base/scrollbar.css">
+    <link rel="stylesheet" href="./css/layout/nav.css">
+    <link rel="stylesheet" href="./css/components/page-fade.css">
+    <link rel="stylesheet" href="./css/components/nav-dropdown.css">
+
+    <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/modal-screen.css">
+    <link rel="stylesheet" href="./css/components/login-modal.css">
+    <link rel="stylesheet" href="./css/components/page-banner.css">
+    <link rel="stylesheet" href="./css/components/category-tabs.css">
+
+    <!-- 섹션: 그 페이지에 있는 것만 -->
+    <link rel="stylesheet" href="./css/sections/mypage.css">
+
+    <!-- 푸터는 다른 규칙을 덮어쓸 수 있어야 하므로 마지막 -->
+    <link rel="stylesheet" href="./css/layout/footer.css">
+
+    <title>NotedDount — 마이페이지</title>
+
+</head>
+
+<body>
+    <!-- 📄 페이지가 바뀔 때 덮였다 걷히는 흰 막.
+         처음부터 그려져 있어야 깜빡임이 없어 마크업에 둡니다. -->
+    <div class="page-fade" aria-hidden="true"></div>
+
+    <nav id="mainNav" class="navbar">
+
+        <a href="./cart.html" class="mobile-cart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+        </a>
+
+        <h1 class="logo">
+            <a href="./index.html">
+                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
+                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+            </a>
+        </h1>
+
+        <ul class="nav-links">
+            <li><a href="./onlineShop.html">SHOP</a></li>
+            <li><a href="./menu.html">MENU</a></li>
+            <li><a href="./brand.html">BRAND</a></li>
+            <li><a href="#">SUPPORT</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <!-- 로그인했을 때만 보입니다 — js/modules/authNav.js 가 켜고 끕니다 -->
+            <a href="./mypage.html" class="btn btn-outline pc-btn pc-btn-mypage" hidden>Mypage</a>
+            <a href="./cart.html" class="btn btn-outline pc-btn">Cart</a>
+
+            <button class="hamburger-btn" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="mobile-menu-wrapper" id="mobile-menu">
+        <div class="mobile-login-header">
+            <p>로그인이 필요합니다.</p>
+            <a href="./mypage.html" class="mobile-mypage" hidden>마이페이지</a>
+            <a href="#" class="login-link">로그인</a>
+        </div>
+        <ul class="mobile-menu-list">
+            <li><a href="./onlineShop.html">Shop</a></li>
+            <li><a href="./menu.html">Menu</a></li>
+            <li><a href="./brand.html">Brand</a></li>
+            <li><a href="#">Support</a></li>
+        </ul>
+
+        <!-- 🌈 바닥에 걸치는 무지개 장식 (CSS 로 그립니다 — img/rainbow.svg 는 1.18MB 라 안 씁니다) -->
+        <div class="mobile-menu-rainbow" aria-hidden="true"></div>
+
+        <!-- 🐰 메뉴 아래 빈 자리 장식: 무지개 위에 앉은 토끼 + 천천히 도는 별.
+             (@keyframes spin 은 css/base/animations.css 에 있어 그대로 재사용) -->
+        <div class="mobile-menu-stars" aria-hidden="true">
+            <span class="mm-circle"></span>
+            <img src="./img_deco/star1.png" class="mm-star mm-star-1" alt="">
+            <img src="./img_deco/star2.png" class="mm-star mm-star-2" alt="">
+            <img src="./img/phoneRabbit.svg" class="mm-rabbit" alt="">
+        </div>
+    </div>
+
+    <!-- 🏙️ 하늘색 배너 — 도시 그림(brand 와 같은 SVG)을 아래에 깔고,
+         구름은 js/modules/brandCity.js 가 아주 천천히 흘려보냅니다 -->
+    <header class="mypage-banner page-banner">
+        <div class="mypage-banner-art" id="mypageBannerArt"></div>
+
+        <!-- 스크롤을 내리는 순간 어두워지는 막 (다른 배너와 같은 규칙) -->
+        <div class="mypage-overlay page-banner-overlay"></div>
+
+        <h2 class="mypage-banner-title page-banner-title">MY PAGE</h2>
+    </header>
+
+    <main>
+        <section class="mypage">
+            <div class="mypage-inner">
+
+                <!-- 인사 — 이름은 js/modules/myPage.js 가 채웁니다 -->
+                <p class="mypage-hello" id="mypageHello"></p>
+
+                <!-- 탭 (menu / onlineShop / support 와 같은 컴포넌트) -->
+                <div class="shop-tabs" id="mypageTabs" role="tablist" aria-label="마이페이지 메뉴">
+                    <button type="button" class="shop-tab is-active" data-category="orders" role="tab"
+                        aria-selected="true" aria-controls="panelOrders">주문조회</button>
+                    <button type="button" class="shop-tab" data-category="points" role="tab"
+                        aria-selected="false" aria-controls="panelPoints">포인트</button>
+                    <button type="button" class="shop-tab" data-category="edit" role="tab"
+                        aria-selected="false" aria-controls="panelEdit">정보수정</button>
+                    <button type="button" class="shop-tab" data-category="leave" role="tab"
+                        aria-selected="false" aria-controls="panelLeave">회원탈퇴</button>
+
+                    <div class="shop-tabs-badge">
+                        <img src="./img/brand/smile.svg" alt="">
+                    </div>
+                </div>
+
+                <!-- 📦 주문조회 -->
+                <section class="mypage-panel" id="panelOrders" role="tabpanel" aria-label="주문조회">
+                    <div class="mypage-orders" id="mypageOrders"></div>
+                </section>
+
+                <!-- ⭐ 포인트 -->
+                <section class="mypage-panel" id="panelPoints" role="tabpanel" aria-label="포인트" hidden>
+                    <div class="mypage-points" id="mypagePoints"></div>
+                </section>
+
+                <!-- ✍️ 정보수정 -->
+                <section class="mypage-panel" id="panelEdit" role="tabpanel" aria-label="정보수정" hidden>
+                    <form class="mypage-edit" id="mypageEditForm" novalidate>
+                        <!-- 데모 계정일 때 js/modules/myPage.js 가 켭니다 -->
+                        <p class="mypage-edit-notice" id="mypageEditNotice" hidden></p>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editEmail">이메일 (아이디)</label>
+                            <input class="mypage-input" type="email" id="editEmail" readonly>
+                            <p class="mypage-help">아이디는 바꿀 수 없습니다.
+                                장바구니·주문·포인트가 모두 이 주소에 묶여 있어서입니다.</p>
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editName">이름</label>
+                            <input class="mypage-input" type="text" id="editName"
+                                autocomplete="name" placeholder="이름">
+                        </div>
+
+                        <hr class="mypage-divider">
+
+                        <p class="mypage-sub">비밀번호 변경 <span>바꾸지 않으시려면 비워 두세요.</span></p>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editCurrentPw">지금 비밀번호</label>
+                            <input class="mypage-input" type="password" id="editCurrentPw"
+                                autocomplete="current-password" placeholder="지금 쓰고 계신 비밀번호">
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editNewPw">새 비밀번호</label>
+                            <input class="mypage-input" type="password" id="editNewPw"
+                                autocomplete="new-password" placeholder="8자 이상">
+                        </div>
+
+                        <div class="mypage-field">
+                            <label class="mypage-label" for="editNewPw2">새 비밀번호 확인</label>
+                            <input class="mypage-input" type="password" id="editNewPw2"
+                                autocomplete="new-password" placeholder="한 번 더">
+                        </div>
+
+                        <p class="mypage-edit-result" id="mypageEditResult" hidden></p>
+
+                        <button type="submit" class="mypage-edit-btn" id="mypageEditSubmit">저장하기</button>
+                    </form>
+                </section>
+
+                <!-- 👋 회원탈퇴 -->
+                <section class="mypage-panel" id="panelLeave" role="tabpanel" aria-label="회원탈퇴" hidden>
+                    <div class="mypage-leave">
+                        <h3 class="mypage-leave-title">그동안 이용해 주셔서 고맙습니다</h3>
+                        <p class="mypage-leave-desc">
+                            탈퇴하시면 가입 정보와 주문 내역, 포인트가 모두 사라집니다.<br>
+                            다시 가입하셔도 지난 기록은 돌아오지 않습니다.
+                        </p>
+                        <button type="button" class="mypage-leave-btn" id="mypageLeaveOpen">회원 탈퇴</button>
+                    </div>
+                </section>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- 🚪 회원탈퇴 확인 — 뒷배경은 상품 상세·로그인과 같은 .modal-screen -->
+    <div class="modal-screen leave-overlay" id="leaveOverlay" aria-hidden="true">
+        <div class="leave-box" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+            <h2 class="leave-title" id="leaveTitle">회원탈퇴</h2>
+
+            <div class="leave-body">
+                <p>가입된 회원정보가 모두 삭제됩니다. 작성하신 게시물은 삭제되지 않습니다.</p>
+                <p>탈퇴 후 같은 계정으로 재가입 시 기존에 가지고 있던 적립금은 복원되지 않으며,
+                    사용 및 다운로드했던 쿠폰도 사용 불가능합니다.</p>
+                <p>회원 탈퇴를 진행하시겠습니까?</p>
+
+                <p class="leave-error" id="leaveError" hidden></p>
+            </div>
+
+            <div class="leave-actions">
+                <button type="button" class="leave-btn leave-btn-ghost" id="leaveCancel">취소</button>
+                <button type="button" class="leave-btn leave-btn-solid" id="leaveConfirm">탈퇴하기</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+
+        <div class="footer-bg">
+            <!-- 📱 폰에서만 보이는 무지개 행성. 곰돌이 걸음에 맞춰 천천히 돕니다 -->
+            <img src="./img/earthRainbow.svg" class="footer-planet" alt="" aria-hidden="true">
+        </div>
+
+        <!-- 글자가 배경·곰돌이 위에서 읽히도록 덮는 옅은 막 (색은 footer.css 의 --veil) -->
+        <div class="footer-overlay" aria-hidden="true"></div>
+
+        <canvas id="footer-canvas"></canvas>
+
+        <div class="footer-ui">
+
+            <div class="footer-left">
+                <div class="footer-social">
+                    <h4>SOCIAL</h4>
+                    <div class="social-actions-wrap">
+                        <a href="#" class="btn-social-item btn-kakao">
+                            <img src="./img/kakao.png" alt="채널 추가하기">
+                            <span class="btn-text">채널 추가하기</span>
+                        </a>
+                        <a href="#" class="btn-social-item btn-insta">
+                            <img src="./img/insta.png" alt="인스타그램">
+                            <span class="btn-text">Instagram</span>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="footer-company">
+                    <h4>COMPANY INFORMATION</h4>
+                    <p>주식회사 지엔에프지</p>
+                    <p>서울 강남구 학동로82길 7</p>
+                    <p>사업자 등록번호 248-81-00620 • 통신판매번호 2020-서울강남-02297 • 대표이사 이준범</p>
+                    <p class="copyright">Copyright © 2023 Knotted. All Rights Reserved.</p>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                <img src="./img/white_logo.svg" alt="Knotted 로고" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="footer-links">
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                </div>
+                <div class="footer-cs">
+                    <h4>고객센터</h4>
+                    <h2>1800-6067</h2>
+                    <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
+                    <p>점심시간 : 12:00 - 13:00</p>
+                </div>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- 이 페이지가 실제로 쓰는 라이브러리만 불러옵니다. -->
+    <script defer src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script type="module" src="./js/pages/mypage.js"></script>
+
+</body>
+
+</html>

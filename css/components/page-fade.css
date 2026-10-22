@@ -1,0 +1,52 @@
+/* ============================================================
+   📄 페이지가 바뀔 때 부드럽게 (흰 막이 걷혔다 덮였다)
+
+   화면 전체를 덮는 흰 막 하나입니다.
+     · 들어올 때 — 덮인 채로 시작해 걷힙니다 (CSS 만으로 동작)
+     · 나갈 때   — js/modules/pageFade.js 가 .is-leaving 을 붙이면 덮입니다
+
+   ⚠️ 막을 HTML 에 미리 적어 두는 이유:
+      JS 가 만들어 넣으면 그 전에 페이지가 한 번 그려져서, 화면이 떴다가
+      흰색으로 덮인 뒤 다시 걷히는 깜빡임이 생깁니다. CSS 는 그리기 전에
+      적용되므로 마크업에 두면 처음부터 덮인 상태로 시작합니다.
+
+   ⚠️ pointer-events: none 입니다. 막이 덮여 있는 동안에도 클릭은
+      그대로 아래로 지나갑니다.
+   ============================================================ */
+
+.page-fade {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;          /* 로그인 모달(9999)보다는 아래 */
+
+    background-color: #fff;
+    pointer-events: none;
+
+    /* 🎚️ 걷히고 덮이는 데 걸리는 시간 */
+    --page-fade-time: 0.4s;
+
+    opacity: 1;
+    animation: page-fade-in var(--page-fade-time) ease forwards;
+}
+
+/* 들어올 때 — 걷힙니다 */
+@keyframes page-fade-in {
+    to { opacity: 0; }
+}
+
+/* 나갈 때 — 다시 덮입니다.
+   animation-name 이 바뀌면 처음부터 다시 돌기 때문에, 걷혀 있던(0) 상태에서
+   자연스럽게 1 로 올라갑니다. */
+.page-fade.is-leaving {
+    animation: page-fade-out var(--page-fade-time) ease forwards;
+}
+
+@keyframes page-fade-out {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ⚠️ prefers-reduced-motion 블록을 두지 않았습니다.
+      이 효과는 '움직임' 이 아니라 색이 옅어졌다 짙어지는 것뿐이라 어지럽지
+      않고, 여기서 시간을 다시 적으면 그 설정이 켜진 환경에서는 위의
+      --page-fade-time 을 아무리 고쳐도 화면이 달라지지 않습니다. */

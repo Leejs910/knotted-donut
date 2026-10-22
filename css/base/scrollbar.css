@@ -47,9 +47,40 @@
     background: var(--sb-track);
 }
 
+/* ============================================================
+   📄 페이지 자체(문서) 스크롤바는 감춥니다.
+
+   왜:
+     트랙을 투명하게 둬서 그 자리에 body 배경(#f8fafc)이 비치는데,
+     폭이 17px 이라 주황색 히어로 위에서는 흰 띠처럼 크게 보였습니다.
+     스크롤은 Lenis 가 맡고 있어 휠·터치·키보드·스페이스 모두 그대로
+     동작하고, 사라지는 것은 '지금 어디쯤인지' 보여 주는 막대뿐입니다.
+
+   ⚠️ 안쪽 상자들(영수증 .receipt-scroll, 결제 열, 로그인 모달 등)의
+      스크롤바는 그대로 둡니다. 거기서는 스크롤이 된다는 표시가 필요합니다.
+
+   되돌리려면 이 블록만 지우면 됩니다.
+   ============================================================ */
+/* ⚠️ html 이 아니라 body 입니다. 문서(뷰포트) 스크롤바의 생김새는 body 에서
+      올라오기 때문에, html::-webkit-scrollbar 로는 꿈쩍도 하지 않습니다.
+      (실제로 재 봤습니다: html 쪽은 17px 그대로, body 쪽은 0) */
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* 표준 속성 — 파이어폭스와 최신 크롬이 함께 봅니다 */
+html {
+    scrollbar-width: none;
+}
+
 @supports not selector(::-webkit-scrollbar) {
     * {
         scrollbar-width: auto;
         scrollbar-color: var(--sb-thumb) var(--sb-track);
+    }
+
+    /* 위 * 규칙보다 구체적이라 문서에만 적용됩니다 */
+    html {
+        scrollbar-width: none;
     }
 }

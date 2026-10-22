@@ -5,13 +5,19 @@
 //
 // 필요 CSS: css/components/shop-item-modal.css
 //
+// 담기·구매는 js/modules/cartStore.js 에 저장되고, 로그인한 사람만 할 수 있습니다.
+//
 // 사용법:
 //   import { openShopItemModal } from './shopItemModal.js';
 //   openShopItemModal(상품데이터); // { title, imgUrl, imgUrl2, price }
 //   openShopItemModal(상품데이터, { onClose: () => ... }); // 닫힐 때 할 일이 있으면
 
+import { addToCart, clearCheckout } from './cartStore.js';
+import { isLoggedIn } from './auth.js';
+import { openLoginModal } from './loginModal.js';
+
 const MODAL_HTML = `
-<div id="shop-item-modal" class="shop-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+<div id="shop-item-modal" class="modal-screen shop-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="shop-modal-box">
 
         <div class="shop-modal-topbar">
@@ -97,6 +103,7 @@ let overlay = null;   // 모달 최상위 요소
 let els = null;       // 자주 쓰는 자식 요소 모음
 let onCloseHook = null; // 닫힐 때 실행할 콜백 (컨베이어 재생 등)
 
+let currentItem = null; // 지금 보고 있는 상품 (담기·구매에 씁니다)
 let images = [];      // 지금 보고 있는 상품의 이미지 목록 (imgUrl, imgUrl2)
 let imgIndex = 0;
 let unitPrice = 0;
@@ -126,7 +133,34 @@ function ensureModal() {
         qtyValue: overlay.querySelector('.shop-modal-qty-value'),
         qtyBtns: overlay.querySelectorAll('.shop-modal-qty-btn'),
         totalValue: overlay.querySelector('.shop-modal-total-value'),
+        buyBtn: overlay.querySelector('.shop-modal-buy'),
+        cartBtn: overlay.querySelector('.shop-modal-cart-btn'),
     };
+
+    // 🛒 담기 / 구매하기
+    // ⚠️ 로그인하지 않았으면 담을 곳이 없으므로 로그인 창을 먼저 띄웁니다.
+    function requireLogin() {
+        if (isLoggedIn()) return true;
+        closeShopItemModal();
+        openLoginModal();
+        return false;
+    }
+
+    els.cartBtn.addEventListener('click', () => {
+        if (!currentItem || !requireLogin()) return;
+        addToCart(currentItem, qty);
+        closeShopItemModal();
+        location.href = './cart.html';
+    });
+
+    els.buyBtn.addEventListener('click', () => {
+        if (!currentItem || !requireLogin()) return;
+        addToCart(currentItem, qty);
+        closeShopItemModal();
+        // 장바구니에서 골라 둔 목록이 남아 있으면 그게 보이므로 지워 둡니다
+        clearCheckout();
+        location.href = './checkout.html';
+    });
 
     // 어두운 배경(오버레이 자신)을 눌렀을 때만 닫힘 (박스 위를 눌렀을 때는 안 닫힘)
     overlay.addEventListener('click', (e) => {
@@ -176,6 +210,7 @@ export function openShopItemModal(item, opts = {}) {
     ensureModal();
 
     onCloseHook = opts.onClose || null;
+    currentItem = item;
 
     images = [item.imgUrl, item.imgUrl2].filter(Boolean);
     unitPrice = Number(item.price) || 0;

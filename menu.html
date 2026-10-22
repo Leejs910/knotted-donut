@@ -10,8 +10,12 @@
     <link rel="stylesheet" href="./css/base/animations.css">
     <link rel="stylesheet" href="./css/base/scrollbar.css">
     <link rel="stylesheet" href="./css/layout/nav.css">
+    <link rel="stylesheet" href="./css/components/page-fade.css">
+    <link rel="stylesheet" href="./css/components/nav-dropdown.css">
 
     <!-- 컴포넌트: 그 페이지에서 쓰는 것만 -->
+    <link rel="stylesheet" href="./css/components/modal-screen.css">
+    <link rel="stylesheet" href="./css/components/login-modal.css">
     <link rel="stylesheet" href="./css/components/page-banner.css">
     <link rel="stylesheet" href="./css/components/category-tabs.css">
     <link rel="stylesheet" href="./css/components/grid-nav.css">
@@ -31,9 +35,13 @@
 </head>
 
 <body>
+    <!-- 📄 페이지가 바뀔 때 덮였다 걷히는 흰 막.
+         처음부터 그려져 있어야 깜빡임이 없어 마크업에 둡니다. -->
+    <div class="page-fade" aria-hidden="true"></div>
+
     <nav id="mainNav" class="navbar">
 
-        <a href="#" class="mobile-cart">
+        <a href="./cart.html" class="mobile-cart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"></circle>
@@ -52,13 +60,15 @@
         <ul class="nav-links">
             <li><a href="./onlineShop.html">SHOP</a></li>
             <li><a href="./menu.html">MENU</a></li>
-            <li><a href="#">BRAND</a></li>
-            <li><a href="#">SUPPORT</a></li>
+            <li><a href="./brand.html">BRAND</a></li>
+            <li><a href="./support.html">SUPPORT</a></li>
         </ul>
 
         <div class="nav-actions">
             <a href="#" class="btn btn-outline pc-btn">Login</a>
-            <a href="#" class="btn btn-outline pc-btn">Cart</a>
+            <!-- 로그인했을 때만 보입니다 — js/modules/authNav.js 가 켜고 끕니다 -->
+            <a href="./mypage.html" class="btn btn-outline pc-btn pc-btn-mypage" hidden>Mypage</a>
+            <a href="./cart.html" class="btn btn-outline pc-btn">Cart</a>
 
             <button class="hamburger-btn" id="hamburger-btn">
                 <span></span>
@@ -71,13 +81,14 @@
     <div class="mobile-menu-wrapper" id="mobile-menu">
         <div class="mobile-login-header">
             <p>로그인이 필요합니다.</p>
+            <a href="./mypage.html" class="mobile-mypage" hidden>마이페이지</a>
             <a href="#" class="login-link">로그인</a>
         </div>
         <ul class="mobile-menu-list">
             <li><a href="./onlineShop.html">Shop</a></li>
             <li><a href="#">Menu</a></li>
-            <li><a href="#">Brand</a></li>
-            <li><a href="#">Support</a></li>
+            <li><a href="./brand.html">Brand</a></li>
+            <li><a href="./support.html">Support</a></li>
         </ul>
 
         <!-- 🌈 바닥에 걸치는 무지개 장식 (CSS 로 그립니다 — img/rainbow.svg 는 1.18MB 라 안 씁니다) -->
@@ -149,13 +160,15 @@
 
     <footer class="site-footer">
 
-        <div class="footer-bg-trees"></div>
-        <div class="footer-store-building">
+        <div class="footer-bg">
+            <!-- 📱 폰에서만 보이는 무지개 행성. 곰돌이 걸음에 맞춰 천천히 돕니다 -->
+            <img src="./img/earthRainbow.svg" class="footer-planet" alt="" aria-hidden="true">
         </div>
 
-        <canvas id="footer-canvas"></canvas>
+        <!-- 글자가 배경·곰돌이 위에서 읽히도록 덮는 옅은 막 (색은 footer.css 의 --veil) -->
+        <div class="footer-overlay" aria-hidden="true"></div>
 
-        <div class="footer-overlay"></div>
+        <canvas id="footer-canvas"></canvas>
 
         <div class="footer-ui">
 
