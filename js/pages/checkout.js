@@ -8,7 +8,7 @@ import { getCheckoutItems, removeOrdered, setCheckoutItems } from '../modules/ca
 import { addOrder, settlePoints } from '../modules/memberStore.js';
 
 // --- 모든 페이지 공통 ---
-import { initPageFade } from '../modules/pageFade.js';
+import { initPageFade, skipNextPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
@@ -76,6 +76,10 @@ const truck = initTruckScene({
 
         // 주문한 것만 장바구니에서 뺍니다 (고르지 않고 남겨 둔 것은 그대로)
         removeOrdered(getCheckoutItems());
+
+        // 트럭이 떠난 직후라 화면이 이미 흰색입니다.
+        // 결제완료 화면에서 흰 막이 또 걷히지 않게 건너뛰라고 남겨 둡니다.
+        skipNextPageFade();
 
         location.href = './orderComplete.html';
     },

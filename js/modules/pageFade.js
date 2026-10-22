@@ -15,9 +15,42 @@
 
 const FALLBACK_MS = 600;   // 전환이 끝났다는 신호가 안 오더라도 넘어갈 시간
 
+// '다음 페이지에서는 들어오는 페이드를 건너뛰어 달라' 는 쪽지.
+// 페이지를 넘어가야 해서 sessionStorage 를 씁니다 (탭을 닫으면 사라집니다).
+const SKIP_KEY = 'noteddount:skip-fade-in';
+
+/** 다음 페이지에 들어갈 때 흰 막이 걷히는 연출을 건너뜁니다.
+ *
+ *  쓰는 곳: js/pages/checkout.js — 트럭이 떠난 뒤 결제완료로 넘어갈 때.
+ *  왜: 트럭 무대가 흰 바탕(.truck-stage-band)이라 화면이 이미 흰색입니다.
+ *      거기서 흰 막이 또 걷히면 같은 흰색에서 한 번 더 걷히는 군더더기가 됩니다.
+ *
+ *  ⚠️ 한 번 쓰면 지워집니다. 결제완료 화면을 새로고침하면 평소대로 페이드합니다. */
+export function skipNextPageFade() {
+    try {
+        sessionStorage.setItem(SKIP_KEY, '1');
+    } catch {
+        /* 쪽지를 못 남겨도 이동 자체는 됩니다 (페이드만 평소대로 돕니다) */
+    }
+}
+
 export function initPageFade() {
     const veil = document.querySelector('.page-fade');
     if (!veil) return;
+
+    // 결제 연출에서 바로 넘어온 경우에는 들어오는 페이드를 건너뜁니다.
+    //
+    // ⚠️ 이 모듈은 <script type="module"> 이라 본문이 다 그려지기 전에 돕니다.
+    //    혹시 한 프레임 늦어 흰 막이 비쳐도, 바로 전 화면(트럭 무대)이 이미
+    //    흰색이라 눈에 띄지 않습니다.
+    try {
+        if (sessionStorage.getItem(SKIP_KEY)) {
+            sessionStorage.removeItem(SKIP_KEY);
+            veil.classList.add('is-instant');
+        }
+    } catch {
+        /* 저장소를 못 쓰는 환경에서는 평소대로 페이드합니다 */
+    }
 
     // ⚠️ 뒤로 가기로 돌아왔을 때 (bfcache) 막이 덮인 채로 멈춰 있습니다.
     //    .is-leaving 을 떼면 animation-name 이 되돌아가면서 다시 걷힙니다.
