@@ -28,6 +28,10 @@ export async function initBrandCity({
     // 배너처럼 납작한 칸에서는 그림을 채워 넣고 아래쪽(도시)을 남깁니다.
     // 본문처럼 비율대로 놓을 때는 meet 로 둡니다.
     fit = null,
+    // 구름을 쓸지. false 면 구름 뭉치를 아예 지우고 흘러가는 연출도 걸지
+    // 않습니다. 그림에 배경이 없으므로(rect 가 하나도 없습니다) 구름을
+    // 지우면 칸의 바탕색이 그대로 하늘이 됩니다.
+    clouds = true,
 } = {}) {
     if (!holder) return;
 
@@ -52,16 +56,25 @@ export async function initBrandCity({
     svg.removeAttribute('height');
     if (fit) svg.setAttribute('preserveAspectRatio', fit);
 
-    const clouds = svg.querySelector('#cloudGroup');
+    const cloudGroup = svg.querySelector('#cloudGroup');
+
     if (!clouds) {
+        // 구름을 안 쓰는 칸 — 뭉치를 지우고 끝냅니다.
+        // (남겨 두고 CSS 로 숨기면 흘러가는 연출이 보이지 않는 채로 계속 돕니다)
+        cloudGroup?.remove();
+        holder.classList.add('is-cloudless');
+        return;
+    }
+
+    if (!cloudGroup) {
         console.warn('[brandCity] SVG 안에서 #cloudGroup 을 찾지 못했습니다.');
         return;
     }
 
     // 구름 뭉치의 오른쪽 끝이 그림 왼쪽 밖으로 나가는 거리 (+여유 40)
-    const box = clouds.getBBox();
+    const box = cloudGroup.getBBox();
     const shift = Math.ceil(box.x + box.width) + 40;
-    clouds.style.setProperty('--cloud-shift', `${shift}px`);
+    cloudGroup.style.setProperty('--cloud-shift', `${shift}px`);
 
     // 화면에 들어왔을 때 딱 한 번 출발합니다.
     // (페이지를 열자마자 시작하면, 한참 스크롤해 내려왔을 때는 이미
