@@ -28,6 +28,10 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
     //    transitionend 가 오지 않는 환경에서 아래 보험이 헛돌게 됩니다.
     let truckStarted = false;
 
+    // 이동이 시작된 뒤에도 흰 무대를 덮어 두므로, '이미 끝났는가' 를
+    // bandEl.hidden 으로 알 수 없습니다. 따로 기억합니다.
+    let finished = false;
+
     // 트럭 SVG 는 180KB 정도라 결제 버튼을 누른 뒤에 불러옵니다.
     // (평소 결제 화면 로딩을 무겁게 만들지 않기 위해)
     async function loadSvg() {
@@ -51,7 +55,17 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
     }
 
     function finish() {
-        bandEl.hidden = true;
+        if (finished) return;
+        finished = true;
+
+        // ⚠️ 여기서 흰 무대를 걷어내면 안 됩니다.
+        //    onFinish() 는 다음 페이지로 이동을 '시작' 할 뿐이고, 새 페이지가
+        //    뜨기까지 0.1초쯤 걸립니다. 그 사이 무대가 사라지면 그 아래에
+        //    닫힌 노란 문(.truck-door.is-closed)이 드러나, 셔터가 닫히는
+        //    장면이 한 번 깜빡이고 지나갑니다.
+        //    흰 무대를 그대로 덮어 둔 채 이동하면 흰 화면에서 흰 화면으로
+        //    이어집니다. (결제완료 페이지는 들어오는 페이드도 건너뛰므로
+        //     — js/modules/pageFade.js — 흰색이 끊기지 않습니다)
         window.lenis?.start(); // 잠갔던 스크롤을 풀어 줍니다
         if (typeof onFinish === 'function') onFinish();
     }
@@ -125,7 +139,7 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
 
         // 애니메이션이 어떤 이유로든 끝나지 않아도 멈춰 있지 않도록 안전장치
         timers.push(setTimeout(() => {
-            if (bandEl.hidden) return;
+            if (finished) return;
             done();
         }, 4000));
     }
