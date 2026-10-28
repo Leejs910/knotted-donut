@@ -1,0 +1,40 @@
+/* ============================================================
+   ➖ 배너와 본문을 나누는 가로줄
+
+   푸터 맨 위에 있는 줄(.site-footer::before)과 똑같이 생겼습니다.
+   배너가 있는 페이지라면 어디서나 같은 줄이 나오도록, 배너 바로
+   아래에 <div class="banner-rule"></div> 한 줄을 넣어 씁니다.
+
+   ⚠️ 배너 안쪽(::before)이 아니라 바깥에 따로 둡니다. 배너는
+      overflow: hidden 이라 안에 넣으면 그림 위를 덮어 버립니다.
+      온라인샵 배너는 바닥까지 컨베이어가 흐르고 있어서, 덮이면
+      레일 아랫부분이 잘립니다.
+
+   ⚠️ 배너 쪽의 border-bottom 은 걷어냈습니다. 그대로 두면 이 줄의
+      검은 선과 나란히 붙어 두 줄처럼 보입니다.
+      (css/components/page-banner.css, css/sections/order-complete.css)
+
+   🎚️ 두께를 바꾸려면 --rule-h(전체)와 --rule-edge(위아래 검은 선)를
+      만지면 됩니다. 푸터와 맞추려면 footer.css 의 .site-footer::before
+      쪽도 같이 바꿔 주세요 — 지금은 24px / 4px 로 같습니다.
+   ============================================================ */
+
+.banner-rule {
+    --rule-h: 24px;
+    --rule-edge: 4px;
+    --rule-ink: #1a1a1a;
+    --rule-fill: #ffffff;
+
+    /* 높이 안에 위아래 선 두께가 포함됩니다 (가운데 흰 칸 16px) */
+    box-sizing: border-box;
+    width: 100%;
+    height: var(--rule-h);
+
+    background-color: var(--rule-fill);
+    border-top: var(--rule-edge) solid var(--rule-ink);
+    border-bottom: var(--rule-edge) solid var(--rule-ink);
+
+    /* 배너의 어두운 막이나 본문 배경이 줄 위로 올라오지 않도록 */
+    position: relative;
+    z-index: 5;
+}
