@@ -18,7 +18,9 @@ import { login, signup, isLoggedIn } from './auth.js';
 import { demoUsers } from '../data/demoUsers.js';
 
 const MODAL_HTML = `
-<div id="login-modal" class="modal-screen login-overlay" role="dialog" aria-modal="true"
+<!-- data-lenis-prevent 를 빼면 폰·태블릿에서 손가락으로 밀어도 안 움직입니다.
+     이유는 js/modules/shopItemModal.js 의 같은 자리에 적어 두었습니다. -->
+<div id="login-modal" class="modal-screen login-overlay" data-lenis-prevent role="dialog" aria-modal="true"
      aria-labelledby="login-title" aria-hidden="true" tabindex="-1">
     <div class="login-box">
 

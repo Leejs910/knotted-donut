@@ -101,12 +101,19 @@
 
         <!-- 🌤️ 히어로와 본문의 경계를 가로지르는 하늘 한 겹.
              겹치는 순서는 시안 그대로 망점 → 분홍 → 물결입니다.
-             물결은 두 장을 나란히 붙여 오른쪽에서 왼쪽으로 계속 흐릅니다. -->
+             물결은 여러 장을 나란히 붙여 오른쪽에서 왼쪽으로 계속 흐릅니다.
+
+             ⚠️ 석 장입니다. 두 장이면 넓은 화면(또는 브라우저를 축소했을 때)
+                에서 한 바퀴가 끝날 무렵 오른쪽 끝이 비어 물결이 뚝 끊깁니다.
+                한 장의 폭은 화면 폭보다 좁아질 수 있어서(= 0.8×화면 + 384px),
+                화면이 1920 을 넘어가면 두 장으로는 덮지 못합니다.
+                장수를 바꾸면 css 의 .brand-waves-track 너비도 같이 바꿔야 합니다. -->
         <div class="brand-sky" aria-hidden="true">
             <img src="./img/brand/halftone-pink.webp" class="brand-sky-halftone" alt="">
             <div class="brand-sky-pink"></div>
             <div class="brand-waves">
                 <div class="brand-waves-track">
+                    <img src="./img/brand/waves.svg" alt="">
                     <img src="./img/brand/waves.svg" alt="">
                     <img src="./img/brand/waves.svg" alt="">
                 </div>

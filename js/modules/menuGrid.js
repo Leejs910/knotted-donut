@@ -16,10 +16,10 @@ import { initGridPager } from './gridPager.js';
 // 🎨 카테고리별 테마 — 카드 그림 / 이름표 색 / 리본 뱃지가 한 세트로 움직입니다.
 //    하늘(섹션 배경)색은 css/sections/menu-grid.css 의 [data-active] 가 맡습니다.
 const THEMES = {
-    all:   { bgImg: './img/cardBlue.png',   themeColor: '#A6C8FF', ribbon: './img/blue_ribbon.png' },
-    donut: { bgImg: './img/cardYellow.png', themeColor: '#F4D03F', ribbon: './img/yellow_ribbon.png' },
-    cake:  { bgImg: './img/cardPink.png',   themeColor: '#FFAFC8', ribbon: './img/pink_ribbon.png' },
-    drink: { bgImg: './img/cardGreen.png',  themeColor: '#89D9B9', ribbon: './img/green_ribbon.png' },
+    all:   { bgImg: './img/cardBlue.png',   themeColor: '#A6C8FF' },
+    donut: { bgImg: './img/cardYellow.png', themeColor: '#F4D03F' },
+    cake:  { bgImg: './img/cardPink.png',   themeColor: '#FFAFC8' },
+    drink: { bgImg: './img/cardGreen.png',  themeColor: '#89D9B9' },
 };
 
 // 🎚️ 한 페이지에 보여줄 '줄' 수.
@@ -30,10 +30,6 @@ const PAGE_ROWS = 2;
 //    2열 × 3줄 = 6개씩. 이걸 두지 않으면 20개가 10줄로 쭉 늘어나
 //    섹션 높이가 화면의 3배가 넘습니다.
 const MOBILE_PAGE_ROWS = 3;
-
-const RIBBONS = Object.fromEntries(
-    Object.entries(THEMES).map(([key, theme]) => [key, theme.ribbon])
-);
 
 export function initMenuGrid({ donut = [], cake = [], drink = [] } = {}) {
     const gridEl = document.getElementById('menuCardGrid');
@@ -107,7 +103,11 @@ export function initMenuGrid({ donut = [], cake = [], drink = [] } = {}) {
     initCategoryTabs({
         tabsEl,
         themeEl: sectionEl,
-        ribbons: RIBBONS,
+        // ⚠️ ribbons 를 넘기지 않습니다. 넘기면 탭 모듈이 배지 그림의 src 를
+        //    카테고리마다 리본으로 갈아끼웁니다 — menu.html 에 적어 둔 웃는
+        //    얼굴이 켜지자마자 리본으로 바뀌어 버립니다.
+        //    배지는 마크업에 적은 얼굴 하나로 고정합니다 (mypage / support 와 같은 방식).
+        //    통통 튀는 효과는 그대로 동작합니다.
         onChange: (category) => {
             currentCategory = category;
             pager.reset(); // 카테고리를 바꾸면 첫 페이지부터

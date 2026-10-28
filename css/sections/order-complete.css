@@ -392,7 +392,7 @@
     z-index: 2;
 
     width: clamp(112px, 12vw, 168px);
-    aspect-ratio: 198 / 172; /* thankyou.svg 원본 비율 */
+    aspect-ratio: 298 / 257; /* thankyou2.svg 원본 비율 — 그림을 바꾸면 여기도 */
     pointer-events: none;
 }
 

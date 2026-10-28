@@ -16,8 +16,14 @@ import { addToCart, clearCheckout } from './cartStore.js';
 import { isLoggedIn } from './auth.js';
 import { openLoginModal } from './loginModal.js';
 
+// ⚠️ data-lenis-prevent — 이게 없으면 폰·태블릿에서 모달 안을 손가락으로
+//    밀어도 꿈쩍하지 않습니다(스크롤바를 직접 끌어야 움직입니다).
+//    모달을 열 때 window.lenis.stop() 으로 뒷배경을 잠그는데, Lenis 는
+//    멈춰 있는 동안 들어오는 휠·터치를 전부 preventDefault 로 막아 버립니다.
+//    이 표시가 붙은 요소 안에서 시작된 움직임은 Lenis 가 손대지 않고 넘깁니다.
+//    모달 뿌리에 한 번 붙이면 그 안쪽 전부에 적용됩니다.
 const MODAL_HTML = `
-<div id="shop-item-modal" class="modal-screen shop-modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+<div id="shop-item-modal" class="modal-screen shop-modal-overlay" data-lenis-prevent role="dialog" aria-modal="true" aria-hidden="true">
     <div class="shop-modal-box">
 
         <div class="shop-modal-topbar">
