@@ -6,43 +6,201 @@
 .shop-grid {
     position: relative;
 
-    /* 카테고리 탭에 따라 바뀌는 배경색 (기본: 전체 = 파랑) */
-    background-color: #8CD8FF;
+    /* 🎨 카테고리에 따라 바뀌는 두 가지 색.
+         --gingham : 뒷배경 격자무늬의 색
+         --frame   : 액자 안쪽 바탕색
+       바탕 자체는 흰색이고, 무늬와 액자 안쪽만 카테고리 색을 따릅니다.
+       (예전에는 .shop-grid 배경색 자체를 바꿨습니다) */
+    --gingham: #BDE1EF;
+    --frame: #BDE1EF;
+
+    background-color: #fff;
     transition: background-color 0.4s ease;
 
-    padding-bottom: 255px;
+    padding: 120px 0 255px;
+    overflow: hidden;  /* 구름과 격자무늬가 섹션 밖으로 나가지 않게 */
 }
 
-/* X 무늬 배경 — 인라인 SVG(작은 X 두 개가 대각선으로 놓인 80x80 타일)를
-   background-image 로 반복시키고, 위치를 애니메이션시켜 왼쪽 위 → 오른쪽
-   아래로 천천히 흐르게 합니다. 4개 카테고리 배경색 위에서 다 잘 보이도록
-   흰색 반투명 선으로 그렸습니다.
-   ⚠️ .shop-grid 에 overflow:hidden 을 주지 않습니다 — 카테고리 탭 알약이
-   음수 margin-top 으로 배너 경계 위까지 걸쳐 있어야 하는데, 여기서 자르면
-   그 알약 윗부분이 잘려 보입니다. repeat 배경은 어차피 박스 안에서만
-   타일링되므로 inset:0 으로도 끊김 없이 순환합니다. */
-.shop-grid::before {
-    content: '';
+/* ------------------------------------------------------------
+   🔲 비스듬한 격자무늬 배경
+
+   피그마에서는 100px 폭의 띠가 196.43px 간격으로 가로·세로로 겹쳐
+   격자를 이룹니다. 그 띠를 45° 돌려 서북–동남 방향으로 눕혔습니다.
+
+   ⚠️ background-position 이 아니라 transform(translate) 으로 움직입니다.
+      background-position 은 GPU 합성이 되지 않아 매 프레임 섹션 전체를
+      다시 칠합니다. 이 섹션은 화면을 가득 채울 만큼 커서 부담이 큽니다.
+
+   ⚠️ 한 칸(--tile)만큼만 움직이고 처음으로 돌아갑니다. 띠 간격의
+      √2 분의 1(196.43 / 1.41421 ≈ 138.9px)이라, 대각선으로 그만큼
+      밀면 무늬가 정확히 한 칸 넘어가 이음매가 보이지 않습니다.
+      간격을 바꾸면 이 값도 같이 바꿔야 합니다.
+------------------------------------------------------------ */
+.shop-gingham {
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg stroke='white' stroke-opacity='0.55' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='12' y1='12' x2='28' y2='28'/%3E%3Cline x1='28' y1='12' x2='12' y2='28'/%3E%3Cline x1='52' y1='52' x2='68' y2='68'/%3E%3Cline x1='68' y1='52' x2='52' y2='68'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 80px 80px;
-    animation: shopPatternDrift 26s linear infinite;
-    pointer-events: none;
     z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-@keyframes shopPatternDrift {
-    from { background-position: 0 0; }
-    to { background-position: 80px 80px; }
+.shop-gingham::before {
+    content: '';
+    position: absolute;
+
+    /* 🎚️ 무늬 크기 — 이 두 값만 바꾸면 나머지는 따라옵니다.
+         --band-w   : 띠 하나의 굵기
+         --band-gap : 띠와 띠 사이 (굵기 포함한 한 칸)
+       --tile 은 대각선으로 미는 거리입니다. 반드시 간격 ÷ √2 여야
+       한 칸이 정확히 맞물려 이음매가 보이지 않습니다. */
+    --band-w: 80px;
+    --band-gap: 196.43px;
+    --tile: calc(var(--band-gap) / 1.41421356);
+
+    /* 밀려나는 만큼 사방으로 넉넉히 키워 둡니다 (가장자리가 비지 않게) */
+    inset: calc(var(--tile) * -2);
+
+    /* 🎚️ 띠 하나의 진하기. 두 띠가 겹치는 칸은 저절로 64% 가 됩니다
+          (0.4 + 0.4 x 0.6). 피그마에서 40% 짜리 띠 두 장을 겹친 것과 같습니다. */
+    --band: color-mix(in srgb, var(--gingham) 40%, transparent);
+
+    background-image:
+        repeating-linear-gradient(45deg,
+            var(--band) 0 var(--band-w), transparent var(--band-w) var(--band-gap)),
+        repeating-linear-gradient(135deg,
+            var(--band) 0 var(--band-w), transparent var(--band-w) var(--band-gap));
+
+    /* ⚠️ 여기에 opacity 를 걸면 안 됩니다. 두 띠를 다 그린 뒤에 한꺼번에
+          흐려지는 것이라, 겹치는 칸이 따로 진해지지 않고 전체가 똑같이
+          연해집니다. 반투명은 띠 '색' 자체에 줘야 서로 겹쳐 보입니다. */
+
+    animation: shopGinghamDrift 24s linear infinite;
 }
 
-/* 탭 클릭으로 바뀌는 카테고리별 배경색 (js/modules/shopGrid.js 가 data-active 를 붙입니다) */
-.shop-grid[data-active="food"] { background-color: #FFF09F; }
-.shop-grid[data-active="living"] { background-color: #FFC9E1; }
-.shop-grid[data-active="bulk"] { background-color: #50BD83; }
-.shop-grid[data-active="all"] { background-color: #8CD8FF; }
+@keyframes shopGinghamDrift {
+    from { translate: 0 0; }
+    to   { translate: var(--tile) var(--tile); }   /* 동남쪽으로 */
+}
+
+/* ------------------------------------------------------------
+   ☁️ 액자 바깥 구름 — 오른쪽 위, 왼쪽 아래 한 장씩
+------------------------------------------------------------ */
+.shop-cloud {
+    position: absolute;
+    z-index: 0;
+    width: 359px;
+    height: auto;
+    pointer-events: none;
+
+    /* 🎚️ 한 바퀴 도는 시간. 키울수록 느려집니다.
+         --spin-from : 출발 각도 (피그마에서 기울여 둔 값을 그대로 씁니다) */
+    --spin: 90s;
+    --spin-from: 0deg;
+
+    animation: shopCloudSpin var(--spin) linear infinite;
+}
+
+/* ⚠️ rotate 를 따로 적지 않습니다. 애니메이션이 같은 속성을 쥐고 있어서
+      덮어써지고, 출발 각도만 사라집니다. 기울기는 --spin-from 으로 줍니다. */
+@keyframes shopCloudSpin {
+    from { rotate: var(--spin-from); }
+    to   { rotate: calc(var(--spin-from) + 360deg); }
+}
+
+.shop-cloud--right {
+    top: 24px;
+    right: 2.6%;
+    --spin-from: 8.67deg;   /* 피그마 지정값 */
+}
+
+/* 둘이 같은 박자로 돌면 눈에 띄어서, 왼쪽은 조금 더 느리게 둡니다 */
+.shop-cloud--left {
+    bottom: 128px;
+    left: 3%;
+    --spin: 110s;
+}
+
+/* ------------------------------------------------------------
+   🖼️ 흰 테두리 액자
+
+   피그마: 1400 x 1600, 모서리 16px, 흰 테두리 32px,
+          그 바깥을 3px 짙은 갈색 선이 한 바퀴 두릅니다.
+
+   ⚠️ 바깥 선은 border 가 아니라 box-shadow 로 둘렀습니다. border 는
+      하나만 쓸 수 있는데 흰 테두리가 이미 그 자리를 쓰고 있어서입니다.
+      spread 만 준 그림자라 번짐 없이 선처럼 보이고, 모서리 둥글기도
+      그대로 따라옵니다.
+------------------------------------------------------------ */
+.shop-frame {
+    position: relative;
+    z-index: 1;
+
+    width: min(1400px, calc(100% - 80px));
+    margin: 0 auto;
+
+    box-sizing: border-box;
+    border: 32px solid #fff;
+    border-radius: 16px;
+    background-color: var(--frame);
+    box-shadow: 0 0 0 3px #3E2723;
+
+    transition: background-color 0.4s ease;
+}
+
+/* ------------------------------------------------------------
+   🌊 액자 아래 물결과 문구
+
+   물결 SVG 는 preserveAspectRatio="none" 으로 그려져 있어 가로로
+   늘려 써도 됩니다. 액자 안쪽 폭을 가득 채웁니다.
+------------------------------------------------------------ */
+.shop-frame-foot {
+    position: relative;
+    margin-top: 90px;
+
+}
+
+.shop-frame-wave {
+    display: block;
+
+    /* ⚠️ 일부러 1px 씩 크게 그려 가장자리를 액자의 흰 테두리 위로 내보냅니다.
+
+          물결은 가로가 소수점인 상자에 그려집니다(1024px 화면에서 936 x
+          153.66px). 그러면 왼쪽·오른쪽·아래 가장자리 한 줄이 반투명해지고,
+          그 뒤에 액자 바탕색이 있으면 실선처럼 비칩니다.
+          (바탕을 빨강으로 바꿔 보면 빨간 실선이 보입니다)
+
+          그 한 줄을 흰 테두리 위에 올려 두면 비칠 색 자체가 없습니다.
+          ⚠️ foot 에 흰 배경을 까는 방법은 쓰면 안 됩니다. 상자 전체가
+             하얘져서 곡선 위쪽에 보여야 할 액자 색까지 덮습니다
+             (물결이 아예 안 보이고 직선이 됩니다). */
+    width: calc(100% + 2px);
+    margin-inline: -1px;
+    margin-bottom: -1px;
+
+    height: auto;
+}
+
+/* 문구는 물결의 흰 바탕 위에 얹습니다 */
+.shop-frame-slogan {
+    position: absolute;
+    left: 50%;
+    bottom: 14%;
+    translate: -50% 0;
+
+    margin: 0;
+    font-family: 'SinchonRhapsody', 'Pretendard Variable', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 2.4vw, 46px);
+    letter-spacing: max(-2px, -0.02em);
+    color: var(--frame);
+    white-space: nowrap;
+}
+
+/* 탭 클릭으로 바뀌는 카테고리별 색 (js/modules/shopGrid.js 가 data-active 를 붙입니다) */
+.shop-grid[data-active="all"]    { --gingham: #BDE1EF; --frame: #BDE1EF; }
+.shop-grid[data-active="food"]   { --gingham: #FFF09F; --frame: #FFF6C8; }
+.shop-grid[data-active="living"] { --gingham: #FFC9E1; --frame: #FFE3F0; }
+.shop-grid[data-active="bulk"]   { --gingham: #50BD83; --frame: #CDEBDA; }
 
 /* 카테고리에 맞춰 상품 카드의 "담기" 버튼 배경 / 가격 글자색도 함께 바꿉니다.
    (기본값은 css/components/shop-item-card.css 를 그대로 따르고, 전체일 때는 override 하지 않습니다) */
@@ -63,15 +221,13 @@
 .shop-grid[data-active="living"] .shop-item-cart:hover { background-color: #FFA3CC; }
 .shop-grid[data-active="bulk"] .shop-item-cart:hover { background-color: #3FA76F; }
 
-/* 피그마 기준 상품 그리드의 좌우 여백이 204px → 안쪽 폭 1512px */
+/* 액자 안쪽 — 피그마에서 카드가 액자 안쪽 면에서 33px 떨어져 있습니다 */
 .shop-grid-inner {
-    position: relative; /* X 무늬 배경(::before, z-index 0)보다 위에 그려지도록 */
+    position: relative;
     z-index: 1;
 
     width: 100%;
-    max-width: 1512px;
-    margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 33px;
 
     /* ⚠️ flow-root 가 꼭 필요합니다.
        첫 자식(지금은 .shop-sort)의 margin-top 이 이 박스 밖으로 새어 나가면
@@ -97,7 +253,7 @@
     position: relative;
     display: flex;
     justify-content: flex-end;
-    margin-top: 42px;
+    margin-top: 57px;   /* 액자 안쪽 면에서 정렬 알약까지 (피그마) */
 }
 
 /* 네이티브 <select> 대신 만든 커스텀 드롭다운 트리거.
@@ -206,27 +362,6 @@
    리본 장식 (그리드 아래)
    위쪽 리본(ribbonTop)은 그 자리에 카테고리 탭이 들어오면서 뺐습니다.
 ------------------------------------------------------------ */
-.shop-ribbon {
-    display: block;
-    margin-inline: auto;
-    height: auto;
-    max-width: 100%;
-    pointer-events: none;
-    user-select: none;
-    transition: filter 0.4s ease;
-}
-
-/* 리본 SVG는 원본이 파란 톤으로 그려져 있어, 탭에서 고른 카테고리 색상에 맞춰
-   filter 로 색상을 통째로 돌려줍니다(개별 path 를 색칠하는 대신). */
-.shop-grid[data-active="food"] .shop-ribbon { filter: hue-rotate(195deg) saturate(1) brightness(1.55); }
-.shop-grid[data-active="living"] .shop-ribbon { filter: hue-rotate(119deg) saturate(1.2); }
-.shop-grid[data-active="bulk"] .shop-ribbon { filter: hue-rotate(-63deg) saturate(1.3); }
-
-.shop-ribbon-bottom {
-    width: 812px;
-    margin-top: 117px;
-}
-
 /* ------------------------------------------------------------
    상품 그리드 + 좌우 페이지 넘김 버튼
 ------------------------------------------------------------ */
@@ -247,7 +382,14 @@
 /* 상품 그리드 — 피그마: 4열, 가로 간격 65px, 세로 간격 63px */
 .shop-card-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    /* ⚠️ 1fr 이 아니라 minmax(0, 1fr) 입니다. 1fr 은 사실 minmax(auto, 1fr)
+          이라 '내용이 줄어들 수 있는 최소폭' 아래로는 안 줄어듭니다.
+          상품명에 word-break: keep-all 이 걸려 있어 긴 낱말이 통째로
+          최소폭이 되고, 그만큼 그 열이 넓어져 열 폭이 서로 달라집니다.
+          (360px 폰에서 실측: 144.7px / 127.3px 로 갈렸습니다)
+          0 으로 두면 내용과 상관없이 똑같이 나눕니다. */
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     column-gap: 65px;
     row-gap: 63px;
     margin-top: 75px;
@@ -270,52 +412,63 @@
 ============================================================ */
 @media (max-width: 1280px) {
     .shop-card-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         column-gap: 40px;
         row-gap: 48px;
     }
 
     .shop-tabs { margin-top: 48px; }
-    .shop-ribbon-bottom { width: min(650px, 100%); margin-top: 90px; }
 
     .shop-grid { padding-bottom: 180px; }
 }
 
 @media (max-width: 1024px) {
     .shop-card-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         column-gap: 32px;
         row-gap: 40px;
         margin-top: 56px;
     }
 
-    .shop-ribbon-bottom { width: min(500px, 100%); margin-top: 70px; }
 
     .shop-grid { padding-bottom: 140px; }
 }
 
 /* ------------------------------------------------------------
-   📐 컨테이너가 max-width(1512px)에 못 미치는 구간의 좌우 여백
+   📐 좁은 화면에서의 액자
 
-   1512px 보다 좁은 화면에서는 안쪽 폭이 뷰포트에 걸려 버려,
-   패딩 24px 만 남고 카드가 화면 끝까지 붙습니다.
-   (14인치 2560x1600 배율 200% = CSS 1280px 에서 실측: 카드가
-    x=24 부터 x=1256 까지. 한쪽 여백이 24px 뿐이었습니다)
-
-   그 구간만 여백을 키워 숨 쉴 자리를 만듭니다. 열 수는 그대로입니다.
-       1280px 에서  카드 3열  387px → 365px,  여백 24px → 56px
-
-   ⚠️ 열을 줄이는 쪽(1280 에서 2열)은 택하지 않았습니다. 카드가 602px 이
-      되는데 상품 이미지 원본이 1024px 이라, 배율 200% 화면에서 필요한
-      1204px 에 18% 모자라 오히려 흐려집니다.
-   ⚠️ 1024px 이하는 건드리지 않습니다. 태블릿·폰에서는 24/16px 이 맞습니다.
+   액자가 바깥 여백(한쪽 40px)을 맡으므로 안쪽 상자는 33px 그대로 둡니다.
+   화면이 좁아질수록 흰 테두리를 얇게 해, 안에 들어갈 자리를 넓힙니다.
 ------------------------------------------------------------ */
-@media (min-width: 1025px) and (max-width: 1511px) {
-    .shop-grid-inner { padding: 0 56px; }
+@media (max-width: 1280px) {
+    .shop-frame {
+        width: min(1400px, calc(100% - 48px));
+        border-width: 20px;
+    }
 }
 
 @media (max-width: 767px) {
-    .shop-grid-inner { padding: 0 16px; }
+    .shop-frame {
+        width: calc(100% - 24px);
+        border-width: 10px;
+        border-radius: 12px;
+    }
+
+    /* 360px 화면에서 띠 100px 은 화면의 1/3 이라 무늬로 보이지 않습니다 */
+    .shop-gingham::before {
+        --band-w: 36px;
+        --band-gap: 86px;
+    }
+
+    .shop-cloud { width: 180px; }
+    .shop-cloud--right { top: 12px; }
+    .shop-cloud--left { bottom: 70px; }
+
+    .shop-grid { padding-top: 60px; }
+}
+
+@media (max-width: 767px) {
+    .shop-grid-inner { padding: 0 14px; }
 
     .shop-tabs { margin-top: 32px; }
 
@@ -349,7 +502,6 @@
         margin-top: 40px;
     }
 
-    .shop-ribbon-bottom { width: min(300px, 100%); margin-top: 48px; }
 
     .shop-grid { padding-bottom: 90px; }
 }
