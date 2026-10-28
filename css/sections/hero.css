@@ -414,15 +414,42 @@
     }
 }
 
+/* 📱 태블릿 가로 (768 ~ 1024)
+   ⚠️ 여기가 비어 있다시피 해서 탭에서 화면이 깨졌습니다.
+      상자만 60vh 로 줄여 놓고 글자 크기는 데스크톱 그대로(제목 110px)라,
+      내용(489px)이 상자(372px)보다 커져 위아래로 58px 씩 삐져나왔습니다.
+      제목 윗부분이 잘리고, 버튼은 히어로를 벗어나 구름 위에 얹혔습니다.
+      갤럭시 탭 S9(1024 x 620)에서 그대로 재현했습니다.
+   그래서 ① 상자를 다른 구간과 같은 한 화면 높이로 되돌리고
+         ② 글자를 이 폭에 맞게 줄입니다. */
 @media (max-width: 1024px) {
-    .video-hero{
-        height: 60vh;
+    .video-hero {
+        height: 100vh;   /* svh 를 모르는 브라우저용 */
+        height: 100svh;  /* 주소창을 뺀 실제 보이는 높이 */
     }
-    
+
+    .sub-title {
+        font-size: 30px;
+    }
+
+    .main-title {
+        font-size: 72px;
+        margin-bottom: 16px;
+    }
+
+    .description {
+        font-size: 18px;
+        margin-bottom: 28px;
+    }
+
+    .button-group {
+        margin-bottom: 28px;
+    }
+
     .item-4 {
         display: none;
     }
-    
+
     .item-6 {
         display: none;
     }

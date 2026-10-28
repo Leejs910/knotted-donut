@@ -89,14 +89,23 @@
     animation: menu-rainbow-down var(--pass-time) linear infinite;
 }
 
+/* 🌫️ 드나들 때는 흐려집니다.
+   기둥이 상자 끝에 닿으면 그냥 잘려서 툭 사라져 보였습니다. 들어오는
+   동안 천천히 진해지고, 나가기 시작할 즈음 다시 옅어지게 둡니다.
+   🎚️ 12% / 88% 가 흐려지는 구간의 길이입니다. 벌릴수록 더 오래,
+      더 멀리서부터 옅어집니다. 가운데 76% 동안은 또렷합니다. */
 @keyframes menu-rainbow-up {
-    from { translate: 0 0; }
-    to   { translate: 0 calc(-100cqh - 100%); }
+    0%   { translate: 0 0;                        opacity: 0; }
+    12%  {                                        opacity: 1; }
+    88%  {                                        opacity: 1; }
+    100% { translate: 0 calc(-100cqh - 100%);     opacity: 0; }
 }
 
 @keyframes menu-rainbow-down {
-    from { translate: 0 -100%; }
-    to   { translate: 0 100cqh; }
+    0%   { translate: 0 -100%;                    opacity: 0; }
+    12%  {                                        opacity: 1; }
+    88%  {                                        opacity: 1; }
+    100% { translate: 0 100cqh;                   opacity: 0; }
 }
 
 /* 자리와 색. 지나가는 시간을 저마다 다르게 둬서 넷이 한 덩어리로

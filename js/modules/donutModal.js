@@ -11,7 +11,9 @@
 //   openDonutModal(도넛데이터, { themeColor: '#A6C8FF', bgImg: './img/cardBlue.png' });
 
 const MODAL_HTML = `
-<div id="donut-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
+<!-- data-lenis-prevent 를 빼면 폰·태블릿에서 손가락으로 밀어도 안 움직입니다.
+     이유는 js/modules/shopItemModal.js 의 같은 자리에 적어 두었습니다. -->
+<div id="donut-modal" class="modal-overlay" data-lenis-prevent role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
     <div class="modal-container">
 
         <!-- 1. SVG 원형 배경 및 둥근 텍스트 -->
