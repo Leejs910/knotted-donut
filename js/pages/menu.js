@@ -19,7 +19,7 @@ import { initFooterBear } from '../modules/footerBear.js';
 // --- 이 페이지에만 있는 섹션 ---
 import { initPuzzleBanner } from '../modules/puzzleBanner.js';
 import { initBannerOverlay } from '../modules/bannerOverlay.js';
-import { initClouds } from '../modules/clouds.js';
+import { initMenuDeco } from '../modules/menuDeco.js';
 import { initMenuGrid } from '../modules/menuGrid.js';
 
 // 공통
@@ -35,8 +35,8 @@ initAuthGuard();
 initPuzzleBanner();
 initBannerOverlay({ trigger: '.puzzle', overlay: '.puzzle-overlay' });
 
-// 흘러가는 구름 배경 (index.html 과 같은 모듈)
-initClouds();
+// ✨ 배경 반짝이 (무지개와 구름은 마크업 + CSS 로만 움직입니다)
+initMenuDeco();
 
 // 메뉴 그리드
 // 도넛 / 케이크는 index.html 이 쓰는 데이터를 그대로 재사용합니다.
