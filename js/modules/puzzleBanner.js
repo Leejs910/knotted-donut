@@ -25,6 +25,11 @@ const RADIUS = 16;           // 타일 모서리 둥근 정도(px)
 // 🎚️ 타일 대비 그림 크기. 1 이면 타일을 꽉 채우고, 0.96 이면 4% 작아집니다.
 //    타일 바탕(크림색 둥근 사각형)은 그대로 두고 그림만 가운데에서 줄어듭니다.
 const IMAGE_SCALE = 0.96;
+
+// 🎚️ 도넛 그림의 진하기. 1 이면 그대로, 0.5 면 절반만 보입니다.
+//    타일 바탕은 이 값의 영향을 받지 않습니다 — 그림을 올릴 때만 적용하고
+//    바로 되돌리므로, 크림색 타일은 늘 또렷합니다.
+const IMAGE_OPACITY = 0.5;
 const VISIBLE_ROWS = 2;      // 화면에 꽉 차게 보여줄 줄 수 (타일 크기 = 배너높이 / 이 값)
 const ANIM_FRAMES = 25;      // 한 칸 미는 데 쓰는 프레임 수 (클수록 느림)
 
@@ -182,7 +187,12 @@ export function initPuzzleBanner() {
                 if (cell.img && cell.img.complete) {
                     const imgSize = tileSize * IMAGE_SCALE;
                     const inset = (tileSize - imgSize) / 2;
+
+                    // ⚠️ globalAlpha 는 캔버스 전체에 남는 설정입니다. 여기서
+                    //    되돌려 놓지 않으면 다음 칸의 타일 바탕까지 연해집니다.
+                    ctx.globalAlpha = IMAGE_OPACITY;
                     ctx.drawImage(cell.img, tileX + inset, tileY + inset, imgSize, imgSize);
+                    ctx.globalAlpha = 1;
                 }
             }
         }
