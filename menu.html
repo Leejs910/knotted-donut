@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="./css/components/page-banner.css">
     <link rel="stylesheet" href="./css/components/category-tabs.css">
     <link rel="stylesheet" href="./css/components/grid-nav.css">
-    <link rel="stylesheet" href="./css/components/clouds.css">
     <link rel="stylesheet" href="./css/components/menu-card.css">
     <link rel="stylesheet" href="./css/components/donut-modal.css">
 
@@ -123,8 +122,37 @@
         <!-- 🍩 메뉴 섹션 — 카드는 js/modules/menuGrid.js 가 그려 넣습니다 -->
         <section class="menu-grid">
 
-            <!-- 흘러가는 구름 배경 (index.html 과 같은 모듈이 채웁니다) -->
-            <div class="clouds-bg" id="cloud-container"></div>
+            <!-- 🌈 무지개 기둥 — 둥근 쪽으로 천천히 오르내립니다
+                 (R·G 는 위가 둥글어 위로, Y·B 는 아래가 둥글어 아래로) -->
+            <div class="menu-rainbows" aria-hidden="true">
+                <div class="menu-rainbow menu-rainbow--b"></div>
+                <div class="menu-rainbow menu-rainbow--y"></div>
+                <div class="menu-rainbow menu-rainbow--g"></div>
+                <div class="menu-rainbow menu-rainbow--r"></div>
+            </div>
+
+            <!-- ☁️ 구름 — 아래가 잘린 채 우에서 좌로 아주 천천히 흐릅니다.
+                 같은 묶음을 두 벌 두고 한 벌만큼 밀어, 이음매 없이 돕니다. -->
+            <div class="menu-clouds" aria-hidden="true">
+                <div class="menu-clouds-track">
+                    <div class="menu-cloud-set">
+                        <img class="menu-cloud menu-cloud--1" src="./img/menu/cloud4.svg" alt="">
+                        <img class="menu-cloud menu-cloud--2" src="./img/menu/cloud4.svg" alt="">
+                        <img class="menu-cloud menu-cloud--3" src="./img/menu/cloud5.svg" alt="">
+                        <img class="menu-cloud menu-cloud--4" src="./img/menu/cloud4.svg" alt="">
+                    </div>
+                    <div class="menu-cloud-set">
+                        <img class="menu-cloud menu-cloud--1" src="./img/menu/cloud4.svg" alt="">
+                        <img class="menu-cloud menu-cloud--2" src="./img/menu/cloud4.svg" alt="">
+                        <img class="menu-cloud menu-cloud--3" src="./img/menu/cloud5.svg" alt="">
+                        <img class="menu-cloud menu-cloud--4" src="./img/menu/cloud4.svg" alt="">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✨ 반짝이 — 자리와 크기는 js/data/menuDecoData.js 에 있고
+                 js/modules/menuDeco.js 가 그려 넣습니다 -->
+            <div class="menu-stars" id="menuStars" aria-hidden="true"></div>
 
             <div class="menu-grid-inner">
 
@@ -140,7 +168,7 @@
                         aria-selected="false">음료</button>
 
                     <div class="shop-tabs-badge">
-                        <img src="./img/blue_ribbon.png" alt="">
+                        <img src="./img/brand/smile.svg" alt="">
                     </div>
                 </div>
 

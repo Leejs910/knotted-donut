@@ -112,7 +112,17 @@
     <header class="video-hero">
         <video autoplay muted loop playsinline poster="./img/donut_fallback.png" class="bg-video">
             <!-- 정방향 → 역방향이 이어지는 부메랑 영상이라, loop 만으로
-                 끊김 없이 왔다 갔다 반복됩니다. (원본: video/donutVideo.mp4) -->
+                 끊김 없이 왔다 갔다 반복됩니다.
+
+                 원본 video/donutVideo.mp4 (8.25초) 의 앞 6.1초만 쓰고,
+                 그 역방향을 이어 붙여 만들었습니다. 되돌이점과 loop 가
+                 이어지는 곳에서 같은 프레임이 두 번 나오지 않도록 한 장씩
+                 덜어냅니다 — 147 + 145 = 292 프레임 (12.17초).
+
+                 ffmpeg -i video/donutVideo.mp4 -filter_complex                    "[0:v]trim=end=6.1,setpts=PTS-STARTPTS,split=2[f][r];                     [r]reverse,trim=start_frame=1:end_frame=146,setpts=PTS-STARTPTS[rv];                     [f][rv]concat=n=2:v=1[out]"                    -map "[out]" -an -c:v libx264 -preset slow -crf 23                    -pix_fmt yuv420p -profile:v high -movflags +faststart 결과.mp4
+
+                 ⚠️ 원본은 HEVC 라 브라우저가 못 읽습니다. 반드시 H.264 로
+                    내보내야 합니다. -->
             <source src="./video/donutVideo_boomerang.mp4" type="video/mp4">
             브라우저가 비디오를 지원하지 않습니다.
         </video>

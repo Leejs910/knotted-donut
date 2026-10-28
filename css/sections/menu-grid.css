@@ -13,33 +13,219 @@
 .menu-grid {
     position: relative;
 
-    /* 카테고리에 따라 바뀌는 하늘색 (기본: 전체 = 하늘색)
-       onlineShop 의 .shop-grid 와 같은 색을 씁니다. */
-    background-color: #8CD8FF;
-    transition: background-color 0.4s ease;
+    /* 🎨 카테고리에 따라 바뀌는 하늘색. 바탕은 흰색에서 이 색으로 내려갑니다.
+       (피그마: 위 흰색 → 아래 #BDE1EF) */
+    --sky: #BDE1EF;
+
+    background-image: linear-gradient(to bottom, #fff, var(--sky));
 
     padding-bottom: 180px;
 
-    /* ⚠️ overflow: hidden 을 주지 않습니다. 구름은 .clouds-bg 가 자체적으로
-       잘라내고, 여기서 자르면 카드 hover 가 위로 떠오를 때 잘립니다. */
+    /* ⚠️ overflow: hidden 을 주지 않습니다. 카드 hover 가 위로 떠오를 때
+       잘립니다. 무지개와 구름은 각자의 상자(.menu-rainbows / .menu-clouds)
+       가 알아서 잘라냅니다. */
 }
 
 /* 탭으로 바뀌는 카테고리별 하늘색 (js/modules/categoryTabs.js 가 data-active 를 붙입니다) */
-.menu-grid[data-active="all"]   { background-color: #8CD8FF; } /* 하늘 */
-.menu-grid[data-active="donut"] { background-color: #FFF09F; } /* 노랑 */
-.menu-grid[data-active="cake"]  { background-color: #FFC9E1; } /* 핑크 */
-.menu-grid[data-active="drink"] { background-color: #50BD83; } /* 초록 */
+.menu-grid[data-active="all"]   { --sky: #BDE1EF; } /* 하늘 */
+.menu-grid[data-active="donut"] { --sky: #FFF09F; } /* 노랑 */
+.menu-grid[data-active="cake"]  { --sky: #FFC9E1; } /* 핑크 */
+.menu-grid[data-active="drink"] { --sky: #A2DFBF; } /* 초록 */
 
-/* 구름이 담기는 상자 — 섹션 전체를 덮습니다.
-   (.clouds-bg 자체 규칙은 css/components/clouds.css 에 있습니다) */
-.menu-grid .clouds-bg {
-    z-index: 1;
+/* ------------------------------------------------------------
+   🌈 무지개 기둥
+
+   피그마: 230 x 1140, 한쪽 끝만 128px 로 둥급니다. 둥근 쪽이 진하고
+   반대쪽으로 갈수록 투명해집니다.
+
+   R·G 는 위가 둥글고, Y·B 는 아래가 둥급니다. 각자 '둥근 쪽' 으로
+   천천히 오르내립니다 — 위가 둥근 것은 위로, 아래가 둥근 것은 아래로.
+
+   자리는 1920 폭 기준을 vw 로 바꿔 둔 값이라 창을 줄여도 비율이 같습니다.
+------------------------------------------------------------ */
+.menu-rainbows {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;      /* 기둥이 섹션 밖으로 삐져나가지 않게 */
+    pointer-events: none;
+
+    /* ⚠️ 이게 있어야 아래 keyframes 의 100cqh(= 이 상자의 높이) 를 쓸 수 있습니다.
+          기둥이 '화면 밖으로 완전히 나갔다' 를 섹션 높이로 재야 하는데,
+          섹션 높이는 카드 수에 따라 달라져 vw 같은 고정값으로는 못 맞춥니다. */
+    container-type: size;
 }
 
-/* 본문은 구름보다 위에 */
+.menu-rainbow {
+    position: absolute;
+    width: 11.98vw;        /* 230 / 1920 */
+    height: 59.38vw;       /* 1140 / 1920 */
+
+    /* 🎚️ 한 번 지나가는 데 걸리는 시간. 키울수록 느려집니다. */
+    --pass-time: 36s;
+}
+
+/* ------------------------------------------------------------
+   위가 둥근 둘(R·G) — 아래에서 올라와 위로 빠져나갑니다.
+
+   ⚠️ 시작과 끝이 둘 다 '상자 밖' 이어야 합니다. 그래야 끝에서 처음으로
+      돌아가는 순간이 안 보입니다. 끝을 상자 안에 두면 기둥이 툭 사라졌다
+      튀어나옵니다.
+        시작 : top 100% (상자 바닥 아래) 에서 그대로
+        끝   : 자기 키(100%) + 상자 높이(100cqh) 만큼 위로
+------------------------------------------------------------ */
+.menu-rainbow--r,
+.menu-rainbow--g {
+    top: 100%;
+    border-radius: 6.67vw 6.67vw 0 0;   /* 128 / 1920 */
+    animation: menu-rainbow-up var(--pass-time) linear infinite;
+}
+
+/* 아래가 둥근 둘(Y·B) — 위에서 내려와 아래로 빠져나갑니다 */
+.menu-rainbow--y,
+.menu-rainbow--b {
+    top: 0;
+    border-radius: 0 0 6.67vw 6.67vw;
+    animation: menu-rainbow-down var(--pass-time) linear infinite;
+}
+
+@keyframes menu-rainbow-up {
+    from { translate: 0 0; }
+    to   { translate: 0 calc(-100cqh - 100%); }
+}
+
+@keyframes menu-rainbow-down {
+    from { translate: 0 -100%; }
+    to   { translate: 0 100cqh; }
+}
+
+/* 자리와 색. 지나가는 시간을 저마다 다르게 둬서 넷이 한 덩어리로
+   움직이지 않게 하고, 음수 지연으로 시작 지점도 어긋나게 둡니다. */
+.menu-rainbow--b {
+    left: 26.06vw;
+    background-image: linear-gradient(to top, #BDE1EF, rgba(255, 255, 255, 0));
+    --pass-time: 41s;
+    animation-delay: -12s;
+}
+
+.menu-rainbow--y {
+    left: 38.04vw;
+    background-image: linear-gradient(to top, #FFF09F, rgba(255, 255, 255, 0));
+    --pass-time: 33s;
+    animation-delay: -25s;
+}
+
+.menu-rainbow--g {
+    left: 49.98vw;
+    background-image: linear-gradient(to bottom, #A2DFBF, rgba(255, 255, 255, 0));
+    --pass-time: 37s;
+    animation-delay: -5s;
+}
+
+.menu-rainbow--r {
+    left: 61.96vw;
+    background-image: linear-gradient(to bottom, #FFC9E1, rgba(255, 255, 255, 0));
+    --pass-time: 45s;
+    animation-delay: -30s;
+}
+
+/* ------------------------------------------------------------
+   ☁️ 아래쪽 구름 — 우에서 좌로 아주 천천히
+
+   섹션 바닥에 붙여 두고, 구름을 바닥보다 아래까지 내려 잘라냅니다.
+   (피그마에서도 구름 아랫부분이 잘려 있습니다)
+
+   ⚠️ 같은 묶음을 두 벌 두고 '한 벌 폭' 만큼만 밀었다가 되돌립니다.
+      그래야 되돌아가는 순간이 보이지 않습니다. 한 벌만 두면 다 지나간
+      뒤 빈 화면이 생기고, 미는 거리가 한 벌 폭과 다르면 툭 끊깁니다.
+------------------------------------------------------------ */
+.menu-clouds {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 36vw;
+    min-height: 200px;
+
+    z-index: 1;
+    overflow: hidden;      /* 구름 아랫부분을 여기서 잘라냅니다 */
+    pointer-events: none;
+}
+
+.menu-clouds-track {
+    display: flex;
+    height: 100%;
+
+    /* 🎚️ 한 벌이 다 지나가는 데 걸리는 시간. 키울수록 느려집니다.
+          (150.2vw 를 이 시간 동안 갑니다 — 140s 면 1920 화면에서 약 20px/초) */
+    --drift-time: 140s;
+
+    animation: menu-cloud-drift var(--drift-time) linear infinite;
+}
+
+/* 한 벌의 폭 = 피그마에서 구름 네 개가 차지하던 가로 길이 (2883 / 19.2) */
+.menu-cloud-set {
+    position: relative;
+    flex: 0 0 150.2vw;
+    height: 100%;
+}
+
+@keyframes menu-cloud-drift {
+    from { translate: 0 0; }
+    to   { translate: -150.2vw 0; }   /* 정확히 한 벌 — 좌로 */
+}
+
+.menu-cloud {
+    position: absolute;
+    height: auto;
+}
+
+/* 자리와 크기 — 피그마 1920 기준을 vw 로. bottom 이 음수면 그만큼 잘립니다. */
+.menu-cloud--1 { left: 0;        bottom: -10.63vw; width: 58.64vw; }
+.menu-cloud--2 { left: 16.87vw;  bottom: -9.12vw;  width: 58.64vw; }
+.menu-cloud--3 { left: 72.01vw;  bottom: -10.75vw; width: 51.39vw; }
+.menu-cloud--4 { left: 91.58vw;  bottom: -10.63vw; width: 58.64vw; }
+
+/* ------------------------------------------------------------
+   ✨ 반짝이 — 둥둥 떠다닙니다
+   자리는 js/data/menuDecoData.js, 놓는 일은 js/modules/menuDeco.js.
+------------------------------------------------------------ */
+.menu-stars {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ⚠️ rotate 와 translate 를 따로 씁니다. 한 속성(transform)에 같이 적으면
+      애니메이션이 기울기까지 덮어써서, 45° 로 둔 반짝이가 똑바로 섭니다. */
+.menu-star {
+    position: absolute;
+    height: auto;
+    rotate: var(--star-spin, 0deg);
+    animation: menu-star-float var(--star-time, 7s) ease-in-out infinite;
+}
+
+@keyframes menu-star-float {
+    0%, 100% { translate: 0 0;        opacity: 0.85; }
+    50%      { translate: 0 -1.15vw;  opacity: 1; }
+}
+
+/* 배지 그림이 리본이 아니라 얼굴이라 원을 좀 더 채웁니다.
+   (기본값 70% 는 리본 모양에 맞춘 값이라 얼굴이 작아 보입니다.
+    mypage / support 가 같은 이유로 같은 손질을 해 두었습니다) */
+.menu-grid .shop-tabs-badge img {
+    width: 88%;
+    height: 88%;
+}
+
+/* 본문은 장식들보다 위에.
+   층 순서: 하늘(바탕) → 무지개(0) → 구름(1) → 반짝이(2) → 본문(3)
+   ⚠️ 반짝이와 같은 2 로 두면 마크업 순서에만 기대게 됩니다. */
 .menu-grid-inner {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 
     width: 100%;
     max-width: 1512px;
@@ -167,4 +353,30 @@
     }
 
     .menu-grid { padding-bottom: 80px; }
+
+    /* ✨ 폰에서는 반짝이를 뺍니다. 화면이 좁아 카드와 겹쳐 지저분해집니다.
+       ⚠️ display: none 이라 그림은 이미 받아진 뒤입니다. SVG 400바이트짜리
+          라 그대로 두지만, 더 무거운 그림을 넣게 되면 js 쪽에서 아예
+          만들지 않도록 옮기세요. (js/modules/menuDeco.js) */
+    .menu-stars { display: none; }
+
+    /* 🌈 폰에서는 무지개를 화면 가득. 데스크톱 비율(11.98vw)을 그대로 쓰면
+       45px 밖에 안 돼서 가느다란 선처럼 보입니다.
+       넷이 나란히 화면을 거의 채우도록 24vw 씩 둡니다 (사이 0.4vw). */
+    .menu-rainbow {
+        width: 24vw;
+        height: 150vw;      /* 세로도 넉넉히 — 지나가는 동안 꽉 차 보이게 */
+    }
+
+    /* 둥근 정도도 폭에 맞춰 키웁니다 (피그마 비율: 폭의 55.7%) */
+    .menu-rainbow--r,
+    .menu-rainbow--g { border-radius: 13.4vw 13.4vw 0 0; }
+
+    .menu-rainbow--y,
+    .menu-rainbow--b { border-radius: 0 0 13.4vw 13.4vw; }
+
+    .menu-rainbow--b { left: 0.8vw; }
+    .menu-rainbow--y { left: 25.2vw; }
+    .menu-rainbow--g { left: 49.6vw; }
+    .menu-rainbow--r { left: 74vw; }
 }
