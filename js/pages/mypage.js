@@ -8,7 +8,6 @@ import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
-import { initNavDropdown } from '../modules/navDropdown.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
 import { initAuthGuard } from '../modules/authGuard.js';
@@ -24,7 +23,6 @@ initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
-initNavDropdown();
 initLoginModal();
 initAuthNav();
 initAuthGuard();
@@ -35,6 +33,10 @@ initAuthGuard();
 initBrandCity({
     holder: document.getElementById('mypageBannerArt'),
     fit: 'xMidYMax slice',
+
+    // 구름은 쓰지 않습니다. 그림에 배경이 없어서, 구름을 지우면 배너의
+    // 바탕색(#BDE1EF)이 그대로 하늘이 됩니다.
+    clouds: false,
 });
 
 // 스크롤을 내리면 배너가 어두워집니다 (다른 배너와 같은 연출)

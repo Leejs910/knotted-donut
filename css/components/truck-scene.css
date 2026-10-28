@@ -66,11 +66,30 @@
 
        ②와 ③ 사이의 틈이 test/truckAnime.html 의 '덜컹거린 다음 움직이는' 느낌입니다.
        (원본은 0.8s 에 덜컹, 1.0s 에 출발 — 그 간격 0.2s 를 그대로 가져왔습니다) */
-    --zoom-dur: 0.231s;
-    --hold: 0.5s;
+    /* ⚠️ --zoom-dur 는 '뒷면 → 옆면' 7장 플립북이 넘어가는 시간입니다.
+       7장이 이 시간을 똑같이 나눠 쓰므로, 한 장에 주어지는 시간은
+       --zoom-dur / 7 입니다. 이 값이 너무 짧으면 화면 주사율보다 빨라져
+       그림이 아예 건너뛰어집니다.
+
+         0.231s → 한 장당 33ms = 60Hz 화면에서 딱 2프레임.
+                  한 프레임만 밀려도 한 장이 통째로 사라져서,
+                  트럭이 돌지 않고 툭툭 튀는 것처럼 보였습니다.
+         0.42s  → 한 장당 60ms = 약 3.6프레임. 한 프레임 밀려도 남습니다.
+
+       늘린 만큼 --hold 에서 빼서, 전체 길이와 출발 시점(0.93s)은
+       예전과 똑같이 유지했습니다. (--hold 는 그냥 서 있는 시간입니다) */
+    --zoom-dur: 0.42s;
+    --hold: 0.31s;
     --judder: 0.2s;
     --drive-dur: 2s;
-    --drive-to: 150vw;
+
+    /* ⚠️ 단위 뜻이 바뀌었습니다.
+       예전에는 이 값이 SVG <g> 에 걸려서 'viewBox 단위'로 읽혔습니다.
+       (150vw → 1920 user 단위 → 화면에서는 약 4026px)
+       이제 HTML 컨테이너에 걸리므로 그냥 CSS 픽셀입니다.
+       트럭이 화면을 벗어나는 지점이 주행의 약 40~45% 가 되도록 맞춘 값으로,
+       아래 truckScene.js 의 EXIT_RATIO(0.55) 가 그대로 유효합니다. */
+    --drive-to: 185vw;
 
     position: relative;
     width: 100%;
@@ -117,6 +136,34 @@
     display: none;
 }
 
+/* ------------------------------------------------------------
+   🔥 예열 — 문이 닫히는 1.2초 동안 트럭을 '미리 칠해 두는' 상태
+
+   왜 필요한가:
+     display:none 인 동안 브라우저는 레이아웃도 페인트도 하지 않습니다.
+     그래서 hidden 을 푸는 순간 307개 path 를 scale(2.8) 로 처음 칠하는 일이
+     한 프레임에 전부 몰렸습니다. 배율 200% 화면에서는 픽셀 면적이 약 31배라,
+     문 → 트럭 교체 지점만 유독 턱 걸렸습니다.
+     (SVG 를 미리 받아 두는 것만으로는 해결되지 않습니다. 받기·파싱이 아니라
+      '칠하기'가 비싼 쪽이기 때문입니다)
+
+   문이 닫히는 동안은 어차피 한가하므로, 그때 미리 칠해 둡니다.
+------------------------------------------------------------ */
+.truck-stage-band.is-warming {
+    /* ⚠️ opacity: 0 으로 두면 브라우저가 '안 보이니 안 그려도 된다'고 판단해
+       칠하기를 건너뛸 수 있습니다. 0.001 은 눈에 보이지 않으면서도
+       래스터화는 반드시 하게 만듭니다. */
+    opacity: 0.001;
+    pointer-events: none;
+}
+
+.truck-stage-band.is-warming #truckSvg {
+    /* zoomOutAndPan 의 0% 와 같은 상태.
+       '처음 보여줄 크기 그대로' 칠해 둬야 교체 순간 다시 칠하지 않습니다. */
+    transform: translate(5.825%, 12.593%) scale(2.8);
+    will-change: transform;
+}
+
 .truck-svg,
 .truck-svg svg {
     display: block;
@@ -139,22 +186,36 @@
         돌았습니다 → 출발 시점(0.53s)에 맞췄습니다.
       · 주행 끝점이 80vw 라 넓은 화면에서 트럭 꼬리가 남았습니다 → 150vw.
 ------------------------------------------------------------ */
-.start-animation #truckStripe {
+/* 🏎️ 줌·주행을 SVG <g>(#truckStripe) 가 아니라 HTML 컨테이너(#truckSvg) 에 겁니다.
+
+   SVG 내부 요소의 transform 은 GPU 합성이 되지 않아, scale 이 조금씩 바뀌는
+   매 프레임마다 307개 path 를 그 배율로 다시 칠했습니다.
+   scale(2.8) × 배율 200% 화면이면 한 번에 약 1,880만 픽셀입니다.
+   HTML 요소의 transform 은 레이어를 한 번 칠해 두고 GPU 가 확대/이동만 하므로
+   중간 배율마다 다시 칠하지 않습니다.
+
+   📐 좌표 환산 — viewBox(515 x 270) 단위를 컨테이너 기준 %로 바꾼 것입니다.
+      컨테이너 폭이 SVG 폭과 같으므로 결과 픽셀값이 정확히 일치합니다.
+        30px → 30/515 = 5.825%      34px → 34/270 = 12.593%
+        60px → 60/515 = 11.650%     15px → 15/270 =  5.556%
+        80px → 80/515 = 15.534%     10px → 10/270 =  3.704% */
+.start-animation #truckSvg {
     transform-origin: 50% 50%;
+    will-change: transform;
     animation:
         zoomOutAndPan var(--zoom-dur) cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
         driveAway var(--drive-dur) ease-in calc(var(--zoom-dur) + var(--hold) + var(--judder)) forwards;
 }
 
 @keyframes zoomOutAndPan {
-    0%   { transform: translate(30px, 34px) scale(2.8); } /* 문에 딱 붙은 뒷면 */
-    14%  { transform: translate(60px, 15px) scale(2.5); }
-    100% { transform: translate(80px, 10px) scale(1); }   /* 줌아웃 완료 */
+    0%   { transform: translate(5.825%, 12.593%) scale(2.8); } /* 문에 딱 붙은 뒷면 */
+    14%  { transform: translate(11.650%, 5.556%) scale(2.5); }
+    100% { transform: translate(15.534%, 3.704%) scale(1); }   /* 줌아웃 완료 */
 }
 
 @keyframes driveAway {
-    0%   { transform: translate(80px, 10px) scale(1); }
-    100% { transform: translate(var(--drive-to), 10px) scale(1); }
+    0%   { transform: translate(15.534%, 3.704%) scale(1); }
+    100% { transform: translate(var(--drive-to), 3.704%) scale(1); }
 }
 
 /* 뒷면 → 옆면으로 넘어가는 7장짜리 프레임 애니메이션 */

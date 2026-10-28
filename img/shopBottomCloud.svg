@@ -1,0 +1,7 @@
+<!-- ⚠️ 피그마에서 다시 내보내면 왼쪽 아래 끝점이 L0.99 220 으로 나옵니다.
+     x 가 0 이 아니라 왼쪽 변이 기울어 액자 사이에 틈이 보입니다. L0 220 으로 고쳐 주세요. -->
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="1340" height="220" viewBox="0 0 1340 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#235;&#160;&#136;&#236;&#157;&#180;&#236;&#150;&#180; 1">
+<path id="Vector" d="M1340 0C1172.5 0 1172.5 50 1005 50C837.5 50 837.5 0 670 0C502.5 0 502.5 50 335 50C167.5 50 167.5 0 0 0L0 220H1340V0Z" fill="white"/>
+</g>
+</svg>

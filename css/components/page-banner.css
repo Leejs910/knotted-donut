@@ -37,8 +37,8 @@
 
     color: #fff;
 
-    /* 배너와 본문 사이 경계선. border-box 라 배너 높이에는 영향이 없습니다. */
-    border-bottom: 3px solid #3E2723;
+    /* 배너와 본문 사이 경계선은 바로 아래 .banner-rule 이 맡습니다.
+       (css/components/banner-rule.css) */
 }
 
 /* 🌓 배너 전체에 얹는 아주 옅은 어두운 막 — 흰 글씨 네비게이션용.

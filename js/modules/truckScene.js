@@ -23,6 +23,15 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
     let svgLoaded = false;
     let playing = false;
 
+    // ⚠️ '트럭이 출발했는가' 를 bandEl.hidden 으로 판단하면 안 됩니다.
+    //    예열(is-warming) 때문에 문이 닫히는 동안에도 이미 hidden 이 풀려 있어서,
+    //    transitionend 가 오지 않는 환경에서 아래 보험이 헛돌게 됩니다.
+    let truckStarted = false;
+
+    // 이동이 시작된 뒤에도 흰 무대를 덮어 두므로, '이미 끝났는가' 를
+    // bandEl.hidden 으로 알 수 없습니다. 따로 기억합니다.
+    let finished = false;
+
     // 트럭 SVG 는 180KB 정도라 결제 버튼을 누른 뒤에 불러옵니다.
     // (평소 결제 화면 로딩을 무겁게 만들지 않기 위해)
     async function loadSvg() {
@@ -46,15 +55,33 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
     }
 
     function finish() {
-        bandEl.hidden = true;
+        if (finished) return;
+        finished = true;
+
+        // ⚠️ 여기서 흰 무대를 걷어내면 안 됩니다.
+        //    onFinish() 는 다음 페이지로 이동을 '시작' 할 뿐이고, 새 페이지가
+        //    뜨기까지 0.1초쯤 걸립니다. 그 사이 무대가 사라지면 그 아래에
+        //    닫힌 노란 문(.truck-door.is-closed)이 드러나, 셔터가 닫히는
+        //    장면이 한 번 깜빡이고 지나갑니다.
+        //    흰 무대를 그대로 덮어 둔 채 이동하면 흰 화면에서 흰 화면으로
+        //    이어집니다. (결제완료 페이지는 들어오는 페이드도 건너뛰므로
+        //     — js/modules/pageFade.js — 흰색이 끊기지 않습니다)
         window.lenis?.start(); // 잠갔던 스크롤을 풀어 줍니다
         if (typeof onFinish === 'function') onFinish();
     }
 
     // ③④ 트럭 등장 → 주행
     function runTruck() {
-        bandEl.hidden = false;
+        if (truckStarted) return;
+        truckStarted = true;
 
+        // 예열해 뒀다면 여기서는 투명도만 걷어내면 됩니다 (이미 칠해져 있음).
+        // 예열에 실패했더라도 hidden 을 풀어 예전과 똑같이 동작합니다.
+        bandEl.hidden = false;
+        bandEl.classList.remove('is-warming');
+
+        // SVG 가 제대로 들어왔는지 확인하는 용도로만 찾습니다.
+        // (애니메이션은 이제 #truckStripe 가 아니라 컨테이너 #truckSvg 에 걸립니다)
         const stripe = svgHolder.querySelector('#truckStripe');
         if (!stripe) {
             console.warn('[truckScene] SVG 안에서 #truckStripe 를 찾지 못했습니다.');
@@ -94,7 +121,7 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
             if (settled) return;
             settled = true;
             timers.forEach(clearTimeout);
-            stripe.removeEventListener('animationend', onEnd);
+            svgHolder.removeEventListener('animationend', onEnd);
             finish();
         };
 
@@ -104,13 +131,15 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
             if (e.animationName !== 'driveAway') return;
             done();
         }
-        stripe.addEventListener('animationend', onEnd);
+        // ⚠️ driveAway 는 컨테이너(#truckSvg = svgHolder)에서 끝납니다.
+        //    예전처럼 #truckStripe 에 달면 이 보험이 영영 울리지 않습니다.
+        svgHolder.addEventListener('animationend', onEnd);
 
         timers.push(setTimeout(done, exitAt));
 
         // 애니메이션이 어떤 이유로든 끝나지 않아도 멈춰 있지 않도록 안전장치
         timers.push(setTimeout(() => {
-            if (bandEl.hidden) return;
+            if (finished) return;
             done();
         }, 4000));
     }
@@ -161,6 +190,14 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
             return;
         }
 
+        // 🔥 예열 — 문이 닫히는 1.2초 동안 트럭을 미리 칠해 둡니다.
+        //    (css/components/truck-scene.css 의 .is-warming 설명 참고)
+        //    이게 없으면 문 → 트럭 교체 순간에 307개 path 를 scale(2.8) 로
+        //    처음 칠하는 일이 한 프레임에 몰려 그 지점만 턱 걸립니다.
+        bandEl.classList.add('is-warming');
+        bandEl.hidden = false;
+        void stageEl.offsetWidth; // 레이아웃을 지금 확정시켜 칠하기를 앞당깁니다
+
         // ① 문 닫기
         doorEl.classList.add('is-closed');
 
@@ -174,10 +211,25 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
 
         // transitionend 가 안 오는 경우(탭이 숨겨져 있는 등) 대비
         setTimeout(() => {
-            if (!bandEl.hidden) return;
+            if (truckStarted) return;
             doorEl.removeEventListener('transitionend', onDoorEnd);
             runTruck();
         }, 1600);
+    }
+
+    // 🕗 결제 버튼을 누르기 전, 브라우저가 한가한 틈에 미리 받아 둡니다.
+    //
+    //    예전에는 누르는 순간 받아서, 183KB·307개 path 를 내려받고 파싱하는
+    //    일이 회전 첫 장과 정확히 겹쳤습니다. 그래서 회전 시작이 항상 한 번
+    //    턱 걸렸습니다.
+    //
+    //    ⚠️ 페이지 로딩 자체는 여전히 무겁게 하지 않습니다. idle 콜백이라
+    //       화면이 다 뜨고 할 일이 없을 때만 돌고, 실패해도 play() 가 다시
+    //       받으므로 연출에는 영향이 없습니다.
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => { loadSvg(); }, { timeout: 3000 });
+    } else {
+        setTimeout(() => { loadSvg(); }, 1200);
     }
 
     return { play };

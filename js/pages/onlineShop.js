@@ -11,7 +11,6 @@ import { initPageFade } from '../modules/pageFade.js';
 import { initSmoothScroll } from '../modules/smoothScroll.js';
 import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
-import { initNavDropdown } from '../modules/navDropdown.js';
 import { initTabFromUrl } from '../modules/tabFromUrl.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
@@ -19,7 +18,7 @@ import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
 // --- 이 페이지에만 있는 섹션 ---
-import { initPuzzleBanner } from '../modules/puzzleBanner.js';
+import { initShopBeltBanner } from '../modules/shopBeltBanner.js';
 import { initBannerOverlay } from '../modules/bannerOverlay.js';
 import { initShopGrid } from '../modules/shopGrid.js';
 
@@ -28,14 +27,13 @@ initPageFade();
 initSmoothScroll();
 initNavScroll();
 initMobileMenu();
-initNavDropdown();
 initLoginModal();
 initAuthNav();
 initAuthGuard();
 
-// 퍼즐 배너
-initPuzzleBanner();
-initBannerOverlay({ trigger: '.puzzle', overlay: '.puzzle-overlay' });
+// 컨베이어 배너 — 레일이 끊임없이 흐르고 상자가 무작위로 지나갑니다
+initShopBeltBanner();
+initBannerOverlay({ trigger: '.shop-belt', overlay: '.shop-belt-overlay' });
 
 // 상품 그리드
 initShopGrid({ data: cardData });

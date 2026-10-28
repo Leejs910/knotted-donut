@@ -19,7 +19,8 @@
 
     overflow: hidden;
     background: #BDE1EF; /* 배경 SVG가 뜨기 전에도 보이는 하늘색 */
-    border-bottom: 3px solid #3E2723;
+    /* 배너와 본문 사이 경계선은 바로 아래 .banner-rule 이 맡습니다.
+       (css/components/banner-rule.css) */
 }
 
 /* 도로 배경 — 한 장짜리 SVG를 가로로 반복시키고,
