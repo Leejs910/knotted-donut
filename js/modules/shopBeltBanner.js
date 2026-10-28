@@ -40,11 +40,14 @@ const TILE_RATIO = 1455 / 357;
 //    상자가 화면 왼쪽에서 지워지지 않습니다.
 const BOX_RATIO = 283 / 219;
 
+// ⚠️ 라벨 없는 민무늬 상자입니다. 라벨이 붙은 box*.png 는 index 히어로의
+//    컨베이어(js/modules/conveyor.js)가 계속 씁니다 — 그쪽은 상자 위에 상품
+//    카드가 얹히는 구조라 라벨이 필요합니다. 이 배너는 상자만 흘려보냅니다.
 const BOX_IMAGES = [
-    './img/boxPink.png',
-    './img/boxBlue.png',
-    './img/boxGreen.png',
-    './img/boxYellow.png',
+    './img/boxPinkRaw.png',
+    './img/boxBlueRaw.png',
+    './img/boxGreenRaw.png',
+    './img/boxYellowRaw.png',
 ];
 
 const rand = (min, max) => min + Math.random() * (max - min);
@@ -57,10 +60,12 @@ export function initShopBeltBanner() {
     const banner = rail.closest('.page-banner') || rail.parentElement;
     if (!banner) return;
 
-    // 움직임을 불편해하는 사용자에게는 느리게 — 멈추지는 않습니다.
-    // (멈추면 '컨베이어' 라는 화면의 뜻이 사라집니다)
-    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const speed = SETTINGS.SPEED * (calm ? 0.45 : 1);
+    // ⚠️ prefers-reduced-motion 으로 속도를 줄이지 않습니다.
+    //    OS 에서 '애니메이션 효과' 를 꺼 둔 화면에서는 그 조건이 늘 참이라,
+    //    SETTINGS.SPEED 를 아무리 고쳐도 영영 그 45% 만 보입니다. 그 화면에
+    //    맞춰 속도를 정하면 켜 둔 화면에서는 두 배로 빨라집니다.
+    //    속도는 SETTINGS.SPEED 한 곳에서만 정합니다.
+    const speed = SETTINGS.SPEED;
 
     let stageWidth = 0;
     let tileWidth = 0;
