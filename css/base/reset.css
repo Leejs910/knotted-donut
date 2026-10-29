@@ -45,7 +45,24 @@ html{
 
 
 
-body { font-family: sans-serif; background: #f8fafc; }
+/* 🔤 본문 서체 — 사이트 전체의 기본값입니다.
+
+   Pretendard 는 파일이 아니라 CDN 으로 받아옵니다. 각 페이지 <head> 에서
+   이 파일보다 먼저 부르는 pretendardvariable-dynamic-subset.min.css 가
+   그 일을 합니다. 그 한 줄이 빠지면 여기 적은 이름이 아무 데도 없어서
+   한글이 보는 사람 기기의 기본 고딕으로 나옵니다.
+
+   ⚠️ 'Pretendard Variable' 과 'Pretendard' 는 서로 다른 이름입니다.
+      CDN 이 주는 쪽은 'Pretendard Variable' 하나뿐이라, 'Pretendard' 만
+      적어 두면 설치된 사람 화면에서조차 안 걸립니다.
+      (푸터가 실제로 그랬습니다 — css/layout/footer.css)
+
+   ⚠️ 이 한 줄이 기본값이라, 컴포넌트·섹션 css 에서 같은 스택을 다시
+      적을 필요가 없습니다. 다른 서체를 쓸 때만 따로 적습니다. */
+body {
+    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    background: #f8fafc;
+}
 * {
     box-sizing: border-box; }
 a{
