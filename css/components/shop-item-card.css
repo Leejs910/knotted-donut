@@ -61,7 +61,6 @@
     margin: 21px 6px 0;
     text-align: center;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
     font-size: clamp(13px, 1vw, 19.2px);
     font-weight: 500;
     line-height: 1.35;
@@ -83,7 +82,6 @@
     margin: 9px 0 21px;
     text-align: center;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
     font-size: clamp(16px, 1.25vw, 24px);
     font-weight: 700;
     color: #10ABFF;
@@ -102,7 +100,8 @@
     background: #BDE1EF;
     color: #fff;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    /* button 은 body 의 서체를 물려받지 않습니다 — 직접 물려줍니다 */
+    font-family: inherit;
     font-size: clamp(16px, 1.25vw, 24px);
     font-weight: 700;
 

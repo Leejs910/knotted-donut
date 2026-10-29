@@ -25,7 +25,6 @@
           내용이 길어질 때의 스크롤은 바깥 .modal-screen 이 맡습니다. */
     overflow: visible;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
 
     /* 상품 상세 모달과 같은 등장 효과 — 살짝 튀어오르듯 */
     transform: scale(0.92) translateY(10px);

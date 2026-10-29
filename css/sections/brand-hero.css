@@ -31,7 +31,6 @@
     background: #fff;
     overflow: hidden;   /* 1920칸 무대가 좁은 화면에서 양옆으로 삐져나갑니다 */
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
 }
 
 /* ------------------------------------------------------------
