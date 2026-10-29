@@ -4,7 +4,7 @@
 
 ## 프로젝트 개요
 
-"NotedDount"라는 도넛 가게 컨셉의 인터랙티브 포트폴리오 웹사이트입니다. `index.html`(메인 랜딩), `onlineShop.html`(온라인 스토어) 두 개의 정적 페이지로 구성되며, 빌드 도구나 프레임워크 없이 순수 HTML/CSS/JavaScript(ES 모듈)로 작성되어 있습니다 (`package.json` 없음, 별도 설치/빌드 과정 없음).
+"KnottedDonut"라는 도넛 가게 컨셉의 인터랙티브 포트폴리오 웹사이트입니다. `index.html`(메인 랜딩), `onlineShop.html`(온라인 스토어) 두 개의 정적 페이지로 구성되며, 빌드 도구나 프레임워크 없이 순수 HTML/CSS/JavaScript(ES 모듈)로 작성되어 있습니다 (`package.json` 없음, 별도 설치/빌드 과정 없음).
 
 ## 기술 스택
 
