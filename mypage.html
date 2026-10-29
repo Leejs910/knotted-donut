@@ -29,6 +29,7 @@
     <link rel="stylesheet" href="./css/components/login-modal.css">
     <link rel="stylesheet" href="./css/components/page-banner.css">
     <link rel="stylesheet" href="./css/components/category-tabs.css">
+    <link rel="stylesheet" href="./css/components/list-pager.css">
 
     <!-- 섹션: 그 페이지에 있는 것만 -->
     <link rel="stylesheet" href="./css/sections/mypage.css">
@@ -143,9 +144,12 @@
                     </div>
                 </div>
 
-                <!-- 📦 주문조회 -->
+                <!-- 📦 주문조회
+                     주문이 쌓이면 화면이 한없이 길어져서 다섯 건씩 끊어 보여 줍니다.
+                     번호는 js/modules/listPager.js 가 아래 <nav> 에 그려 넣습니다. -->
                 <section class="mypage-panel" id="panelOrders" role="tabpanel" aria-label="주문조회">
                     <div class="mypage-orders" id="mypageOrders"></div>
+                    <nav class="list-pager" id="mypageOrdersPager" aria-label="주문조회 페이지" hidden></nav>
                 </section>
 
                 <!-- ⭐ 포인트 -->

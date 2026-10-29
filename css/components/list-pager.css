@@ -1,0 +1,89 @@
+/* ============================================================
+   🔢 번호 페이지 넘김
+
+   버튼은 js/modules/listPager.js 가 그려 넣습니다.
+   지금 쓰는 곳: 마이페이지 주문조회
+
+   글자만 늘어놓는 수수한 모양입니다 — 목록이 주인공이라
+   페이지 번호가 시선을 끌지 않게 둡니다.
+   ============================================================ */
+
+.list-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px;
+
+    margin-top: 28px;
+}
+
+/* 숨길 때는 자리까지 없애야 합니다 — display:flex 가 [hidden] 을 이기므로
+   따로 적어 둡니다. (한 쪽뿐이면 모듈이 hidden 을 붙입니다) */
+.list-pager[hidden] {
+    display: none;
+}
+
+.list-pager-btn {
+    /* button 은 body 의 서체를 물려받지 않습니다 */
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1;
+    color: #6b6b6b;
+
+    min-width: 34px;
+    height: 34px;
+    padding: 0 6px;
+
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+
+    transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.list-pager-btn:hover:not(:disabled) {
+    color: #3E2723;
+    background-color: #f3f3f3;
+}
+
+/* 지금 보고 있는 쪽 — 네모로 감싸서 한눈에 */
+.list-pager-btn[aria-current="page"] {
+    color: #3E2723;
+    font-weight: 700;
+    border-color: #cfcfcf;
+    background-color: #fff;
+}
+
+/* 이전 / 다음 — 번호보다 조금 넓고 글자도 작게 */
+.list-pager-btn.is-step {
+    min-width: auto;
+    padding: 0 10px;
+    font-size: 13px;
+}
+
+.list-pager-btn:disabled {
+    color: #c8c8c8;
+    cursor: default;
+}
+
+.list-pager-dots {
+    padding: 0 4px;
+    color: #9a9a9a;
+    font-size: 14px;
+    user-select: none;
+}
+
+/* 📱 좁은 화면에서는 번호가 줄바꿈되며 쌓이므로 간격만 조금 줄입니다 */
+@media (max-width: 480px) {
+    .list-pager-btn {
+        min-width: 30px;
+        height: 30px;
+        font-size: 13px;
+    }
+    .list-pager-btn.is-step {
+        padding: 0 8px;
+        font-size: 12px;
+    }
+}
