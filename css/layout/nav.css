@@ -351,31 +351,9 @@
         overflow: hidden;
     }
 
-    .mm-star {
-        position: absolute;
-        will-change: transform;
-    }
-
-    /* 자리와 크기는 하나씩 따로. 속도를 다르게 줘야 한 박자로 돌지 않습니다 */
-    .mm-star-1 {
-        top: 9%; left: 9%; width: 62px;
-        animation: spin 18s linear infinite;
-    }
-    .mm-star-2 {
-        top: 40%; right: 9%; width: 36px;
-        animation: spin 24s linear infinite reverse;
-    }
-
-    /* 작은 원 — 이미지 없이 테두리만으로 그립니다 */
-    .mm-circle {
-        position: absolute;
-        top: 3%; left: 6%;
-        width: 22px;
-        height: 22px;
-        border: 3px solid #1d1d1d;
-        border-radius: 50%;
-        background-color: #FFFFFF;
-    }
+    /* 예전에는 여기에 도는 별 둘(.mm-star-1 / .mm-star-2)과 작은 동그라미
+       (.mm-circle)가 더 있었습니다. 무지개·토끼와 한 화면에 모이니 어수선해
+       보여서 걷어냈습니다. 지금은 토끼 하나만 둡니다. */
 
     /* 🐰 무지개 위에 앉은 토끼.
        가로 비율로 크기를 잡아 화면 폭이 달라져도 같은 크기로 앉아 있게 합니다.
@@ -394,14 +372,6 @@
         height: auto;
         transform: rotate(7deg);
         transform-origin: bottom center;
-    }
-
-    /* 움직임을 불편해하는 사용자에게는 훨씬 느리게.
-       ⚠️ 전부 꺼버리면 장식이 그냥 멈춘 그림이 됩니다. */
-    @media (prefers-reduced-motion: reduce) {
-        .mm-star {
-            animation-duration: 60s !important;
-        }
     }
 
     .mobile-menu-rainbow {

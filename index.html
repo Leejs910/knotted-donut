@@ -102,12 +102,10 @@
         <!-- 🌈 바닥에 걸치는 무지개 장식 (그림 파일 대신 CSS 로 그립니다 — 장식 하나에 수백 KB 를 쓸 이유가 없습니다) -->
         <div class="mobile-menu-rainbow" aria-hidden="true"></div>
 
-        <!-- 🐰 메뉴 아래 빈 자리 장식: 무지개 위에 앉은 토끼 + 천천히 도는 별.
-             (@keyframes spin 은 css/base/animations.css 에 있어 그대로 재사용) -->
+        <!-- 🐰 메뉴 아래 빈 자리 장식: 무지개 위에 앉은 토끼.
+             (예전에는 도는 별 둘과 동그라미가 더 있었는데, 한 화면에 모이니
+              어수선해 보여 걷어냈습니다. 상자 이름은 그대로 둡니다.) -->
         <div class="mobile-menu-stars" aria-hidden="true">
-            <span class="mm-circle"></span>
-            <img src="./img_deco/star1.png" class="mm-star mm-star-1" alt="">
-            <img src="./img_deco/star2.png" class="mm-star mm-star-2" alt="">
             <img src="./img/phoneRabbit.svg" class="mm-rabbit" alt="">
         </div>
     </div>
@@ -126,15 +124,22 @@
             <!-- 정방향 → 역방향이 이어지는 부메랑 영상이라, loop 만으로
                  끊김 없이 왔다 갔다 반복됩니다.
 
-                 원본 video/donutVideo.mp4 (8.25초) 의 앞 6.1초만 쓰고,
-                 그 역방향을 이어 붙여 만들었습니다. 되돌이점과 loop 가
-                 이어지는 곳에서 같은 프레임이 두 번 나오지 않도록 한 장씩
-                 덜어냅니다 — 147 + 145 = 292 프레임 (12.17초).
+                 원본 video/donutVideo.mp4 (8.25초, 24fps) 의 앞 4.875초
+                 (117 프레임) 만 쓰고, 그 역방향을 이어 붙여 만들었습니다.
+                 되돌이점과 loop 가 이어지는 곳에서 같은 프레임이 두 번
+                 나오지 않도록 한 장씩 덜어냅니다
+                 — 117 + 115 = 232 프레임 (9.67초).
 
-                 ffmpeg -i video/donutVideo.mp4 -filter_complex                    "[0:v]trim=end=6.1,setpts=PTS-STARTPTS,split=2[f][r];                     [r]reverse,trim=start_frame=1:end_frame=146,setpts=PTS-STARTPTS[rv];                     [f][rv]concat=n=2:v=1[out]"                    -map "[out]" -an -c:v libx264 -preset slow -crf 23                    -pix_fmt yuv420p -profile:v high -movflags +faststart 결과.mp4
+                 🎚️ 길이를 바꾸려면 앞쪽 F 프레임 수만 정하면 됩니다.
+                    end=F/24 로 자르고, 뒤쪽은 end_frame=F-1 로 맞춥니다.
+                    전체 길이는 (2F-2)/24 초가 됩니다.
+
+                 ffmpeg -i video/donutVideo.mp4 -filter_complex                    "[0:v]trim=end=4.875,setpts=PTS-STARTPTS,split=2[f][r];                     [r]reverse,trim=start_frame=1:end_frame=116,setpts=PTS-STARTPTS[rv];                     [f][rv]concat=n=2:v=1[out]"                    -map "[out]" -an -r 24 -c:v libx264 -preset slow -crf 23                    -pix_fmt yuv420p -profile:v high -movflags +faststart 결과.mp4
 
                  ⚠️ 원본은 HEVC 라 브라우저가 못 읽습니다. 반드시 H.264 로
-                    내보내야 합니다. -->
+                    내보내야 합니다.
+                 ⚠️ -r 24 를 빼지 마세요. concat 뒤에 ffmpeg 이 25fps 로
+                    잡아 버려 프레임 수가 어긋납니다(실제로 241 이 나왔습니다). -->
             <source src="./video/donutVideo_boomerang.mp4" type="video/mp4">
             브라우저가 비디오를 지원하지 않습니다.
         </video>
