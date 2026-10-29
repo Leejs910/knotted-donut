@@ -120,7 +120,14 @@
              다시 만들려면:
                ffmpeg -i <원본> -c:v libwebp -quality 86 -compression_level 6 \
                       img/donut_fallback.webp -->
-        <video autoplay muted loop playsinline poster="./img/donut_fallback.webp" class="bg-video">
+        <!-- ⚠️ autoplay 를 적지 않습니다. 적어 두면 브라우저가 첫 화면을
+                그리기 전에 1.7MB 짜리 영상부터 받아서, 폰에서 첫 화면이
+                몇 초씩 늦어집니다. preload="metadata" 로는 막을 수 없습니다
+                — autoplay 가 있으면 무시되고 그대로 다 받습니다(측정함).
+                대신 js/modules/heroVideo.js 가 화면이 뜬 뒤에 틀어 줍니다.
+                그때까지는 poster(72KB) 가 자리를 지킵니다. -->
+        <video muted loop playsinline preload="none"
+               poster="./img/donut_fallback.webp" class="bg-video">
             <!-- 정방향 → 역방향이 이어지는 부메랑 영상이라, loop 만으로
                  끊김 없이 왔다 갔다 반복됩니다.
 

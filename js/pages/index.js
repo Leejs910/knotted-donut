@@ -17,6 +17,7 @@ import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
 // --- 이 페이지에만 있는 섹션 ---
+import { initHeroVideo } from '../modules/heroVideo.js';
 import { initShootingStars } from '../modules/shootingStar.js';
 import { initHeroDecoScroll } from '../modules/heroDecoScroll.js';
 import { initClouds } from '../modules/clouds.js';
@@ -35,6 +36,7 @@ initAuthNav();
 initAuthGuard();
 
 // 히어로
+initHeroVideo();
 initShootingStars();
 initHeroDecoScroll();
 
