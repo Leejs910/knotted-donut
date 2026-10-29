@@ -81,11 +81,17 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
 
             // data-card-index를 심어두면, 스와이퍼가 무한루프용으로 카드를 복제해도
             // 복제본까지 이 번호를 그대로 물려받습니다. → 클릭한 카드를 정확히 찾아낼 수 있음
+            // ⚠️ loading="lazy" — 이 섹션은 히어로(한 화면) 아래에 있는데도
+            //    카드 전부를 첫 화면에서 받고 있었습니다. 지금은 보이는 것만
+            //    받고, 넘길 때 나머지가 따라옵니다.
+            //    카드 자리는 css 가 잡아 두므로 늦게 와도 밀리지 않습니다.
+            //    배경 그림(cardPink 등)은 넉 장이 돌려 쓰여 금방 캐시됩니다.
             return `
         <div class="swiper-slide" data-card-index="${index}">
             <div class="card-inner">
-                <img src="${theme.bgImg}" class="card-bg" alt="배경">
-                <img src="${item.imgUrl}" class="donut-pic" alt="${item.title}">
+                <img src="${theme.bgImg}" class="card-bg" alt="" loading="lazy" decoding="async">
+                <img src="${item.imgUrl}" class="donut-pic" alt="${item.title}"
+                     loading="lazy" decoding="async">
                 <div class="donut-name-box" style="background-color: ${theme.themeColor};">
                     ${item.title}
                 </div>
