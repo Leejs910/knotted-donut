@@ -99,7 +99,7 @@
             <li><a href="./support.html">Support</a></li>
         </ul>
 
-        <!-- 🌈 바닥에 걸치는 무지개 장식 (CSS 로 그립니다 — img/rainbow.svg 는 1.18MB 라 안 씁니다) -->
+        <!-- 🌈 바닥에 걸치는 무지개 장식 (그림 파일 대신 CSS 로 그립니다 — 장식 하나에 수백 KB 를 쓸 이유가 없습니다) -->
         <div class="mobile-menu-rainbow" aria-hidden="true"></div>
 
         <!-- 🐰 메뉴 아래 빈 자리 장식: 무지개 위에 앉은 토끼 + 천천히 도는 별.
@@ -211,7 +211,19 @@
                 <div class="swiper-button-prev custom-nav-btn"></div>
                 <div class="swiper-button-next custom-nav-btn"></div>
             </div>
-            <img src="./img/rainbow.svg" class="rainbow-bridge" alt="무지개">
+            <!-- 🌈 다음 섹션까지 비스듬히 꽂히는 장식.
+                 ⚠️ 예전에는 img/rainbow.svg 였는데, 이름만 svg 일 뿐 안에
+                    3002x4096 짜리 png 가 base64 로 통째로 박혀 있었습니다
+                    (피그마 내보내기 때 그렇게 됩니다). 그래서 1.18MB 였고,
+                    그중 오른쪽 11.8% 는 화면에 잘려 보이지도 않았습니다.
+                    잘라내고 줄여서 webp 로 바꿨습니다 — 781KB → 110KB.
+                 다시 만들려면:
+                   ffmpeg -i <원본png> -vf "crop=2646:4096:0:0,scale=1400:-1:flags=lanczos" \
+                          -c:v libwebp -quality 80 -compression_level 6 img/rainbow-bridge.webp
+                 alt 는 비워 둡니다 — 뜻을 전하지 않는 장식이라
+                 읽어 주면 오히려 방해가 됩니다. -->
+            <img src="./img/rainbow-bridge.webp" class="rainbow-bridge" alt=""
+                width="1400" height="2167" loading="lazy" decoding="async">
             <div class="wave-container wave-bottom">
                 <div class="wave-divider color-yellow"></div>
             </div>

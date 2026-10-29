@@ -9,10 +9,18 @@ export function initInstaSection({ data = [] } = {}) {
     if (!wrapper) return;
 
     // 1. 카드 동적 렌더링
+    //
+    // ⚠️ loading="lazy" 를 빼지 마세요. 이 섹션은 한참 아래에 있는데도
+    //    스무 장을 첫 화면에서 한꺼번에 받습니다. 폰에서는 그것만으로
+    //    첫 화면이 몇 초씩 늦어집니다.
+    //    자리는 .insta-card 의 aspect-ratio 가 미리 잡아 두므로,
+    //    늦게 와도 레이아웃이 밀리지 않습니다.
+    // ⚠️ 바깥 사이트(인스타)로 나가므로 rel 을 같이 답니다.
     wrapper.innerHTML = data.map(item => `
         <div class="swiper-slide">
-            <a href="${item.linkUrl}" class="insta-card" target="_blank">
-                <img src="${item.imgUrl}" alt="인스타그램 피드 이미지">
+            <a href="${item.linkUrl}" class="insta-card" target="_blank" rel="noopener noreferrer">
+                <img src="${item.imgUrl}" alt="인스타그램 피드 이미지"
+                     loading="lazy" decoding="async">
             </a>
         </div>
     `).join('');
