@@ -42,6 +42,11 @@ export function initClouds({ maxClouds = 6 } = {}) {
     for (let i = 0; i < maxClouds; i++) {
         const cloud = document.createElement('img');
         cloud.classList.add('random-cloud');
+        // 뜻을 전하지 않는 장식입니다. alt 를 아예 빼 두면 화면 낭독기가
+        // 파일 이름(cloud_3.png)을 그대로 읽어 버려서, 빈 alt 로 '읽지 말 것'을
+        // 분명히 적어 둡니다.
+        cloud.alt = '';
+        cloud.decoding = 'async';
         container.appendChild(cloud);
 
         // 구름의 애니메이션이 끝나는(화면 밖으로 나가는) 순간을 감지해 다시 출발시킴
