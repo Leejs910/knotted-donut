@@ -1,0 +1,143 @@
+/* ============================================================
+   🔢 번호 페이지 넘김
+
+   버튼은 js/modules/listPager.js 가 그려 넣습니다.
+   지금 쓰는 곳: 마이페이지 주문조회
+
+   사이트의 다른 조각들과 결을 맞췄습니다.
+     · 글자색은 어디서나 쓰는 갈색 잉크 #3E2723,
+       눌리지 않은 번호는 설명글과 같은 #8a7b75
+     · 지금 쪽은 탭(.shop-tab.is-active)처럼 갈색으로 꽉 채웁니다
+     · 테두리·그림자는 주문 카드(.mypage-order)의 '스티커' 느낌을
+       그대로 줄여서 씁니다 — 3px 테두리에 4px 4px 0 그림자
+     · 꺾쇠는 grid-nav 와 같은 방식으로 테두리를 돌려 그립니다
+   ============================================================ */
+
+.list-pager {
+    --ink: #3E2723;       /* 사이트 공통 갈색 */
+    --muted: #8a7b75;     /* 설명글 회갈색 */
+    --cream: #FFF7E3;     /* 주문 카드 머리 색 */
+    --line: #EADFC6;      /* 크림 위의 옅은 테두리 */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-top: 32px;
+}
+
+/* 숨길 때는 자리까지 없애야 합니다 — display:flex 가 [hidden] 을 이기므로
+   따로 적어 둡니다. (한 쪽뿐이면 모듈이 hidden 을 붙입니다) */
+.list-pager[hidden] {
+    display: none;
+}
+
+.list-pager-btn {
+    /* ⚠️ button 은 body 의 서체를 물려받지 않습니다. 이 줄이 없으면
+          여기만 브라우저 기본 서체로 나옵니다. */
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--muted);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-width: 38px;
+    height: 38px;
+    padding: 0 8px;
+
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+
+    transition: color 0.15s ease, background-color 0.15s ease,
+                border-color 0.15s ease, transform 0.15s ease;
+}
+
+.list-pager-btn:hover:not(:disabled) {
+    color: var(--ink);
+    background-color: var(--cream);
+    border-color: var(--ink);
+    transform: translateY(-2px);
+}
+
+/* 지금 보고 있는 쪽 — 탭과 같은 갈색 채움 + 카드와 같은 스티커 그림자 */
+.list-pager-btn[aria-current="page"] {
+    color: var(--cream);
+    background-color: var(--ink);
+    border-color: var(--ink);
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.08);
+}
+
+.list-pager-btn[aria-current="page"]:hover {
+    color: var(--cream);
+    background-color: var(--ink);
+    transform: none;      /* 이미 눌려 있는 쪽은 들리지 않습니다 */
+}
+
+/* 이전 / 다음 */
+.list-pager-btn.is-step {
+    padding: 0 14px;
+    font-size: 14px;
+}
+
+.list-pager-btn:disabled {
+    color: #cfc5bf;
+    background: #fff;
+    border-color: #efe8dc;
+    cursor: default;
+}
+
+/* 꺾쇠 — css/components/grid-nav.css 와 같은 방식(테두리 두 변을 돌림).
+   글꼴에 기대지 않아 어떤 환경에서도 같은 두께로 나옵니다. */
+.list-pager-ico {
+    width: 7px;
+    height: 7px;
+    border-top: 2.5px solid currentColor;
+    border-right: 2.5px solid currentColor;
+    border-radius: 1px;
+}
+
+.list-pager-btn.is-prev .list-pager-ico {
+    transform: rotate(-135deg);
+    margin-right: -2px;     /* 꺾쇠의 시각적 무게중심을 맞춥니다 */
+}
+
+.list-pager-btn.is-next .list-pager-ico {
+    transform: rotate(45deg);
+    margin-left: -2px;
+}
+
+.list-pager-dots {
+    padding: 0 2px;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    user-select: none;
+}
+
+/* 📱 좁은 화면 — 번호가 줄바꿈되며 쌓이므로 조금씩 줄입니다 */
+@media (max-width: 480px) {
+    .list-pager {
+        gap: 4px;
+        margin-top: 24px;
+    }
+    .list-pager-btn {
+        min-width: 34px;
+        height: 34px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+    .list-pager-btn.is-step {
+        padding: 0 10px;
+        font-size: 13px;
+    }
+}

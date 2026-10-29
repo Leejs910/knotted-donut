@@ -13,6 +13,7 @@ import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initTabFromUrl } from '../modules/tabFromUrl.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
+import { initCartBadge } from '../modules/cartBadge.js';
 import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
@@ -29,6 +30,7 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
+initCartBadge();
 initAuthGuard();
 
 // 퍼즐 배너 (onlineShop.html 과 같은 연출)

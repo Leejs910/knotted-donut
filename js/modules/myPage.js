@@ -6,14 +6,16 @@
 //   · '정보수정' 에서 이름과 비밀번호를 바꿉니다 (데모 계정은 막아 둡니다)
 //   · '회원 탈퇴' 를 누르면 확인 상자를 띄우고, 확인하면 계정과 기록을 지웁니다
 //
-// 필요 요소: #mypageTabs, #mypageOrders, #mypagePoints, #mypageHello,
-//            #leaveOverlay 와 그 안의 단추들
+// 필요 요소: #mypageTabs, #mypageOrders, #mypageOrdersPager, #mypagePoints,
+//            #mypageHello, #leaveOverlay 와 그 안의 단추들
+//            (#mypageOrdersPager 가 없으면 주문을 끊지 않고 전부 보여 줍니다)
 // 필요 CSS: css/sections/mypage.css, css/components/category-tabs.css,
-//           css/components/modal-screen.css
+//           css/components/modal-screen.css, css/components/list-pager.css
 
 import { getUser, removeAccount, updateAccount, isDemoAccount } from './auth.js';
 import { getOrders, getPoints, clearMemberData, WELCOME_POINT } from './memberStore.js';
 import { initCategoryTabs } from './categoryTabs.js';
+import { initListPager } from './listPager.js';
 
 const won = (n) => Math.round(Number(n) || 0).toLocaleString('ko-KR') + '원';
 const num = (n) => Math.round(Number(n) || 0).toLocaleString('ko-KR');
@@ -71,11 +73,40 @@ function orderHTML(order) {
         </article>`;
 }
 
-function renderOrders(el, orders) {
+// 🎚️ 주문조회 한 쪽에 몇 건을 보여 줄지.
+//    주문이 쌓이면 화면이 한없이 길어져서 끊어 보여 줍니다.
+const ORDERS_PER_PAGE = 5;
+
+function renderOrders(el, orders, pagerEl) {
     if (!el) return;
-    el.innerHTML = orders.length
-        ? orders.map(orderHTML).join('')
-        : emptyHTML('아직 주문하신 내역이 없습니다.');
+
+    if (!orders.length) {
+        el.innerHTML = emptyHTML('아직 주문하신 내역이 없습니다.');
+        if (pagerEl) { pagerEl.hidden = true; pagerEl.innerHTML = ''; }
+        return;
+    }
+
+    // 넘김 장치가 없으면(마크업에 자리가 없으면) 예전처럼 전부 보여 줍니다.
+    if (!pagerEl) {
+        el.innerHTML = orders.map(orderHTML).join('');
+        return;
+    }
+
+    const pager = initListPager({
+        pagerEl,
+        pageSize: ORDERS_PER_PAGE,
+        onChange: () => {
+            draw();
+            // 쪽을 넘기면 목록 맨 위로 올려 줍니다. 아래쪽 번호를 누른 채로
+            // 두면 바뀐 목록의 끝만 보여서 뭐가 달라졌는지 알기 어렵습니다.
+            el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        },
+    });
+
+    function draw() {
+        el.innerHTML = pager.slice(orders).map(orderHTML).join('');
+    }
+    draw();
 }
 
 /* ------------------------------------------------------------
@@ -273,7 +304,11 @@ export function initMyPage() {
         helloEl.innerHTML = `<b>${esc(user.name)}</b> 님, 안녕하세요.`;
     }
 
-    renderOrders(document.getElementById('mypageOrders'), orders);
+    renderOrders(
+        document.getElementById('mypageOrders'),
+        orders,
+        document.getElementById('mypageOrdersPager'),
+    );
     renderPoints(document.getElementById('mypagePoints'), orders);
 
     const panels = {

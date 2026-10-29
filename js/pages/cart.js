@@ -13,6 +13,7 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
+import { initCartBadge } from '../modules/cartBadge.js';
 import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 import { initBannerOverlay } from '../modules/bannerOverlay.js';
@@ -28,6 +29,7 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
+initCartBadge();
 initAuthGuard();
 
 // 가방 배너 (가운데 가방이 한 번 통통 튑니다)

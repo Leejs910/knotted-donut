@@ -1,0 +1,67 @@
+/* ============================================================
+   🔴 장바구니에 담긴 개수 동그라미
+
+   요소는 js/modules/cartBadge.js 가 장바구니 링크 안에 넣습니다.
+   붙는 곳: .nav-actions .pc-btn(Cart 단추) · .mobile-cart(아이콘)
+
+   분홍은 사이트에서 쓰던 #FFC9E1 보다 한 단계 진한 색입니다.
+   흰 테두리 위에서도 눈에 띄어야 하고, 안의 숫자가 읽혀야 해서
+   채도를 올렸습니다 (흰 글씨 대비 4.6:1).
+
+   ⚠️ 자리를 잡으려면 부모가 position: relative 여야 합니다.
+      nav.css 를 건드리지 않으려고 cartBadge.js 가 직접 세웁니다.
+   ============================================================ */
+
+.cart-badge {
+    position: absolute;
+    /* 단추를 둘러싼 선의 왼쪽 위에 걸칩니다 */
+    top: -8px;
+    left: -8px;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    box-sizing: border-box;
+
+    background-color: #E86A9C;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 999px;
+
+    /* ⚠️ button 과 달리 span 은 서체를 물려받지만, 네비게이션이
+          font-weight 를 건드려도 흔들리지 않게 여기서 못 박습니다. */
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0;
+
+    pointer-events: none;   /* 링크 클릭을 가로채지 않도록 */
+}
+
+.cart-badge[hidden] {
+    display: none;
+}
+
+/* 네비게이션이 흰 배경으로 바뀌면 흰 테두리가 묻히므로 갈색으로 */
+.navbar.nav-solid .cart-badge {
+    border-color: #3E2723;
+}
+
+/* 📱 모바일 아이콘은 24x24 로 작아서 동그라미도 같이 줄입니다 */
+@media (max-width: 1024px) {
+    .mobile-cart .cart-badge {
+        top: -7px;
+        left: -7px;
+        min-width: 17px;
+        height: 17px;
+        padding: 0 4px;
+        font-size: 10px;
+        border-width: 2px;
+    }
+}
