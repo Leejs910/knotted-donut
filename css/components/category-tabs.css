@@ -41,7 +41,8 @@
     align-items: center;
     justify-content: center;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
+    /* button 은 body 의 서체를 물려받지 않습니다 — 직접 물려줍니다 */
+    font-family: inherit;
     font-size: clamp(14px, 1vw, 19.2px);
     font-weight: 800;
     line-height: 1; /* 'normal'은 폰트마다 줄높이가 달라 상하 중앙이 미묘하게 어긋나 보일 수 있어 고정값으로 둡니다 */

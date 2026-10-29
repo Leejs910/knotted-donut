@@ -190,8 +190,11 @@
        흰 글씨를 그대로 두면 노란 배경(#FDEA9C) 위에서 대비가 1.2:1 로
        읽을 수 없습니다. 이 갈색은 11.5:1 입니다. */
     color: #3E2723;
-    font-family: 'Pretendard', sans-serif; /* 프로젝트 폰트에 맞게 수정하세요 */
-    
+
+    /* 서체는 적지 않습니다 — css/base/reset.css 의 body 에서 물려받습니다.
+       (예전에 여기 'Pretendard' 라고만 적혀 있어서, CDN 이 주는 이름인
+        'Pretendard Variable' 과 달라 푸터만 기본 고딕으로 나왔습니다.) */
+
     /* 배경 클릭이 도화지(캔버스)에 닿을 수 있게 통과시킴 */
     pointer-events: none; 
 }

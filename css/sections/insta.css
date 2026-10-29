@@ -172,7 +172,9 @@
 /* 📸 인스타그램 텍스트 */
 .insta-text {
     color: #ffffff;
-    font-family: sans-serif; /* 깔끔하고 두꺼운 폰트 */
+    /* body 와 같은 서체를 씁니다. sans-serif 라고 적어 두면 기본값을
+       도로 덮어써서, 이 줄만 다른 글꼴로 나옵니다. */
+    font-family: inherit;
     font-size: 32px;
     font-weight: 900;
     letter-spacing: 2px; /* 글자 간격 살짝 넓게 */

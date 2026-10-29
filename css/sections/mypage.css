@@ -47,7 +47,6 @@
     background: #fff;
     padding: 100px 0 210px;
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
 }
 
 .mypage-inner {
@@ -472,7 +471,6 @@
     border-radius: 26px;
     box-shadow: 0 18px 40px rgba(62, 39, 35, 0.18);
 
-    font-family: 'Pretendard Variable', 'Pretendard', system-ui, sans-serif;
 
     /* 로그인 상자와 같은 등장 효과 */
     transform: scale(0.92) translateY(10px);
