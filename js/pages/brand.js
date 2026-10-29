@@ -12,6 +12,7 @@ import { initNavScroll } from '../modules/navScroll.js';
 import { initMobileMenu } from '../modules/mobileMenu.js';
 import { initLoginModal } from '../modules/loginModal.js';
 import { initAuthNav } from '../modules/authNav.js';
+import { initCartBadge } from '../modules/cartBadge.js';
 import { initAuthGuard } from '../modules/authGuard.js';
 import { initFooterBear } from '../modules/footerBear.js';
 
@@ -29,6 +30,7 @@ initNavScroll();
 initMobileMenu();
 initLoginModal();
 initAuthNav();
+initCartBadge();
 initAuthGuard();
 
 // 맨 위 로고가 조립되듯 나타납니다

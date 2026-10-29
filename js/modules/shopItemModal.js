@@ -152,11 +152,15 @@ function ensureModal() {
         return false;
     }
 
+    // 🛒 담기 — 담고 모달만 닫습니다. 보던 자리를 잃지 않게 페이지는 그대로
+    //    둡니다. 담긴 것은 네비게이션 장바구니의 분홍 동그라미 숫자가
+    //    올라가는 것으로 알 수 있습니다 (js/modules/cartBadge.js).
+    //    ⚠️ 예전에는 여기서 cart.html 로 보냈습니다. 하나 담을 때마다
+    //       장바구니로 끌려가서 계속 둘러보기가 어려웠습니다.
     els.cartBtn.addEventListener('click', () => {
         if (!currentItem || !requireLogin()) return;
         addToCart(currentItem, qty);
         closeShopItemModal();
-        location.href = './cart.html';
     });
 
     els.buyBtn.addEventListener('click', () => {

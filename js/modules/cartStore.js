@@ -76,6 +76,32 @@ function write(list) {
     } catch {
         /* 저장을 못 해도 memory 에는 남아 이번 페이지에서는 동작합니다 */
     }
+    notify();
+}
+
+/* ------------------------------------------------------------
+   🔔 담긴 개수가 바뀌었다고 알리기
+
+   네비게이션의 장바구니 배지가 이걸 듣고 숫자를 고칩니다.
+   auth.js 의 onAuthChange 와 같은 방식입니다.
+------------------------------------------------------------ */
+const listeners = new Set();
+
+function notify() {
+    const items = getCartItems();
+    listeners.forEach((fn) => {
+        try { fn(items); } catch { /* 한 명이 넘어져도 나머지는 받아야 합니다 */ }
+    });
+}
+
+/**
+ * 장바구니가 바뀔 때마다 불립니다. 붙이는 즉시 지금 상태로 한 번 불러 줍니다.
+ * @returns 떼어낼 때 부르는 함수
+ */
+export function onCartChange(fn) {
+    listeners.add(fn);
+    try { fn(getCartItems()); } catch { /* 처음 호출이 넘어져도 구독은 남깁니다 */ }
+    return () => listeners.delete(fn);
 }
 
 /** 상점 상품( cardData 한 건 ) → 장바구니 한 줄 */
