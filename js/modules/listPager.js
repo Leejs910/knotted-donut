@@ -50,13 +50,18 @@ export function initListPager({
         const blockStart = Math.floor(page / windowSize) * windowSize;
         const blockEnd = Math.min(blockStart + windowSize, count);
 
-        let html = btn('‹ 이전', page - 1, { disabled: page <= 0, cls: 'is-step' });
+        // 꺾쇠는 글자(‹ ›)가 아니라 css 가 테두리로 그립니다.
+        // 사이트의 다른 넘김 버튼(css/components/grid-nav.css)과 같은 방식이라
+        // 서체가 달라져도 모양과 두께가 흔들리지 않습니다.
+        const ico = '<i class="list-pager-ico" aria-hidden="true"></i>';
+
+        let html = btn(`${ico}이전`, page - 1, { disabled: page <= 0, cls: 'is-step is-prev' });
         for (let i = blockStart; i < blockEnd; i++) {
             html += btn(String(i + 1), i, { current: i === page });
         }
         // 뒤에 더 있으면 말줄임으로 알립니다 (누르는 곳이 아니라 표시입니다)
         if (blockEnd < count) html += `<span class="list-pager-dots" aria-hidden="true">…</span>`;
-        html += btn('다음 ›', page + 1, { disabled: page >= count - 1, cls: 'is-step' });
+        html += btn(`다음${ico}`, page + 1, { disabled: page >= count - 1, cls: 'is-step is-next' });
 
         pagerEl.innerHTML = html;
     }
