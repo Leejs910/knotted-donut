@@ -12,10 +12,27 @@ body {
 html{
     width: 100%;
     box-sizing: inherit;
+    /* Lenis 가 없을 때(스크립트가 못 올라왔거나 구형 브라우저)의 앵커 이동용입니다. */
     scroll-behavior: smooth;
     height: fit-content;
     overflow-x: hidden;
 }
+
+/* ⚠️ 지우지 마세요. Lenis 가 도는 동안에는 위의 smooth 를 반드시 꺼야 합니다.
+   Lenis 는 매 프레임 window.scrollTo() 로 페이지를 옮기는데, smooth 가 켜져
+   있으면 브라우저가 그 한 번 한 번을 또 "부드럽게" 애니메이션하려 듭니다.
+   목표가 매 프레임 바뀌니 브라우저는 계속 처음부터 다시 움직이고, 화면만
+   1~2 초 뒤처집니다. (실제로 휠을 굴리고 2058ms 동안 화면이 멈춰 있었는데,
+   같은 시각 Lenis 내부값은 287 → 1374 로 정상 진행 중이었습니다)
+
+   원래 Lenis 가 자기 CSS 파일로 넣어 주는 규칙인데, 이 프로젝트는 JS 만 CDN
+   으로 불러오기 때문에 여기에 직접 적어 둡니다. !important 까지 원본 그대로
+   입니다 — 나중에 누가 html 쪽에 !important 를 붙여도 버티라고.
+
+   🚨 이 버그는 만든 사람 기기에서는 안 보입니다. OS 의 '애니메이션 효과' 가
+      꺼져 있으면 크롬이 scroll-behavior: smooth 를 무시하기 때문입니다.
+      그 설정이 켜진 남의 기기에서만, 사양과 상관없이 터집니다. */
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
 
 @font-face {
         font-family: 'recoleta'; 
