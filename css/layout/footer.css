@@ -61,20 +61,44 @@
     --bg-tile: 2190px;   /* ← 크기. 2190 / 2.7375(원본 비율) ≈ 800px */
 
     background-color: #FDEA9C;
+}
+
+/* 흐르는 그림은 가상 요소가 맡습니다.
+
+   ⚠️ background-position 으로 움직이지 마세요. 그 속성은 GPU 가 거들지
+      못해서, 매 프레임 이 영역을 통째로 다시 칠합니다. 푸터는 화면만 한
+      크기(1280x800 ≈ 100만 픽셀)라 그 비용이 그대로 스크롤 끊김으로
+      나타납니다 — 저사양 노트북에서 실제로 그랬습니다.
+      transform 은 이미 그려 둔 것을 옮기기만 해서 다시 칠하지 않습니다.
+
+   ⚠️ .footer-bg 자체를 옮기면 안 됩니다. 안에 무지개 행성(.footer-planet)
+      이 들어 있어서 같이 끌려갑니다. 그래서 배경만 떼어 냈습니다.
+
+   ⚠️ 폭이 '한 장' 더 넓어야 합니다. 한 장만큼 왼쪽으로 민 순간에도
+      오른쪽 끝까지 그림이 남아 있어야 빈칸이 생기지 않습니다. */
+.footer-bg::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% + var(--bg-tile));
+    height: 100%;
+
     background-image: url('../../img/spaceBg.webp');
     background-size: var(--bg-tile) 100%;
     background-position: 0 bottom;
     background-repeat: repeat-x;
 
     animation: scrollFooterBg var(--bg-speed) linear infinite;
+    will-change: transform;
 }
 
 /* 오른쪽에서 왼쪽으로 흘러갑니다 (음수 = 왼쪽).
    ⚠️ 끝 값의 크기는 반드시 --bg-tile 과 같아야 합니다. 딱 한 장만큼만
       밀고 0 으로 돌아가므로 경계가 보이지 않습니다. */
 @keyframes scrollFooterBg {
-    from { background-position: 0 bottom; }
-    to   { background-position: calc(var(--bg-tile) * -1) bottom; }
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(calc(var(--bg-tile) * -1), 0, 0); }
 }
 
 /* 움직임을 불편해하는 사용자에게는 느리게. 끄지는 않습니다 —
