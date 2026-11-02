@@ -141,30 +141,48 @@
     
     width: 100%; 
     height: 100%;
-    
-    /* 트레일 배경 이미지 설정 (경로는 실제 파일명으로 수정하세요) */
-    background-image: url('../../img/trail2.svg'); 
-    background-repeat: repeat-x; /* 가로로 무한 반복 */
-    
-    
-    background-size: 1455px 100%; 
-    
-    /* 우에서 좌로 이동하는 애니메이션 (15초 동안 일정한 속도로) */
-    animation: trailMove 17.5s linear infinite; 
-/* transform 대신 background-position을 최적화합니다 */
-    will-change: background-position;
+
+    /* 🎚️ 그림 한 장의 가로 길이. 크기와 이동 거리에 같이 쓰이므로 반드시 이
+       변수 하나로 둡니다 — 따로 적으면 한 바퀴마다 이음매가 튑니다. */
+    --trail-tile: 1455px;
+
+    /* 흘러가는 그림이 이 상자 밖으로 나가지 않게 가둡니다.
+       ⚠️ 부모(.trail-container)에 걸면 안 됩니다. 거기는 overflow: visible 이라야
+          상품 카드가 레일 위로 튀어나올 수 있습니다. 여기는 빈 상자라 안전합니다. */
+    overflow: hidden;
 }
 
-/* 3. 우 -> 좌 이동 애니메이션 */
+/* 3. 실제로 흐르는 그림 — 우에서 좌로
+
+   ⚠️ background-position 으로 움직이지 마세요. 그 속성은 GPU 가 거들지
+      못해서, 매 프레임 이 영역(1306x357 ≈ 47만 픽셀)을 통째로 다시 칠합니다.
+      저사양 노트북에서 스크롤이 끊기던 원인 중 하나였습니다.
+      transform 은 이미 그려 둔 것을 옮기기만 해서 다시 칠하지 않습니다.
+      (푸터도 같은 이유로 바꿨습니다 — css/layout/footer.css)
+
+   ⚠️ 폭이 '한 장' 더 넓어야 합니다. 한 장만큼 왼쪽으로 민 순간에도
+      오른쪽 끝까지 그림이 남아 있어야 빈칸이 생기지 않습니다. */
+.trail-track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% + var(--trail-tile));
+    height: 100%;
+
+    background-image: url('../../img/trail2.svg');
+    background-repeat: repeat-x;      /* 가로로 무한 반복 */
+    background-size: var(--trail-tile) 100%;
+
+    animation: trailMove 17.5s linear infinite;
+    will-change: transform;
+}
+
+/* ⚠️ 끝 값의 크기는 반드시 --trail-tile 과 같아야 합니다. 딱 한 장만큼만
+      밀고 0 으로 돌아가므로 경계가 보이지 않습니다. */
 @keyframes trailMove {
-    0% {
-        /* ✨ 시작점: 배경 이미지의 X축 위치 0 */
-        background-position: 0 0;
-    }
-    100% {
-        /* ✨ 도착점: 박스는 가만히 있고, 배경 이미지만 -1440px 만큼 왼쪽으로 밀려납니다 */
-        background-position: -1455px 0;
-    }
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(calc(var(--trail-tile) * -1), 0, 0); }
 }
 
 
