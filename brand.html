@@ -67,12 +67,15 @@
             </svg>
         </a>
 
-        <h1 class="logo">
-            <a href="./index.html">
-                <img src="./img/white_logo.png" class="logo_white" alt="흰색로고">
-                <img src="./img/black_logo.png" class="logo_black" alt="검은색 로고">
+        <!-- ⚠️ 두 이미지의 alt 는 비워 둡니다. 링크 이름은 아래 aria-label 이
+             맡습니다 — alt 를 채우면 낭독기가 "흰색로고 검은색 로고 링크" 라고
+             읽습니다. 색만 다른 같은 로고라 읽어 줄 내용이 아닙니다. -->
+        <p class="logo">
+            <a href="./index.html" aria-label="Knotted 홈">
+                <img src="./img/white_logo.png" class="logo_white" alt="">
+                <img src="./img/black_logo.png" class="logo_black" alt="">
             </a>
-        </h1>
+        </p>
 
         <ul class="nav-links">
             <li><a href="./onlineShop.html">SHOP</a></li>
@@ -145,7 +148,7 @@
         <!-- ☁️ Knotted 로고 + 구름 접시 위의 친구들
              안쪽 좌표는 1920 x 1071 짜리 피그마 시안 그대로입니다. -->
         <header class="brand-hero">
-            <h2 class="sr-only">Knotted 브랜드 이야기</h2>
+            <h1 class="sr-only">Knotted 브랜드 이야기</h1>
 
             <div class="brand-stage" aria-hidden="true">
                 <div class="brand-spark brand-spark-1"><img src="./img/brand/sparkle-1.svg" alt=""></div>
@@ -247,7 +250,7 @@
 
             <div class="footer-left">
                 <div class="footer-social">
-                    <h4>SOCIAL</h4>
+                    <h2>SOCIAL</h2>
                     <div class="social-actions-wrap">
                         <a href="https://pf.kakao.com/_AUDFj" class="btn-social-item btn-kakao"
                             target="_blank" rel="noopener noreferrer">
@@ -263,7 +266,7 @@
 
                 </div>
                 <div class="footer-company">
-                    <h4>COMPANY INFORMATION</h4>
+                    <h2>COMPANY INFORMATION</h2>
                     <p>주식회사 지엔에프지</p>
                     <p>서울 강남구 학동로82길 7</p>
                     <p>사업자 등록번호 000-00-00000 (데모) • 대표이사 홍길동</p>
@@ -285,8 +288,8 @@
                     <a href="#">이용약관</a>
                 </div>
                 <div class="footer-cs">
-                    <h4>고객센터</h4>
-                    <h2>1800-0000</h2>
+                    <h2>고객센터</h2>
+                    <p class="footer-tel">1800-0000</p>
                     <p>운영시간 : 월 - 금 (09:00 - 17:00)<br>주말 및 공휴일 휴무</p>
                     <p>점심시간 : 12:00 - 13:00</p>
                 </div>

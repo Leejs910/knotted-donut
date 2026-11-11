@@ -227,15 +227,21 @@
 .footer-ui a,
 .footer-ui p,
 .footer-ui h2,
-.footer-ui h4,
 .footer-center img {
     pointer-events: auto;
 }
 
-/* 📌 공통 제목 스타일 */
-.footer-ui h4 {
+/* 📌 공통 제목 스타일
+   ⚠️ 예전에는 h4 였습니다. 푸터 앞의 본문이 h2 라 h2 → h4 로 단계가 건너뛰어
+      화면 낭독기가 중간 단계를 잃어버렸습니다.
+   ⚠️ margin-top 을 빼지 마세요. 예전 모습은 h4 의 브라우저 기본 여백
+      (1.33em)에 기대고 있었는데, h2 로 올리면 0.83em 으로 줄어 푸터 글이
+      8~24px 위로 올라붙습니다. 단계만 고치고 보이는 자리는 그대로 두려고
+      그 값을 그대로 적어 둡니다. */
+.footer-ui h2 {
     font-size: 16px;
     font-weight: 700;
+    margin-top: 1.33em;
     margin-bottom: 14px;
     letter-spacing: 0.5px;
 }
@@ -372,10 +378,16 @@
     text-decoration: underline;
 }
 
-/* 고객센터 텍스트 */
-.footer-cs h2 {
+/* 고객센터 텍스트
+   ⚠️ 예전에는 h2 였습니다. 전화번호는 제목이 아닌데 h4 셋 뒤에 h2 가 와서
+      단계가 거꾸로 섞였습니다. p 로 내리는 대신 크기는 여기서 지킵니다.
+   ⚠️ line-height 를 빼지 마세요. p 가 되면서 아래 `.footer-cs p` 의 1.6 을
+      물려받는데, 그러면 줄 상자가 31px → 42px 로 커져 아래 글이 밀립니다.
+      h2 일 때와 같은 normal 로 못박아 둡니다. */
+.footer-cs .footer-tel {
     font-size: 40px;
     font-weight: 800;
+    line-height: normal;
     margin: 5px 0 15px 0;
 }
 
@@ -430,7 +442,7 @@
     }
 
     /* 오른쪽 고객센터 전화번호 크기 축소 */
-    .footer-cs h2 {
+    .footer-cs .footer-tel {
         font-size: 28px; /* 기존 40px -> 28px */
         margin: 5px 0 10px 0;
     }
@@ -486,7 +498,7 @@
         gap: 20px;
     }
 
-    .footer-cs h2 {
+    .footer-cs .footer-tel {
         font-size: 26px; /* 전화번호 크기 축소 */
         margin-bottom: 5px;
     }
