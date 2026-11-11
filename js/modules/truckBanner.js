@@ -58,8 +58,12 @@ export async function initTruckBanner() {
     holder.classList.add('is-ready');
 
     const bodyEl = holder.querySelector('#truckbody');
+    // ⚠️ 세 자리 모두 앞글자 매칭이어야 합니다. 예전에는 가운데만 `#tireMid` 로
+    //    정확히 일치시켰는데, 바퀴가 늘어 tireMid_2 가 생기자 그 바퀴만 멈춘 채
+    //    실려 갔습니다. 같은 이유로 css/sections/order-complete.css 의
+    //    회전축 선택자도 함께 맞춰 두었습니다.
     const wheels = [
-        ...holder.querySelectorAll('#tireMid, [id^="tireBack"], [id^="tireFront"]'),
+        ...holder.querySelectorAll('[id^="tireMid"], [id^="tireBack"], [id^="tireFront"]'),
     ];
 
     // 움직임을 불편해하는 사용자에게는 절반 속도로 — 끄지는 않습니다.

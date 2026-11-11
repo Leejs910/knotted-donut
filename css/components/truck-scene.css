@@ -235,8 +235,12 @@
 @keyframes showF6 { 0%, 71.4% { opacity: 0; } 71.5%, 85.7% { opacity: 1; } 85.8%, 100% { opacity: 0; } }
 @keyframes showF7 { 0%, 85.7% { opacity: 0; } 85.8%, 100% { opacity: 1; } }
 
-/* 바퀴 — 출발할 때부터 돕니다 */
+/* 바퀴 — 출발할 때부터 돕니다.
+   ⚠️ 바퀴를 늘리면 여기에도 같이 적어야 합니다. 빠뜨리면 그 바퀴만 멈춘 채
+      실려 갑니다 (tireMid_2 가 실제로 그랬습니다). 도는 바퀴는 여섯 개입니다 —
+      작은 것 셋(tire*_2) · 큰 것 셋(tireBack_1 · tireMid · tireFront_1). */
 .start-animation #truck7 #tireBack_2,
+.start-animation #truck7 #tireMid_2,
 .start-animation #truck7 #tireFront_2,
 .start-animation #truck7 #tireBack_1,
 .start-animation #truck7 #tireMid,

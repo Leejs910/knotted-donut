@@ -104,11 +104,13 @@
     pointer-events: none;
 }
 
-/* 트럭 크기 — 비율이 427:208 이라 25vw 면 높이가 12.2vw 입니다.
-   배너가 20vw 이므로 트럭이 배너 높이의 약 61%를 차지합니다.
+/* 트럭 크기 — 비율이 515:270 이라 25vw 면 높이가 13.1vw 입니다.
+   배너가 20vw 이므로 트럭이 배너 높이의 약 66%를 차지합니다.
    ⚠️ 이보다 더 키우면 배너 위로 삐져나갑니다.
       (트럭 바닥은 배너 아래에서 16% 지점 → 남은 공간이 84% = 16.8vw,
-       트럭 높이 12.2vw 라 여유는 4.6vw 뿐입니다) */
+       트럭 높이 13.1vw 라 여유는 3.7vw 뿐입니다)
+   ⚠️ 비율은 img/truckSide.svg 의 viewBox 에서 옵니다. 그림을 갈아 끼우면
+      이 숫자들도 다시 계산해야 합니다 (예전 그림은 427:208 이었습니다). */
 .oc-truck {
     position: absolute;
     left: 0;
@@ -135,8 +137,11 @@
     color: rgba(0, 0, 0, 0.45);
 }
 
-/* 바퀴와 차체는 JS가 직접 transform 을 넣으므로 기준점만 잡아 둡니다 */
-.oc-truck #tireMid,
+/* 바퀴와 차체는 JS가 직접 transform 을 넣으므로 기준점만 잡아 둡니다.
+   ⚠️ 세 자리 모두 앞글자 매칭입니다. js/modules/truckBanner.js 가 바퀴를 고르는
+      선택자와 똑같이 맞춰 두세요 — 한쪽만 고치면 그 바퀴는 돌긴 도는데
+      회전축이 도형 중앙이 아니라 엉뚱한 곳에 잡혀 휘청거립니다. */
+.oc-truck [id^="tireMid"],
 .oc-truck [id^="tireBack"],
 .oc-truck [id^="tireFront"] {
     transform-box: fill-box;

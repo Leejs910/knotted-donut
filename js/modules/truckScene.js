@@ -166,21 +166,22 @@ export function initTruckScene({ scrollTarget = null, onFinish = null } = {}) {
             const gap = Math.max(NAV_H, (window.innerHeight - rect.height) / 2);
             const y = Math.max(0, Math.round(rect.top + window.scrollY - gap));
 
-            const html = document.documentElement;
-            const prevBehavior = html.style.scrollBehavior;
-
-            html.style.scrollBehavior = 'smooth';
-            window.scrollTo(0, y);
+            // ⚠️ 예전에는 html 에 inline 으로 scroll-behavior:smooth 를 심었는데,
+            //    이제는 듣지 않습니다. css/base/reset.css 의
+            //    `.lenis.lenis-smooth` 규칙이 !important 로 auto 를 못박기
+            //    때문입니다(그 규칙이 없으면 Lenis 가 1~2 초 뒤처집니다).
+            //    inline 스타일은 !important 를 이기지 못합니다.
+            //    lenis.stop() 을 해도 lenis-smooth 클래스는 그대로 남아 있어서
+            //    여기서도 적용됩니다.
+            //    옵션으로 넘기는 behavior 는 CSS 와 무관하게 동작하므로 이쪽을 씁니다.
+            window.scrollTo({ top: y, behavior: 'smooth' });
             await new Promise((r) => setTimeout(r, 600));
 
             // 부드러운 스크롤이 듣지 않았으면 즉시 맞춰 놓습니다.
             if (Math.abs(window.scrollY - y) > 8) {
-                html.style.scrollBehavior = 'auto';
-                window.scrollTo(0, y);
+                window.scrollTo({ top: y, behavior: 'auto' });
                 await new Promise((r) => setTimeout(r, 60));
             }
-
-            html.style.scrollBehavior = prevBehavior;
         }
 
         const ok = await loadSvg();
