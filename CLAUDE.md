@@ -60,6 +60,29 @@
 
 ### 자주 밟는 함정
 
+- **`html { scroll-behavior: smooth }` 와 Lenis 를 같이 켜면 안 됩니다.** Lenis 는
+  매 프레임 `window.scrollTo()` 로 페이지를 옮기는데, `smooth` 가 켜져 있으면
+  브라우저가 그 한 번 한 번을 또 부드럽게 애니메이션하려 듭니다. 목표가 매 프레임
+  바뀌니 브라우저는 계속 처음부터 다시 움직이고, **화면만 1~2 초 뒤처집니다.**
+  `css/base/reset.css` 의 `.lenis.lenis-smooth { scroll-behavior: auto !important }`
+  가 그걸 막습니다 — 원래 Lenis 가 자기 CSS 파일로 넣어 주는 규칙인데, 이 저장소는
+  JS 만 CDN 으로 불러오므로 직접 적어 뒀습니다.
+  🚨 **이 버그는 만드는 사람 기기에서 안 보일 수 있습니다.** OS 의 '애니메이션 효과'
+  가 꺼져 있으면 크롬이 `scroll-behavior: smooth` 를 무시합니다. 실제로 "내
+  컴퓨터만 멀쩡한" 채로 배포돼 있었고, 사양과 무관하게 남의 기기에서만 터졌습니다.
+  같은 이유로 `html.style.scrollBehavior` 를 잠깐 심는 방식은 이제 듣지 않습니다
+  (`!important` 를 못 이깁니다). `window.scrollTo({ top, behavior: 'smooth' })` 처럼
+  옵션으로 넘기세요 — 이쪽은 CSS 와 무관합니다 (`js/modules/truckScene.js`).
+- **트럭 바퀴를 고르는 자리가 세 군데입니다.** 결제 연출은 CSS
+  (`css/components/truck-scene.css`)가 돌리고, 결제완료 배너는 JS
+  (`js/modules/truckBanner.js`)가 매 프레임 직접 돌리며, 배너의 회전축은 또
+  `css/sections/order-complete.css` 가 잡습니다. 바퀴를 늘리면 **세 곳을 같이**
+  고쳐야 합니다. 한 곳만 빠뜨리면 그 바퀴만 멈춘 채 실려 가거나, 돌긴 도는데
+  회전축이 도형 중앙이 아닌 곳에 잡혀 휘청거립니다.
+  📌 참고로 **바퀴의 회전 자체는 화면에 보이지 않습니다.** 바깥 원과 안쪽 원의
+  중심이 같은 동심원이라 돌려도 같은 그림입니다. 달리는 느낌은 전부 차체의
+  덜컹임(`#truckbody` 의 `translateY`)에서 나오므로, 그림의 그리는 순서에서
+  `truckbody` 가 큰 바퀴보다 **앞**에 있어야 그 움직임이 보입니다.
 - **`button` 은 `body` 의 서체를 물려받지 않습니다.** 버튼에 글자가 들어가면
   `font-family: inherit` 를 적어 주세요. 빼면 거기만 브라우저 기본 서체로 나옵니다.
 - **스크롤바 모양은 `css/base/scrollbar.css` 한 곳에서 정합니다.** 색만 바꾸고
