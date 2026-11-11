@@ -64,7 +64,7 @@
 }
 
 .faq-a .faq-mark {
-    color: #b9aba6;
+    color: #7a6c66; /* 흰 바탕 대비 5:1 (#b9aba6 는 2.2:1) */
 }
 
 .faq-q-text {
@@ -165,4 +165,4 @@
 .support[data-active='etc'] .faq-mark { color: #50BD83; }
 
 /* 답의 A. 는 어느 분류에서나 흐린 회색입니다 */
-.support[data-active] .faq-a .faq-mark { color: #b9aba6; }
+.support[data-active] .faq-a .faq-mark { color: #7a6c66; /* 흰 바탕 대비 5:1 (#b9aba6 는 2.2:1) */ }

@@ -4,6 +4,7 @@
 // 필요 라이브러리: Swiper
 
 import { openDonutModal } from './donutModal.js';
+import { initCardKeys } from './cardKeys.js';
 
 const cardThemes = [
     { bgImg: './img/cardPink.png', themeColor: '#FFAFC8' },
@@ -88,7 +89,9 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
             //    배경 그림(cardPink 등)은 넉 장이 돌려 쓰여 금방 캐시됩니다.
             return `
         <div class="swiper-slide" data-card-index="${index}">
-            <div class="card-inner">
+            <!-- ⚠️ 키보드 표식은 슬라이드가 아니라 안쪽 상자에 둡니다.
+                 슬라이드의 role 은 Swiper 가 'group' 으로 덮어씁니다. -->
+            <div class="card-inner" tabindex="0" role="button" aria-label="${item.title} 자세히 보기">
                 <img src="${theme.bgImg}" class="card-bg" alt="" loading="lazy" decoding="async">
                 <img src="${item.imgUrl}" class="donut-pic" alt="${item.title}"
                      loading="lazy" decoding="async">
@@ -108,6 +111,7 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
     // ----- 카드 클릭 → 상세 모달 -----
     // 슬라이드 하나하나에 거는 대신 스와이퍼 전체에 한 번만 겁니다(이벤트 위임).
     // 이렇게 해야 카드를 다시 그리거나 스와이퍼가 복제본을 만들어도 계속 동작합니다.
+    initCardKeys(document.querySelector('.mySwiper'), '.card-inner');
     document.querySelector('.mySwiper').addEventListener('click', (e) => {
         const slide = e.target.closest('.swiper-slide[data-card-index]');
         if (!slide) return;
@@ -139,6 +143,9 @@ export function initDonutSection({ newData = [], bestData = [] } = {}) {
 
         clickedBtn.classList.add('active');
         otherBtn.classList.remove('active');
+        // 화면 읽기 프로그램에게도 '지금 눌린 쪽' 을 알려 줍니다
+        clickedBtn.setAttribute('aria-pressed', 'true');
+        otherBtn.setAttribute('aria-pressed', 'false');
 
         // 애니메이션을 즉시 재시작하려면 클래스를 지운 직후 Reflow를 강제해야 합니다.
         if (badge) {

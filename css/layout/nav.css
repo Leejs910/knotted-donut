@@ -63,6 +63,22 @@
   text-decoration: none;
   font-weight: bold;
 }
+/* ⚠️ Login 은 페이지를 옮기지 않고 모달을 여는 일이라 <a> 가 아니라 <button> 입니다
+      (화면 읽기 프로그램이 '링크' 가 아니라 '단추' 로 읽어 줍니다).
+      button 은 글꼴·배경·줄높이를 물려받지 않으므로, 옆의 Cart 링크와
+      같은 모양이 되도록 여기서 맞춥니다. */
+button.btn-outline,
+button.login-link {
+  background: none;
+  font: inherit;
+  font-weight: bold;
+  line-height: normal;
+  cursor: pointer;
+}
+button.login-link {
+  border: 0;
+  padding: 0;
+}
 /* 1. 스크롤 내릴 때: 위로 서랍처럼 올라가서 숨겨지는 상태 */
 .navbar.nav-hidden {
   transform: translateY(-100%); /* 네비게이션 높이만큼 위로 끌어올림 */

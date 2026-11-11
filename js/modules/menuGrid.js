@@ -11,6 +11,7 @@
 
 import { initCategoryTabs } from './categoryTabs.js';
 import { openDonutModal } from './donutModal.js';
+import { initCardKeys } from './cardKeys.js';
 import { initGridPager } from './gridPager.js';
 
 // 🎨 카테고리별 테마 — 카드 그림 / 이름표 색 / 리본 뱃지가 한 세트로 움직입니다.
@@ -54,7 +55,8 @@ export function initMenuGrid({ donut = [], cake = [], drink = [] } = {}) {
     function cardHTML(item, index) {
         const theme = THEMES[currentCategory] || THEMES.all;
         return `
-        <article class="menu-card" data-index="${index}">
+        <article class="menu-card" data-index="${index}"
+                 tabindex="0" role="button" aria-label="${item.title} 자세히 보기">
             <img class="menu-card-bg" src="${theme.bgImg}" alt="" aria-hidden="true">
             <img class="menu-card-pic" src="${item.imgUrl}" alt="${item.title}" loading="lazy">
             <div class="menu-card-name" style="background-color: ${theme.themeColor};">${item.title}</div>
@@ -117,6 +119,7 @@ export function initMenuGrid({ donut = [], cake = [], drink = [] } = {}) {
 
     // ----- 카드 클릭 → 둥근 상세 모달 -----
     // 카드를 다시 그려도 계속 동작하도록 그리드 전체에 한 번만 겁니다(이벤트 위임).
+    initCardKeys(gridEl, '.menu-card');
     gridEl.addEventListener('click', (e) => {
         const card = e.target.closest('.menu-card');
         if (!card) return;

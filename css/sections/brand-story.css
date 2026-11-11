@@ -384,7 +384,7 @@
 
     font-size: max(14px, calc(26 * var(--u)));
     line-height: 1.462;
-    color: #858585;
+    color: #6b6b6b; /* 흰 바탕 대비 5.3:1 (#858585 는 3.7:1) */
 }
 
 .brand-panel--center .brand-panel-text {

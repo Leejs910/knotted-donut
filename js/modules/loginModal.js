@@ -65,8 +65,8 @@ const MODAL_HTML = `
         </form>
 
         <div class="login-links">
-            <a href="#" class="go-signup">회원가입</a>
-            <a href="#">아이디 · 비밀번호 찾기</a>
+            <button type="button" class="go-signup">회원가입</button>
+            <a>아이디 · 비밀번호 찾기</a>
         </div>
 
         </div>
@@ -119,7 +119,7 @@ const MODAL_HTML = `
 
             <div class="login-links login-links-center">
                 <span>이미 계정이 있으신가요?</span>
-                <a href="#" class="go-login">로그인</a>
+                <button type="button" class="go-login">로그인</button>
             </div>
         </div>
 

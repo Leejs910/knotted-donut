@@ -146,7 +146,7 @@
 /* 할인 전 가격 */
 .cart-item-price-was {
     font-size: 13px;
-    color: #858585;
+    color: #6b6b6b; /* 흰 바탕 대비 5.3:1 (#858585 는 3.7:1) */
     text-decoration: line-through;
 }
 
@@ -163,7 +163,7 @@
 
     font-size: 22px;
     line-height: 1;
-    color: #858585;
+    color: #6b6b6b; /* 흰 바탕 대비 5.3:1 (#858585 는 3.7:1) */
     transition: color 0.2s ease;
 }
 
@@ -209,7 +209,7 @@
 
     font-size: 14px;
     line-height: 1;
-    color: #858585;
+    color: #6b6b6b; /* 흰 바탕 대비 5.3:1 (#858585 는 3.7:1) */
     transition: color 0.2s ease;
 }
 
@@ -227,7 +227,7 @@
     text-align: center;
     font-size: 14px;
     font-weight: 600;
-    color: #858585;
+    color: #6b6b6b; /* 흰 바탕 대비 5.3:1 (#858585 는 3.7:1) */
 }
 
 .cart-item-sum {

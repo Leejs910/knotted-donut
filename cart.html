@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 
 <head>
     <meta charset="UTF-8">
@@ -15,6 +15,16 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32.png">
     <link rel="apple-touch-icon" href="./img/apple-touch-icon.png">
     <meta name="description" content="KnottedDonut 장바구니. 담아 두신 상품을 확인하고 주문을 이어 가세요.">
+    <!-- 링크를 메신저·SNS 에 붙였을 때 뜨는 미리보기 (주소는 배포 주소 기준이어야 합니다) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="KnottedDonut">
+    <meta property="og:title" content="KnottedDonut — 장바구니">
+    <meta property="og:description" content="KnottedDonut 장바구니. 담아 두신 상품을 확인하고 주문을 이어 가세요.">
+    <meta property="og:url" content="https://knotted-donut.vercel.app/cart.html">
+    <meta property="og:image" content="https://knotted-donut.vercel.app/img/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- 바깥에서 받아오는 것(스와이퍼 css · 서체)이 전부 이 한 곳에 있습니다.
          미리 연결해 두면 브라우저가 아래 <link> 를 만나기 전에 DNS·TLS 를
@@ -60,7 +70,7 @@
 
     <nav id="mainNav" class="navbar">
 
-        <a href="#" class="mobile-cart" aria-label="장바구니">
+        <a href="./cart.html" class="mobile-cart" aria-label="장바구니">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
                 <circle cx="9" cy="21" r="1"></circle>
@@ -87,10 +97,10 @@
         </ul>
 
         <div class="nav-actions">
-            <a href="#" class="btn btn-outline pc-btn">Login</a>
+            <button type="button" class="btn btn-outline pc-btn">Login</button>
             <!-- 로그인했을 때만 보입니다 — js/modules/authNav.js 가 켜고 끕니다 -->
             <a href="./mypage.html" class="btn btn-outline pc-btn pc-btn-mypage" hidden>Mypage</a>
-            <a href="#" class="btn btn-outline pc-btn">Cart</a>
+            <a href="./cart.html" class="btn btn-outline pc-btn">Cart</a>
 
             <button class="hamburger-btn" id="hamburger-btn" aria-label="메뉴 열기" aria-expanded="false" aria-controls="mobile-menu">
                 <span></span>
@@ -104,7 +114,7 @@
         <div class="mobile-login-header">
             <p>로그인이 필요합니다.</p>
             <a href="./mypage.html" class="mobile-mypage" hidden>마이페이지</a>
-            <a href="#" class="login-link">로그인</a>
+            <button type="button" class="login-link">로그인</button>
         </div>
         <ul class="mobile-menu-list">
             <li><a href="./onlineShop.html">Shop</a></li>
@@ -229,8 +239,8 @@
 
             <div class="footer-right">
                 <div class="footer-links">
-                    <a href="#">개인정보처리방침</a>
-                    <a href="#">이용약관</a>
+                    <a>개인정보처리방침</a>
+                    <a>이용약관</a>
                 </div>
                 <div class="footer-cs">
                     <h2>고객센터</h2>

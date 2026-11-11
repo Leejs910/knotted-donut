@@ -5,6 +5,7 @@
 // 필요 라이브러리: Swiper
 
 import { openShopItemModal } from './shopItemModal.js';
+import { initCardKeys } from './cardKeys.js';
 
 const boxThemes = [
     { bgImg: './img/boxPink.png', themeColor: '#FFAFC8' },
@@ -189,7 +190,9 @@ export function initConveyor({ data = [] } = {}) {
 
             return `
         <div class="swiper-slide" data-card-index="${index}">
-            <div class="product-bundle">
+            <!-- ⚠️ 키보드 표식은 슬라이드가 아니라 안쪽 상자에 둡니다.
+                 슬라이드의 role 은 Swiper 가 'group' 으로 덮어씁니다. -->
+            <div class="product-bundle" tabindex="0" role="button" aria-label="${item.title} 자세히 보기">
 
                 <div class="product-card" style="border-color: ${theme.themeColor};">
                     <div class="card-img-wrap">
@@ -201,7 +204,7 @@ export function initConveyor({ data = [] } = {}) {
                     </div>
                 </div>
 
-                <img src="${theme.bgImg}" class="box-img" alt="박스">
+                <img src="${theme.bgImg}" class="box-img" alt="">
 
             </div>
         </div>
@@ -219,6 +222,7 @@ export function initConveyor({ data = [] } = {}) {
     // 루프 모드라 Swiper 가 슬라이드를 복제하고 순서도 바꿉니다.
     // 그래서 카드마다 리스너를 다는 대신, 컨테이너에서 한 번만 받아
     // data-card-index 로 어떤 상품인지 찾습니다. (복제된 슬라이드도 이 값을 그대로 물려받습니다)
+    initCardKeys(document.querySelector('.trail-swiper'), '.product-bundle');
     document.querySelector('.trail-swiper').addEventListener('click', (e) => {
         const slide = e.target.closest('.swiper-slide[data-card-index]');
         if (!slide) return;

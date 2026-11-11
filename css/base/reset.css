@@ -34,6 +34,13 @@ html{
       그 설정이 켜진 남의 기기에서만, 사양과 상관없이 터집니다. */
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
+/* 키보드로 닿는 카드(js/modules/cardKeys.js)에 초점 테두리를 그립니다.
+   ⚠️ 슬라이드는 overflow: hidden 상자 안에 있어 바깥 테두리가 잘리므로 안쪽에 그립니다. */
+[role="button"][tabindex="0"]:focus-visible {
+    outline: 3px solid #3E2723;
+    outline-offset: -3px;
+}
+
 @font-face {
         font-family: 'recoleta'; 
         src: url('../../font/RecoletaAlt\ Black.woff2') format('woff2');
