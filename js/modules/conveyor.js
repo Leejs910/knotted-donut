@@ -188,6 +188,10 @@ export function initConveyor({ data = [] } = {}) {
             // 숫자로 변환 후 한국식 천 단위 쉼표 + '원'
             const formattedPrice = Number(item.price).toLocaleString('ko-KR') + '원';
 
+            // ⚠️ 상품 이름은 h3 입니다. index.html 에서 바로 위가 섹션 제목 h2 라,
+            //    h4 로 두면 제목 단계를 건너뜁니다. onlineShop.html 의 같은 카드
+            //    (shopGrid.js)도 h3 입니다. 크기·여백은 .item-name 이 직접 정하므로
+            //    태그를 바꿔도 보이는 모양은 그대로입니다.
             return `
         <div class="swiper-slide" data-card-index="${index}">
             <!-- ⚠️ 키보드 표식은 슬라이드가 아니라 안쪽 상자에 둡니다.
@@ -199,7 +203,7 @@ export function initConveyor({ data = [] } = {}) {
                         <img src="${item.imgUrl}" alt="${item.title}">
                     </div>
                     <div class="card-info">
-                        <h4 class="item-name">${item.title}</h4>
+                        <h3 class="item-name">${item.title}</h3>
                         <p class="item-price" style="color: ${theme.themeColor};">${formattedPrice}</p>
                     </div>
                 </div>
