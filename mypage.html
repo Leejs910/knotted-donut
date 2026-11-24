@@ -64,6 +64,13 @@
 </head>
 
 <body>
+    <!-- ⚠️ 반복 영역 건너뛰기 (KWCAG 6.4.1). 평소엔 화면 밖에 있다가 Tab 을
+         처음 누르면 나타납니다. 지우면 키보드만 쓰는 사람이 페이지마다
+         네비게이션 링크를 전부 지나야 본문에 닿습니다.
+         9개 페이지에 같은 줄이 들어 있습니다 — 고칠 때는 전부 같이.
+         필요 CSS: css/layout/nav.css 의 .skip-link -->
+    <a class="skip-link" href="#content">본문 바로가기</a>
+
     <!-- 📄 페이지가 바뀔 때 덮였다 걷히는 흰 막.
          처음부터 그려져 있어야 깜빡임이 없어 마크업에 둡니다. -->
     <div class="page-fade" aria-hidden="true"></div>
@@ -136,7 +143,7 @@
 
     <!-- 🏙️ 하늘색 배너 — 도시 그림(brand 와 같은 SVG)을 아래에 깔고,
          구름은 js/modules/brandCity.js 가 아주 천천히 흘려보냅니다 -->
-    <header class="mypage-banner page-banner">
+    <header id="content" tabindex="-1" class="mypage-banner page-banner">
         <div class="mypage-banner-art" id="mypageBannerArt"></div>
 
         <!-- 스크롤을 내리는 순간 어두워지는 막 (다른 배너와 같은 규칙) -->

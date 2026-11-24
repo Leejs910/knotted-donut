@@ -65,6 +65,13 @@
 </head>
 
 <body>
+    <!-- ⚠️ 반복 영역 건너뛰기 (KWCAG 6.4.1). 평소엔 화면 밖에 있다가 Tab 을
+         처음 누르면 나타납니다. 지우면 키보드만 쓰는 사람이 페이지마다
+         네비게이션 링크를 전부 지나야 본문에 닿습니다.
+         9개 페이지에 같은 줄이 들어 있습니다 — 고칠 때는 전부 같이.
+         필요 CSS: css/layout/nav.css 의 .skip-link -->
+    <a class="skip-link" href="#content">본문 바로가기</a>
+
     <!-- 📄 페이지가 바뀔 때 덮였다 걷히는 흰 막.
          처음부터 그려져 있어야 깜빡임이 없어 마크업에 둡니다. -->
     <div class="page-fade" aria-hidden="true"></div>
@@ -136,7 +143,7 @@
     </div>
 
     <!-- ☁️ 구름 배너 — SVG는 js/modules/supportBanner.js 가 펼쳐 넣습니다 -->
-    <header class="support-banner page-banner">
+    <header id="content" tabindex="-1" class="support-banner page-banner">
         <div class="support-banner-art" id="supportBannerArt"></div>
 
         <!-- 스크롤을 내리는 순간 어두워지는 막 (cart / onlineShop 과 같은 규칙) -->
@@ -151,15 +158,15 @@
             <div class="support-inner">
 
                 <!-- 카테고리 탭 (menu.html / onlineShop.html 과 같은 컴포넌트) -->
-                <div class="shop-tabs" id="supportTabs" role="tablist" aria-label="문의 분류">
-                    <button type="button" class="shop-tab is-active" data-category="all" role="tab"
-                        aria-selected="true">전체</button>
-                    <button type="button" class="shop-tab" data-category="product" role="tab"
-                        aria-selected="false">제품문의</button>
-                    <button type="button" class="shop-tab" data-category="reserve" role="tab"
-                        aria-selected="false">예약문의</button>
-                    <button type="button" class="shop-tab" data-category="etc" role="tab"
-                        aria-selected="false">기타문의</button>
+                <div class="shop-tabs" id="supportTabs" role="group" aria-label="문의 분류">
+                    <button type="button" class="shop-tab is-active" data-category="all"
+                        aria-pressed="true">전체</button>
+                    <button type="button" class="shop-tab" data-category="product"
+                        aria-pressed="false">제품문의</button>
+                    <button type="button" class="shop-tab" data-category="reserve"
+                        aria-pressed="false">예약문의</button>
+                    <button type="button" class="shop-tab" data-category="etc"
+                        aria-pressed="false">기타문의</button>
 
                     <div class="shop-tabs-badge">
                         <img src="./img/supportBadge.webp" alt="">
