@@ -3,8 +3,14 @@
 // onlineShop.html(상품 카테고리)과 menu.html(메뉴 카테고리)이 같은 동작을 쓰므로
 // 공용 모듈로 뺐습니다.
 //
+// ⚠️ 생김새는 탭이지만 ARIA 로는 탭이 아닙니다. 진짜 탭은 누를 때마다 패널이
+//    바뀌어야 하는데, 여기는 늘 보이는 한 그리드를 거를 뿐입니다. 그래서
+//    role="tab" 이 아니라 role="group" 안의 누름 버튼(aria-pressed)으로 둡니다.
+//    예전에는 role="tab" 이라 W3C 검사에서 "tab 에는 대응하는 tabpanel 이
+//    있어야 한다" 는 오류가 났습니다. (진짜 탭은 mypage.html 쪽입니다)
+//
 // 하는 일
-//   · 누른 탭에 is-active / aria-selected 를 옮겨 붙입니다
+//   · 누른 버튼에 is-active / aria-pressed 를 옮겨 붙입니다
 //   · 가운데 리본 뱃지를 카테고리 색에 맞춰 바꾸고 통통 튀게 합니다
 //   · 테마 요소에 data-active="{카테고리}" 를 붙여 CSS 가 배경색을 바꾸게 합니다
 //   · 바뀐 카테고리를 onChange 로 알려 줍니다
@@ -58,7 +64,7 @@ export function initCategoryTabs({
         tabsEl.querySelectorAll('.shop-tab').forEach((btn) => {
             const on = btn === tab;
             btn.classList.toggle('is-active', on);
-            btn.setAttribute('aria-selected', String(on));
+            btn.setAttribute('aria-pressed', String(on));
         });
 
         paint(current);
