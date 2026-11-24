@@ -246,6 +246,10 @@
     </header>
     <main>
         <section class="newAndBest">
+            <!-- 화면에서는 아래 신메뉴/베스트셀러 버튼이 제목 노릇을 하지만 코드에는
+                 제목이 없어, 제목만 훑어 읽는 스크린 리더에서 이 섹션이 통째로
+                 빠져 있었습니다. 필요 CSS: css/base/reset.css 의 .sr-only -->
+            <h2 class="sr-only">신메뉴와 베스트셀러</h2>
             <div class="clouds-bg" id="cloud-container"></div>
             <div class="menu-toggle-wrapper">
                 <button type="button" class="toggle-btn active" id="btn-new" aria-pressed="true">신메뉴</button>
@@ -281,6 +285,10 @@
         </section>
 
         <section class="online_shop">
+            <!-- 이 섹션의 제목은 곰돌이 간판 그림(img/bear-sign.svg)인데, 그 SVG 는
+                 글자가 한 자도 없는 도형 덩어리라 읽어 줄 것이 없습니다. 그래서
+                 제목을 따로 둡니다. 필요 CSS: css/base/reset.css 의 .sr-only -->
+            <h2 class="sr-only">온라인 샵</h2>
             <div class="shop-decorations">
                 <img src="./img_deco/star1.png" class="shop-deco deco-star" alt="별">
                 <img src="./img_deco/star2.png" class="shop-deco deco-star2" alt="별">
@@ -289,7 +297,9 @@
                 <img src="./img_deco/smile.svg" class="shop-deco deco-smile" alt="스마일">
             </div>
 
-            <div class="shop-title-box" id="shopTitleBox">
+            <!-- ⚠️ 위 h2 가 이 섹션의 이름을 맡았으므로 간판은 숨깁니다. 안에 드는 것은
+                 JS 가 넣는 장식용 SVG 뿐이고 누를 곳도 없어, 숨겨도 잃는 기능이 없습니다 -->
+            <div class="shop-title-box" id="shopTitleBox" aria-hidden="true">
             </div>
 
             <div class="trail-container">
@@ -340,7 +350,7 @@
             <img src="./img/earthRainbow.svg" class="footer-planet" alt="" aria-hidden="true">
         </div>
 
-        <!-- 글자가 배경·곰돌이 위에서 읽히도록 덮는 옅은 막 (색은 footer.css 의 --veil) -->
+        <!-- 글자가 배경·곰돌이 위에서 읽히도록 덮는 옅은 막 (색은 footer.css 의 veil 변수) -->
         <div class="footer-overlay" aria-hidden="true"></div>
 
         <canvas id="footer-canvas"></canvas>
